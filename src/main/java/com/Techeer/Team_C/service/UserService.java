@@ -1,6 +1,5 @@
 package com.Techeer.Team_C.service;
 
-
 import com.Techeer.Team_C.domain.User;
 import com.Techeer.Team_C.dto.UserDto;
 import com.Techeer.Team_C.repository.UserRepository;
@@ -17,47 +16,47 @@ import java.util.stream.Collectors;
 
 public class UserService {
 
-    private final UserRepository memberRepository;
+    private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public UserService(UserRepository memberRepository, ModelMapper modelMapper){
-        this.memberRepository = memberRepository;
+    public UserService(UserRepository userRepository, ModelMapper modelMapper){
+        this.userRepository = userRepository;
         this.modelMapper = modelMapper;
     }
 
-    private UserDto of(User member){
-        return modelMapper.map(member,UserDto.class);  //User entitiy를 user Dto로 변경
+    private UserDto of(User user){
+        return modelMapper.map(user,UserDto.class);
+        // Serice에서는 user entitiy에 바로 접근하지 않고, User entitiy를 user Dto로 변경하여 dto에 접근
     }
 
 
     /**
      * 회원가입
-     * @param member
+     * @param user
      * @return string UserId;
      */
-    public String join(User member) {
-        duplicateIDCheck(member);
+    public String join(User user) {
+        duplicateIDCheck(user);
 
-        //memberRepository.save(member);
-        // member.setPassword(getEncodedPassword(member.getPassword()));
-        memberRepository.save(member);
-        return member.getUserId();
+
+        userRepository.save(user);
+        return user.getUserId();
     }
 
-    private String getEncodedPassword(String password){
-        return "{noop}" + password;
-    }
+//    private String getEncodedPassword(String password){
+//        return "{noop}" + password;
+//    }  db 오류 날 시 해당 코드 사용 필요
 
 
     /**
      * 중복 ID체크
-     * @param member
+     * @param user
      */
-    private void duplicateIDCheck(User member) {
-        memberRepository.findById(member.getUserId())
+    private void duplicateIDCheck(User user) {
+        userRepository.findById(user.getUserId())
                 .ifPresent(m -> {
-                    throw new IllegalStateException("이미 가입된 아이디 입니다."); //optional로 감싸서 다음과 같은 문법 사용가능.
+                    throw new IllegalStateException("이미 가입된 아이디 입니다.");
                 });
     }
 
@@ -65,11 +64,11 @@ public class UserService {
      * 전체 회원 조회
      * @return
      */
-    public List<UserDto> findMembers() {
-        List<User>  membersList= memberRepository.findAll();
+    public List<UserDto> findUsers() {
+        List<User>  usersList= userRepository.findAll();
 
-        List<UserDto> memberDtoList = membersList.stream().map(q -> of(q)).collect(Collectors.toList());
-        return memberDtoList;
+        List<UserDto> userDtoList = usersList.stream().map(q -> of(q)).collect(Collectors.toList());
+        return userDtoList;
     }
 
     /**
@@ -79,9 +78,8 @@ public class UserService {
      */
     public Optional<UserDto> findMember(String id){
 
-        Optional<User> memberById =  memberRepository.findById(id);
-        Optional<UserDto> memberDtoById = memberById.map(q -> of(q));
-        return memberDtoById;
-
+        Optional<User> userById =  userRepository.findById(id);
+        Optional<UserDto> userDtoById = userById.map(q -> of(q));
+        return userDtoById;
     }
 }

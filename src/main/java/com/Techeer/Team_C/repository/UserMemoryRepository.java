@@ -17,9 +17,9 @@ public class UserMemoryRepository implements UserRepository{
 
 
     @Override
-    public User save(User member) {
-        store.put(member.getUserId(), member);
-        return member;
+    public User save(User user) {
+        store.put(user.getUserId(), user);
+        return user;
     }
     // user의 ID를 키 값으로 하는 member 객체를 store에 저장
     @Override

@@ -26,11 +26,11 @@ public class UserController {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public UserController(UserService memberService,PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, UserRepository memberRepository){
-        this.userService = memberService;
+    public UserController(UserService userService,PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, UserRepository userRepository){
+        this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.userRepository = memberRepository;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("users/login")
@@ -64,10 +64,10 @@ public class UserController {
     }
 
 
-//    @GetMapping("/all")
-//    public ResponseEntity<List<User>> AllUser() {
-//        return ResponseEntity.ok(userService.AllUser());
-//    }
+    @GetMapping("/all")
+    public List<UserDto> AllUser() {
+        return userService.findUsers();
+    }
 
 
 }
