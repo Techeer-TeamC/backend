@@ -1,8 +1,6 @@
 package com.Techeer.Team_C.repository;
 
 import com.Techeer.Team_C.domain.User;
-import org.springframework.stereotype.Repository;
-
 import java.util.*;
 
 /*
@@ -10,7 +8,7 @@ import java.util.*;
 향후 mysql과 연결해 직접 데이터를 가져오고 저장하는 기능을 구현할 예정입니다.
  */
 
-@Repository
+//@Repository config/LoginConfig에서 bean설정
 public class UserMemoryRepository implements UserRepository{
 
     private static Map<String, User> store = new HashMap<>();  //메모리에 저장할 자료구

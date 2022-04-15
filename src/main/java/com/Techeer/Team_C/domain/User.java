@@ -1,7 +1,7 @@
 package com.Techeer.Team_C.domain;
 
 //import com.vladmihalcea.hibernate.type.array.IntArrayType;
-import lombok.Builder;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,7 +32,7 @@ public class User implements UserDetails{
     private String userId;
     private String userName;
     private String password;
-    private List<String> roles = new ArrayList<>();
+    private List<String> roles = new ArrayList<>(); //User_Role or Admin Role
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

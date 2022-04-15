@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service
+//@Service - config/Loginconfig 를 통해 bean 설정
 
 public class UserService {
 
