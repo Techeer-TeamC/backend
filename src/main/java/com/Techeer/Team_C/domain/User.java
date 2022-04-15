@@ -40,12 +40,7 @@ public class User implements UserDetails{
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
-    public List<String> getRoles(){
-        return roles;
-    }
-    public String getUserId(){
-        return userId;
-    }
+  
 
     @Override
     public String getUsername() {
