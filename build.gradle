@@ -19,9 +19,13 @@ repositories {
 }
 
 dependencies {
-	// spring security는 추후 로그인 구현시 사용해야 함
-//	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	implementation 'org.springframework.boot:spring-boot-starter-security' //로그인 기능을 위한 security
+	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1' //JWT 사용
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1' //javax/xml/bind/DatatypeConverter 에러 문제. ㅓdk11의 관련 모듈 기본 참조
+
+
 
 	// lombok
 	compileOnly 'org.projectlombok:lombok'
@@ -43,6 +47,13 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+
+
+    //Dto와 entitiy 객체를 변환하기 위한 맵핑 라이브러리 ModelMapper 추가
+	implementation 'org.modelmapper:modelmapper:3.0.0'
+
+
+
 }
 
 tasks.named('test') {
