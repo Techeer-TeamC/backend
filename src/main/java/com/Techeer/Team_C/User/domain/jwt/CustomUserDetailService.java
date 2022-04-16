@@ -1,8 +1,8 @@
-package com.Techeer.Team_C.jwt;
+package com.Techeer.Team_C.User.domain.jwt;
 
 
 
-import com.Techeer.Team_C.repository.UserRepository;
+import com.Techeer.Team_C.User.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

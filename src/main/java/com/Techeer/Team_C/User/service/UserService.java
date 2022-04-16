@@ -1,12 +1,11 @@
-package com.Techeer.Team_C.service;
+package com.Techeer.Team_C.User.service;
 
-import com.Techeer.Team_C.domain.User;
-import com.Techeer.Team_C.dto.UserDto;
-import com.Techeer.Team_C.repository.UserRepository;
+import com.Techeer.Team_C.User.domain.User;
+import com.Techeer.Team_C.User.dto.UserDto;
+import com.Techeer.Team_C.User.repository.UserRepository;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;

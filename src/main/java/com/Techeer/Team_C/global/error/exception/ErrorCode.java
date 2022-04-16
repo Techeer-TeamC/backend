@@ -20,9 +20,6 @@ public enum ErrorCode {
     EMAIL_NOT_FOUND(400, "M003", "Not found this email"),
     INVALID_PASSWORD(400, "M004", "Invalid password"),
 
-    // Coupon
-    COUPON_ALREADY_USE(400, "CO001", "Coupon was already used"),
-    COUPON_EXPIRE(400, "CO002", "Coupon was already expired")
 
     ;
     private final String code;

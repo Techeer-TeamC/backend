@@ -1,4 +1,4 @@
-package com.Techeer.Team_C.domain;
+package com.Techeer.Team_C.User.domain;
 
 //import com.vladmihalcea.hibernate.type.array.IntArrayType;
 

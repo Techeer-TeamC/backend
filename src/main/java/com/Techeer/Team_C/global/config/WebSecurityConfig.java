@@ -1,6 +1,7 @@
-package com.Techeer.Team_C.jwt;
+package com.Techeer.Team_C.global.config;
 
-import lombok.RequiredArgsConstructor;
+import com.Techeer.Team_C.User.domain.jwt.JwtAuthenticationFilter;
+import com.Techeer.Team_C.User.domain.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -1,6 +1,6 @@
-package com.Techeer.Team_C.repository;
+package com.Techeer.Team_C.User.repository;
 
-import com.Techeer.Team_C.domain.User;
+import com.Techeer.Team_C.User.domain.User;
 import java.util.*;
 
 /*
