@@ -1,8 +1,8 @@
-package com.Techeer.Team_C.User.repository;
+package com.Techeer.Team_C.domain.user.repository;
 
 
 
-import com.Techeer.Team_C.User.domain.User;
+import com.Techeer.Team_C.domain.user.entity.User;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,8 +1,8 @@
 package com.Techeer.Team_C.global.config;
 
-import com.Techeer.Team_C.User.repository.UserMemoryRepository;
-import com.Techeer.Team_C.User.repository.UserRepository;
-import com.Techeer.Team_C.User.service.UserService;
+import com.Techeer.Team_C.domain.user.repository.UserMemoryRepository;
+import com.Techeer.Team_C.domain.user.repository.UserRepository;
+import com.Techeer.Team_C.domain.user.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,38 +1,37 @@
-package com.Techeer.Team_C.User.domain;
+package com.Techeer.Team_C.domain.user.dto;
+//DB의 테이블구조와 직접적으로 연관된 entity를 사용하는것은 좋지 않기때문에 중간의 데이터 교환을 위한 Dto가 필요하다.
+// entity의 속성과 동일하게 작성한다.
 
-//import com.vladmihalcea.hibernate.type.array.IntArrayType;
 
-import lombok.Getter;
+import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-//import org.hibernate.annotations.TypeDef;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-//import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-//JTW와 관련된 모듈
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 
 @Getter
 @Setter
-@NoArgsConstructor
-//@Table(name = "test")
-//@TypeDef(name = "int-array", typeClass = IntArrayType.class)
-//@Entity
-public class User implements UserDetails{
-    // 추후 mysql의 schema에 따른 property 맞추기
-//    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+public class UserDto implements UserDetails {
     private Long id;
     private String userId;
     private String userName;
     private String password;
-    private List<String> roles = new ArrayList<>(); //User_Role or Admin Role
+    private List<String> roles = new ArrayList<>();
+
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -40,7 +39,6 @@ public class User implements UserDetails{
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
-  
 
     @Override
     public String getUsername() {
@@ -71,4 +69,5 @@ public class User implements UserDetails{
     public String getPassword(){
         return password;
     }
+
 }

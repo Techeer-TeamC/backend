@@ -1,13 +1,13 @@
-package com.Techeer.Team_C.User.controller;
+package com.Techeer.Team_C.domain.user.controller;
 
-import com.Techeer.Team_C.User.dto.LoginFormDto;
-import com.Techeer.Team_C.User.dto.SignupFormDto;
-import com.Techeer.Team_C.User.dto.UserDto;
-import com.Techeer.Team_C.User.domain.jwt.JwtTokenProvider;
-import com.Techeer.Team_C.User.repository.UserRepository;
-import com.Techeer.Team_C.User.domain.User;
+import com.Techeer.Team_C.domain.user.dto.LoginFormDto;
+import com.Techeer.Team_C.domain.user.dto.SignupFormDto;
+import com.Techeer.Team_C.domain.user.dto.UserDto;
+import com.Techeer.Team_C.domain.user.jwt.JwtTokenProvider;
+import com.Techeer.Team_C.domain.user.repository.UserRepository;
+import com.Techeer.Team_C.domain.user.entity.User;
 import com.Techeer.Team_C.global.error.exception.BusinessException;
-import com.Techeer.Team_C.User.service.UserService;
+import com.Techeer.Team_C.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
