@@ -1,4 +1,4 @@
-package com.Techeer.Team_C.jwt;
+package com.Techeer.Team_C.User.domain.jwt;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;

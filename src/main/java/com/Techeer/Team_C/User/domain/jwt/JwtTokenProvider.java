@@ -1,4 +1,4 @@
-package com.Techeer.Team_C.jwt;
+package com.Techeer.Team_C.User.domain.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;

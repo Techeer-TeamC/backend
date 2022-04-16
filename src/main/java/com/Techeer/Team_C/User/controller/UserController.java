@@ -1,31 +1,29 @@
-package com.Techeer.Team_C.controller;
+package com.Techeer.Team_C.User.controller;
 
-import com.Techeer.Team_C.domain.User;
-import com.Techeer.Team_C.dto.LoginFormDto;
-import com.Techeer.Team_C.dto.SignupFormDto;
-import com.Techeer.Team_C.dto.UserDto;
+import com.Techeer.Team_C.User.dto.LoginFormDto;
+import com.Techeer.Team_C.User.dto.SignupFormDto;
+import com.Techeer.Team_C.User.dto.UserDto;
+import com.Techeer.Team_C.User.domain.jwt.JwtTokenProvider;
+import com.Techeer.Team_C.User.repository.UserRepository;
+import com.Techeer.Team_C.User.domain.User;
 import com.Techeer.Team_C.global.error.exception.BusinessException;
-import com.Techeer.Team_C.global.error.exception.ErrorCode;
-import com.Techeer.Team_C.jwt.JwtTokenProvider;
-import com.Techeer.Team_C.repository.UserRepository;
-import com.Techeer.Team_C.service.UserService;
+import com.Techeer.Team_C.User.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.*;
+import static com.Techeer.Team_C.global.utils.Constants.API_PREFIX;
 
 @RestController
-//@RequestMapping("/user")
-//@RequiredArgsConstructor
+@RequestMapping(API_PREFIX+"/users")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
@@ -41,7 +39,7 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping("users/login")
+    @PostMapping("/login")
     public String login(@RequestBody @Valid final LoginFormDto user) {
 
 
@@ -54,7 +52,7 @@ public class UserController {
         return jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
     }
 
-    @PostMapping("users/signup")
+    @PostMapping("/signup")
     public String join(@RequestBody @Valid final SignupFormDto user) {
 
         User member = new User();
@@ -74,7 +72,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/users/all")
+    @GetMapping("/all")
     public List<UserDto> AllUser() {
         return userService.findUsers();
     }
