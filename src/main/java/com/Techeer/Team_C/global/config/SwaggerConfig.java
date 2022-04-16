@@ -1,4 +1,4 @@
-package com.Techeer.Team_C.config;
+package com.Techeer.Team_C.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
