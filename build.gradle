@@ -28,11 +28,9 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 
 	//mysql
-//	runtimeOnly 'mysql:mysql-connector-java'
-//	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-//	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	runtimeOnly 'mysql:mysql-connector-java'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 //	implementation group: 'com.vladmihalcea', name: 'hibernate-types-52', version: '2.10.4'
-
 
 	// swagger
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'

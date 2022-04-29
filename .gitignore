@@ -169,3 +169,13 @@ Temporary Items
 .apdisk
 
 # End of https://www.toptal.com/developers/gitignore/api/java,macos,intellij
+
+# build file
+build/**
+
+# gradle file
+.gradle/**
+
+# vscode setting
+.idea/*.xml
+.idea/.name
