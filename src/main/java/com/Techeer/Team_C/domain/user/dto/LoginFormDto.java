@@ -1,8 +1,12 @@
 package com.Techeer.Team_C.domain.user.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.validation.constraints.NotEmpty;
 
-
+@Getter
+@Setter
 
 public class LoginFormDto {
     @NotEmpty(message ="id값은 필수사항 입니다.")
@@ -11,21 +15,21 @@ public class LoginFormDto {
     private String password;
 
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+//    public String getUserId() {
+//        return userId;
+//    }
+//
+//    public void setUserId(String userId) {
+//        this.userId = userId;
+//    }
+//
+//    public String getPassword() {
+//        return password;
+//    }
+//
+//    public void setPassword(String password) {
+//        this.password = password;
+//    }
 
 
 }
