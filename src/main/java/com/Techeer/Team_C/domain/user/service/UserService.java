@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 //@Service - config/Loginconfig 를 통해 bean 설정
 
 public class UserService {
-
+    @Autowired
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
-    @Autowired
+
     public UserService(UserRepository userRepository, ModelMapper modelMapper){
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
