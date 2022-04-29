@@ -29,6 +29,8 @@
 .idea/**/dbnavigator.xml
 
 # Gradle
+.gradle
+.idea
 .idea/**/gradle.xml
 .idea/**/libraries
 
