@@ -1,4 +1,4 @@
-package com.Techeer.Team_C.domain.user.jwt;
+package com.Techeer.Team_C.domain.user.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
