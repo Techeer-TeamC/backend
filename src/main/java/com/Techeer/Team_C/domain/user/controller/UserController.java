@@ -5,7 +5,7 @@ import com.Techeer.Team_C.domain.user.dto.UserDto;
 import com.Techeer.Team_C.domain.user.auth.JwtTokenProvider;
 import com.Techeer.Team_C.domain.user.repository.UserRepository;
 import com.Techeer.Team_C.domain.user.entity.User;
-import com.Techeer.Team_C.domain.user.auth.AuthService;
+import com.Techeer.Team_C.domain.user.service.AuthService;
 import com.Techeer.Team_C.global.error.exception.BusinessException;
 import com.Techeer.Team_C.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,7 @@ public class UserController {
         this.authService = authService;
     }
 
-    @PostMapping("/new")
+    @PostMapping("/")
     public String join(@RequestBody @Valid final SignupFormDto user) {
 
         User member = new User();
