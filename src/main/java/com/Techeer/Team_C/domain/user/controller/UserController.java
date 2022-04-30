@@ -4,8 +4,10 @@ import com.Techeer.Team_C.domain.user.dto.LoginFormDto;
 import com.Techeer.Team_C.domain.user.dto.SignupFormDto;
 import com.Techeer.Team_C.domain.user.dto.UserDto;
 import com.Techeer.Team_C.domain.user.jwt.JwtTokenProvider;
+import com.Techeer.Team_C.domain.user.jwt.TokenDto;
 import com.Techeer.Team_C.domain.user.repository.UserRepository;
 import com.Techeer.Team_C.domain.user.entity.User;
+import com.Techeer.Team_C.domain.user.service.AuthService;
 import com.Techeer.Team_C.global.error.exception.BusinessException;
 import com.Techeer.Team_C.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -30,17 +32,19 @@ public class UserController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final AuthService authService;
 
     @Autowired
-    public UserController(UserService userService,PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, UserRepository userRepository){
+    public UserController(UserService userService,PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, UserRepository userRepository, AuthService authService){
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userRepository = userRepository;
+        this.authService = authService;
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody @Valid final LoginFormDto user) {
+    public TokenDto login(@RequestBody @Valid final LoginFormDto user) {
 
 
         UserDto member = userService.findMember(user.getUserId())
@@ -49,7 +53,7 @@ public class UserController {
         if (!passwordEncoder.matches(user.getPassword(), member.getPassword())) {
             throw new BusinessException("잘못된 비밀번호 입니다", INVALID_PASSWORD);
         }
-        return jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
+        return authService.login(user);
     }
 
     @PostMapping("/signup")
@@ -77,5 +81,10 @@ public class UserController {
 //        return userService.findUsers();
 //    }
 
+
+//    @GetMapping("/me")
+//    public ResponseEntity<MemberResponseDto> getMyMemberInfo() {
+//        return ResponseEntity.ok(memberService.getMyInfo());
+//    }
 
 }

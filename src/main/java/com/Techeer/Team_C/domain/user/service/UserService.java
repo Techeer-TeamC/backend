@@ -4,6 +4,7 @@ import com.Techeer.Team_C.domain.user.dto.UserDto;
 import com.Techeer.Team_C.domain.user.entity.User;
 import com.Techeer.Team_C.domain.user.repository.UserRepository;
 
+import org.apache.catalina.security.SecurityUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -81,4 +82,10 @@ public class UserService {
         Optional<UserDto> userDtoById = userById.map(q -> of(q));
         return userDtoById;
     }
+
+
+//    public Optional<UserDto> getMyinfo(){
+//         Optional<User> userById = userRepository.findById(SecurityUtil.getCurrentMemberId())
+//    }
+
 }
