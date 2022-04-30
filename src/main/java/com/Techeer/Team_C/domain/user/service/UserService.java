@@ -7,6 +7,8 @@ import com.Techeer.Team_C.domain.user.repository.UserRepository;
 import org.apache.catalina.security.SecurityUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.Optional;
@@ -84,8 +86,15 @@ public class UserService {
     }
 
 
-//    public Optional<UserDto> getMyinfo(){
-//         Optional<User> userById = userRepository.findById(SecurityUtil.getCurrentMemberId())
-//    }
+    public Optional<UserDto> getMyinfo(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getName() == null) {
+            throw  new RuntimeException("Security Context 에 인증 정보가 없습니다.");
+        }
+        String userId = authentication.getName();
+        Optional<User> userById = userRepository.findById(userId);
+        Optional<UserDto> userDtoById = userById.map(q -> of(q));
+        return userDtoById;
+    }
 
 }

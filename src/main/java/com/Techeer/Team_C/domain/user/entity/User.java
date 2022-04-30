@@ -34,13 +34,6 @@ public class User implements UserDetails{
     private List<String> roles = new ArrayList<>(); //User_Role or Admin Role
 
 
-    public User(String userId, String password, List<String> roles) {
-        this.userId = userId;
-        this.password = password;
-        this.roles = roles;
-    }
-
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
@@ -51,7 +44,7 @@ public class User implements UserDetails{
 
     @Override
     public String getUsername() {
-        return userName;
+        return userId;
     }
 
     @Override
@@ -77,5 +70,9 @@ public class User implements UserDetails{
     @Override
     public String getPassword(){
         return password;
+    }
+
+    public String getUserName() {
+        return this.userName;
     }
 }

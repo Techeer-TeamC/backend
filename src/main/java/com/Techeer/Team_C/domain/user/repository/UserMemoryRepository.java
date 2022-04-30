@@ -10,12 +10,13 @@ import java.util.*;
 
 //@Repository config/LoginConfig에서 bean설정
 public class UserMemoryRepository implements UserRepository{
-
+    private static long sequence = 0L;
     private static Map<String, User> store = new HashMap<>();  //메모리에 저장할 자료구
 
 
     @Override
     public User save(User user) {
+        user.setId(++sequence);
         store.put(user.getUserId(), user);
         return user;
     }

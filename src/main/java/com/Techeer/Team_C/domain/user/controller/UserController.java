@@ -1,13 +1,11 @@
 package com.Techeer.Team_C.domain.user.controller;
 
-import com.Techeer.Team_C.domain.user.dto.LoginFormDto;
 import com.Techeer.Team_C.domain.user.dto.SignupFormDto;
 import com.Techeer.Team_C.domain.user.dto.UserDto;
-import com.Techeer.Team_C.domain.user.jwt.JwtTokenProvider;
-import com.Techeer.Team_C.domain.user.jwt.TokenDto;
+import com.Techeer.Team_C.domain.user.auth.JwtTokenProvider;
 import com.Techeer.Team_C.domain.user.repository.UserRepository;
 import com.Techeer.Team_C.domain.user.entity.User;
-import com.Techeer.Team_C.domain.user.service.AuthService;
+import com.Techeer.Team_C.domain.user.auth.AuthService;
 import com.Techeer.Team_C.global.error.exception.BusinessException;
 import com.Techeer.Team_C.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Collections;
-import java.util.List;
+import java.util.Optional;
 
 
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.*;
@@ -43,20 +41,7 @@ public class UserController {
         this.authService = authService;
     }
 
-    @PostMapping("/login")
-    public TokenDto login(@RequestBody @Valid final LoginFormDto user) {
-
-
-        UserDto member = userService.findMember(user.getUserId())
-                .orElseThrow(() -> new BusinessException("가입되지 않은 E-MAIL 입니다", EMAIL_NOT_FOUND));
-
-        if (!passwordEncoder.matches(user.getPassword(), member.getPassword())) {
-            throw new BusinessException("잘못된 비밀번호 입니다", INVALID_PASSWORD);
-        }
-        return authService.login(user);
-    }
-
-    @PostMapping("/signup")
+    @PostMapping("/new")
     public String join(@RequestBody @Valid final SignupFormDto user) {
 
         User member = new User();
@@ -76,15 +61,10 @@ public class UserController {
     }
 
 
-//    @GetMapping("/all")
-//    public List<UserDto> AllUser() {
-//        return userService.findUsers();
-//    }
 
-
-//    @GetMapping("/me")
-//    public ResponseEntity<MemberResponseDto> getMyMemberInfo() {
-//        return ResponseEntity.ok(memberService.getMyInfo());
-//    }
+    @GetMapping("/")
+    public Optional<UserDto> getMyMemberInfo() {
+        return userService.getMyinfo();
+    }
 
 }

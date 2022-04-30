@@ -1,5 +1,5 @@
 
-package com.Techeer.Team_C.domain.user.jwt;
+package com.Techeer.Team_C.domain.user.auth;
 
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,7 +22,7 @@ public class JwtTokenProvider {
 
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "bearer";
-    private String secretKey = "ourboard";   //이 secretKey로 hash를 생성하는 듯
+    private String secretKey = "ourboard";   // 외부 파일로 따로 관리 예정
 
     private long tokenValidTime = 30 * 60 * 1000L; //토큰 유효시간 30분
     private long refreshTokenValidTime =  7 * 24 * 60 * 60 * 1000L; // refresh 유효시간 : 7일
@@ -48,6 +47,7 @@ public class JwtTokenProvider {
 
         long now = (new Date()).getTime();
 
+
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + tokenValidTime);
         String accessToken = Jwts.builder()
@@ -71,19 +71,6 @@ public class JwtTokenProvider {
                 .build();
     }
 
-
-//    (String userPk, List<String> roles) {
-//        Claims claims = Jwts.claims().setSubject(userPk); // JWT payload 에 저장되는 정보단위
-//        claims.put("roles", roles); // 정보는 key / value 쌍으로 저장된다.
-//        Date now = new Date();
-//        return Jwts.builder()
-//                .setClaims(claims) // 정보 저장
-//                .setIssuedAt(now) // 토큰 발행 시간 정보
-//                .setExpiration(new Date(now.getTime() + tokenValidTime)) // set Expire Time
-//                .signWith(SignatureAlgorithm.HS256, secretKey)  // 사용할 암호화 알고리즘과
-//                // signature 에 들어갈 secret값 세팅
-//                .compact();
-//    }
 
 
     public Authentication getAuthentication(String accessToken) {
@@ -113,24 +100,7 @@ public class JwtTokenProvider {
             return e.getClaims();
         }
     }
-
-
-
-//    // JWT 토큰에서 인증 정보 조회
-//    public Authentication getAuthentication(String token) {
-//        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserPk(token));
-//        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-//    }
-//
-//    // 토큰에서 회원 정보 추출
-//    public String getUserPk(String token) {
-//        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
-//    }
-//
-//    // Request의 Header에서 token 값을 가져옵니다. "X-AUTH-TOKEN" : "TOKEN값'
-//    public String resolveToken(HttpServletRequest request) {
-//        return request.getHeader("X-AUTH-TOKEN");
-//    }
+    //토큰 복호화 함수
 
 
     // 토큰의 유효성 + 만료일자 확인
@@ -141,5 +111,6 @@ public class JwtTokenProvider {
         } catch (Exception e) {
             return false;
         }
+
     }
 }
