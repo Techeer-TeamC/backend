@@ -33,6 +33,14 @@ public class User implements UserDetails{
     private String password;
     private List<String> roles = new ArrayList<>(); //User_Role or Admin Role
 
+
+    public User(String userId, String password, List<String> roles) {
+        this.userId = userId;
+        this.password = password;
+        this.roles = roles;
+    }
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
