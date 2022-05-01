@@ -1,4 +1,4 @@
-package com.Techeer.Team_C.domain.user.entity;
+package com.Techeer.Team_C.domain.auth.entity;
 
 import lombok.Builder;
 import lombok.Getter;

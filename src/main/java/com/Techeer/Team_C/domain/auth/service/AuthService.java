@@ -1,11 +1,11 @@
-package com.Techeer.Team_C.domain.user.service;
+package com.Techeer.Team_C.domain.auth.service;
 
-import com.Techeer.Team_C.domain.user.auth.JwtTokenProvider;
-import com.Techeer.Team_C.domain.user.entity.RefreshToken;
-import com.Techeer.Team_C.domain.user.repository.RefreshTokenRepository;
-import com.Techeer.Team_C.domain.user.dto.TokenRefreshDto;
+import com.Techeer.Team_C.domain.auth.jwt.JwtTokenProvider;
+import com.Techeer.Team_C.domain.auth.entity.RefreshToken;
+import com.Techeer.Team_C.domain.auth.repository.RefreshTokenRepository;
+import com.Techeer.Team_C.domain.auth.dto.TokenRefreshDto;
 import com.Techeer.Team_C.domain.user.dto.LoginFormDto;
-import com.Techeer.Team_C.domain.user.dto.TokenDto;
+import com.Techeer.Team_C.domain.auth.dto.TokenDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;

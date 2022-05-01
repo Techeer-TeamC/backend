@@ -1,12 +1,12 @@
-package com.Techeer.Team_C.domain.user.controller;
+package com.Techeer.Team_C.domain.auth.jwt.controller;
 
-import com.Techeer.Team_C.domain.user.auth.JwtTokenProvider;
+import com.Techeer.Team_C.domain.auth.jwt.JwtTokenProvider;
 import com.Techeer.Team_C.domain.user.dto.LoginFormDto;
-import com.Techeer.Team_C.domain.user.dto.TokenDto;
-import com.Techeer.Team_C.domain.user.dto.TokenRefreshDto;
+import com.Techeer.Team_C.domain.auth.dto.TokenDto;
+import com.Techeer.Team_C.domain.auth.dto.TokenRefreshDto;
 import com.Techeer.Team_C.domain.user.dto.UserDto;
 import com.Techeer.Team_C.domain.user.repository.UserRepository;
-import com.Techeer.Team_C.domain.user.service.AuthService;
+import com.Techeer.Team_C.domain.auth.service.AuthService;
 import com.Techeer.Team_C.domain.user.service.UserService;
 import com.Techeer.Team_C.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;

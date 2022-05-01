@@ -1,4 +1,4 @@
-package com.Techeer.Team_C.domain.user.dto;
+package com.Techeer.Team_C.domain.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
