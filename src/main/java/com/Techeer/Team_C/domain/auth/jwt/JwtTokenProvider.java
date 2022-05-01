@@ -1,7 +1,7 @@
 
-package com.Techeer.Team_C.domain.user.auth;
+package com.Techeer.Team_C.domain.auth.jwt;
 
-import com.Techeer.Team_C.domain.user.dto.TokenDto;
+import com.Techeer.Team_C.domain.auth.dto.TokenDto;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

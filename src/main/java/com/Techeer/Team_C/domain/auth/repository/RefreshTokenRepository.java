@@ -1,6 +1,6 @@
-package com.Techeer.Team_C.domain.user.repository;
+package com.Techeer.Team_C.domain.auth.repository;
 
-import com.Techeer.Team_C.domain.user.entity.RefreshToken;
+import com.Techeer.Team_C.domain.auth.entity.RefreshToken;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Repository
 public class RefreshTokenRepository{ //userId값으로 토큰을 가져올 때 사용
-    private static Map<String,RefreshToken> store = new HashMap<>();  //메모리에 저장할 자료구조//
+    private static Map<String, RefreshToken> store = new HashMap<>();  //메모리에 저장할 자료구조//
     public Optional<RefreshToken> findByKey(String key){
         return Optional.ofNullable(store.get(key));
     }
