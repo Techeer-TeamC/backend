@@ -5,6 +5,7 @@ import com.Techeer.Team_C.domain.auth.dto.TokenDto;
 import com.Techeer.Team_C.global.error.exception.BusinessException;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,20 +28,19 @@ public class JwtTokenProvider {
 
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "bearer";
-    private String secretKey = "ourboard";   // 외부 파일로 따로 관리 예정
+    @Value("${jwt.secret}")
+    private String secretKey;   // 외부 파일로 따로 관리 예정
+
 
     private long tokenValidTime = 30 * 60 * 1000L; //토큰 유효시간 30분
     private long refreshTokenValidTime =  7 * 24 * 60 * 60 * 1000L; // refresh 유효시간 : 7일
-    private final UserDetailsService userDetailsService;
 
-    @Autowired
-    public JwtTokenProvider(UserDetailsService userDetailsService){
-        this.userDetailsService = userDetailsService;
-    }
     // 객체 초기화, secretKey를 Base64로 인코딩한다.
     @PostConstruct
     protected void init() {
+        System.out.println(secretKey);
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        System.out.println(secretKey);
     }
 
     // JWT 토큰 생성

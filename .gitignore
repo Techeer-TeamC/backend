@@ -168,4 +168,6 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+#environment variable of Jwt secret key and db
+.yml
 # End of https://www.toptal.com/developers/gitignore/api/java,macos,intellij
