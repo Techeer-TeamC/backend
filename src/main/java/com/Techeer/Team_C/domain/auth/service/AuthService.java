@@ -6,11 +6,17 @@ import com.Techeer.Team_C.domain.auth.repository.RefreshTokenRepository;
 import com.Techeer.Team_C.domain.auth.dto.TokenRefreshDto;
 import com.Techeer.Team_C.domain.user.dto.LoginFormDto;
 import com.Techeer.Team_C.domain.auth.dto.TokenDto;
+import com.Techeer.Team_C.domain.user.dto.UserDto;
+import com.Techeer.Team_C.domain.user.service.UserService;
+import com.Techeer.Team_C.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import static com.Techeer.Team_C.global.error.exception.ErrorCode.*;
 
 
 @Service
@@ -19,11 +25,17 @@ public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
-
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     public TokenDto login(LoginFormDto loginformDto) {
 
+        UserDto member = userService.findMember(loginformDto.getUserId())
+                .orElseThrow(() -> new BusinessException("가입되지 않은 E-MAIL 입니다", EMAIL_NOT_FOUND));
 
+        if (!passwordEncoder.matches(loginformDto.getPassword(), member.getPassword())) {
+            throw new BusinessException("잘못된 비밀번호 입니다", INVALID_PASSWORD);
+        }
 
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = loginformDto.toAuthentication();
@@ -50,19 +62,18 @@ public class AuthService {
     public TokenDto reissue(TokenRefreshDto tokenRefreshDto) {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(tokenRefreshDto.getRefreshToken())) {
-            throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
+            throw new BusinessException("유효하지 않은 refresh Token 입니다.", INVALID_REFRESH_TOKEN);
         }
-
         // 2. Access Token 에서 Member ID 가져오기
         Authentication authentication = tokenProvider.getAuthentication(tokenRefreshDto.getAccessToken());
 
         // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
+                .orElseThrow(() -> new BusinessException("로그아웃된 사용자 입니다", MISMATCHED_USER_INFORMATION));
 
         // 4. Refresh Token 일치하는지 검사
         if (!refreshToken.getValue().equals(tokenRefreshDto.getRefreshToken())) {
-            throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
+            throw new BusinessException("토큰과 유저정보가 서로 일치하지 않습니다.", LOGOUT_USER);
         }
 
         // 5. 새로운 토큰 생성

@@ -2,6 +2,7 @@
 package com.Techeer.Team_C.domain.auth.jwt;
 
 import com.Techeer.Team_C.domain.auth.dto.TokenDto;
+import com.Techeer.Team_C.global.error.exception.BusinessException;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.Techeer.Team_C.global.error.exception.ErrorCode.*;
 
 
 @Component
@@ -109,9 +112,20 @@ public class JwtTokenProvider {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
             return !claims.getBody().getExpiration().before(new Date());
-        } catch (Exception e) {
-            return false;
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            throw new BusinessException("JWT 서명이 잘못되었습니다.", INVALID_JTW_TOKEN_SIGNATURE);
+
+        } catch (ExpiredJwtException e) {
+           throw new BusinessException("만료된 JWT 토큰입니다.", EXPIRED_JTW_TOKEN);
+
+        } catch (UnsupportedJwtException e) {
+           throw  new BusinessException("지원되지 않는 JWT 토큰입니다..", UNSUPPORTED_JTW_TOKEN);
+
+        } catch (IllegalArgumentException e) {
+            throw new BusinessException("JWT 토큰이 잘못되었습니다.",INVLAID_JTW_TOKEN);
         }
 
     }
+
+
 }

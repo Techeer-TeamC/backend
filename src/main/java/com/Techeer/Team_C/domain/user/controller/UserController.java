@@ -41,22 +41,22 @@ public class UserController {
         this.authService = authService;
     }
 
+    /**
+     * 회원가입
+     */
     @PostMapping("/")
     public String join(@RequestBody @Valid final SignupFormDto user) {
 
-        User member = new User();
+        UserDto member = new UserDto();
         member.setUserId(user.getUserId());
         member.setPassword(passwordEncoder.encode(user.getPassword()));
         member.setUserName(user.getUserName());
         member.setRoles(Collections.singletonList("ROLE_USER"));
 
 
-        try {
-            userService.join(member);
-        }catch(IllegalStateException e){
-            e.printStackTrace();
-            throw new BusinessException("중복된 이메일입니다.", EMAIL_DUPLICATION);
-        }
+
+        userService.join(member);
+
         return member.getUserId();
     }
 
