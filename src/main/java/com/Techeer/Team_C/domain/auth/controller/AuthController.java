@@ -1,4 +1,4 @@
-package com.Techeer.Team_C.domain.auth.jwt.controller;
+package com.Techeer.Team_C.domain.auth.controller;
 
 import com.Techeer.Team_C.domain.auth.jwt.JwtTokenProvider;
 import com.Techeer.Team_C.domain.user.dto.LoginFormDto;
@@ -27,31 +27,12 @@ import static com.Techeer.Team_C.global.utils.Constants.API_PREFIX;
 @RequiredArgsConstructor
 
 public class AuthController {
-    private final UserService userService;
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
     private final AuthService authService;
 
-    @Autowired
-    public AuthController(UserService userService,PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, UserRepository userRepository, AuthService authService){
-        this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.userRepository = userRepository;
-        this.authService = authService;
-    }
 
     @PostMapping("/")
     public TokenDto login(@RequestBody @Valid final LoginFormDto user) {
 
-
-        UserDto member = userService.findMember(user.getUserId())
-                .orElseThrow(() -> new BusinessException("가입되지 않은 E-MAIL 입니다", EMAIL_NOT_FOUND));
-
-        if (!passwordEncoder.matches(user.getPassword(), member.getPassword())) {
-            throw new BusinessException("잘못된 비밀번호 입니다", INVALID_PASSWORD);
-        }
         return authService.login(user);
     }
 

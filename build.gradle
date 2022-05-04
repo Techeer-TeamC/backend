@@ -23,8 +23,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security' //로그인 기능을 위한 security
 	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1' //JWT 사용
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1' //javax/xml/bind/DatatypeConverter 에러 문제. ㅓdk11의 관련 모듈 기본 참조
+	implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1' //javax/xml/bind/DatatypeConverter 에러 문제. jdk11의 관련 모듈 기본 참조
 
+	// jwt 관련 의존성
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+	runtimeClasspath group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
+	runtimeClasspath group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
 
 	//implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // db repository를 위한  JpaRepository 사용
 
