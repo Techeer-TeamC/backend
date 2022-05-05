@@ -20,24 +20,26 @@ import static com.Techeer.Team_C.global.error.exception.ErrorCode.*;
 //@Service - config/Loginconfig 를 통해 bean 설정
 
 public class UserService {
+
     @Autowired
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
 
-    public UserService(UserRepository userRepository, ModelMapper modelMapper){
+    public UserService(UserRepository userRepository, ModelMapper modelMapper) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
     }
 
-    private UserDto of(User user){
-        return modelMapper.map(user,UserDto.class);
+    private UserDto of(User user) {
+        return modelMapper.map(user, UserDto.class);
         // Serice에서는 user entitiy에 바로 접근하지 않고, User entitiy를 user Dto로 변경하여 dto에 접근
     }
 
 
     /**
      * 회원가입
+     *
      * @param userdto
      * @return string UserId;
      */
@@ -56,7 +58,6 @@ public class UserService {
         user.setUserName((userdto.getUserName()));
         user.setRoles(userdto.getRoles());
 
-
         userRepository.save(user);
         return user.getUserId();
     }
@@ -64,8 +65,6 @@ public class UserService {
 //    private String getEncodedPassword(String password){
 //        return "{noop}" + password;
 //    }  db 오류 날 시 해당 코드 사용 필요
-
-
 
 //
 //    /**
@@ -81,22 +80,24 @@ public class UserService {
 
     /**
      * 특정 id값을 가지는 회원정보 조회
+     *
      * @param id
      * @return
      */
-    public Optional<UserDto> findMember(String userId){
+    public Optional<UserDto> findMember(String userId) {
 
-        Optional<User> userByUserId =  userRepository.findByUserId(userId);
+        Optional<User> userByUserId = userRepository.findByUserId(userId);
         Optional<UserDto> userDtoByUserId = userByUserId.map(q -> of(q));
         return userDtoByUserId;
     }
 
 
-    public Optional<UserDto> getMyinfo(){
+    public Optional<UserDto> getMyinfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || authentication.getName() == "anonymousUser" || authentication.getName() == null) {
+        if (authentication == null || authentication.getName() == "anonymousUser"
+                || authentication.getName() == null) {
             System.out.printf(authentication.getName());
-            throw  new BusinessException("Security Context 에 인증 정보가 없습니다", EMPTY_TOKEN_DATA);
+            throw new BusinessException("Security Context 에 인증 정보가 없습니다", EMPTY_TOKEN_DATA);
         }
 
         Long userId = Long.parseLong(authentication.getName());

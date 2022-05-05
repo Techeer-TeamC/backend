@@ -24,7 +24,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 //@Table(name = "test")
 //@TypeDef(name = "int-array", typeClass = IntArrayType.class)
 //@Entity
-public class User implements UserDetails{
+public class User implements UserDetails {
+
     // 추후 mysql의 schema에 따른 property 맞추기
 //    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -40,7 +41,7 @@ public class User implements UserDetails{
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
-  
+
 
     @Override
     public String getUsername() {
@@ -68,7 +69,7 @@ public class User implements UserDetails{
     }
 
     @Override
-    public String getPassword(){
+    public String getPassword() {
         return password;
     }
 

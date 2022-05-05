@@ -33,7 +33,7 @@ public class JwtTokenProvider {
 
 
     private long tokenValidTime = 30 * 60 * 1000L; //토큰 유효시간 30분
-    private long refreshTokenValidTime =  7 * 24 * 60 * 60 * 1000L; // refresh 유효시간 : 7일
+    private long refreshTokenValidTime = 7 * 24 * 60 * 60 * 1000L; // refresh 유효시간 : 7일
 
     // 객체 초기화, secretKey를 Base64로 인코딩한다.
     @PostConstruct
@@ -51,7 +51,6 @@ public class JwtTokenProvider {
                 .collect(Collectors.joining(","));
 
         long now = (new Date()).getTime();
-
 
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + tokenValidTime);
@@ -75,7 +74,6 @@ public class JwtTokenProvider {
                 .refreshToken(refreshToken)
                 .build();
     }
-
 
 
     public Authentication getAuthentication(String accessToken) {
@@ -117,13 +115,13 @@ public class JwtTokenProvider {
             throw new BusinessException("JWT 서명이 잘못되었습니다.", INVALID_JTW_TOKEN_SIGNATURE);
 
         } catch (ExpiredJwtException e) {
-           throw new BusinessException("만료된 JWT 토큰입니다.", EXPIRED_JTW_TOKEN);
+            throw new BusinessException("만료된 JWT 토큰입니다.", EXPIRED_JTW_TOKEN);
 
         } catch (UnsupportedJwtException e) {
-           throw  new BusinessException("지원되지 않는 JWT 토큰입니다..", UNSUPPORTED_JTW_TOKEN);
+            throw new BusinessException("지원되지 않는 JWT 토큰입니다..", UNSUPPORTED_JTW_TOKEN);
 
         } catch (IllegalArgumentException e) {
-            throw new BusinessException("JWT 토큰이 잘못되었습니다.",INVLAID_JTW_TOKEN);
+            throw new BusinessException("JWT 토큰이 잘못되었습니다.", INVLAID_JTW_TOKEN);
         }
 
     }

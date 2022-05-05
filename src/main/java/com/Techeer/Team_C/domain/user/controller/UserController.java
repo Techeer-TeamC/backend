@@ -22,7 +22,7 @@ import static com.Techeer.Team_C.global.error.exception.ErrorCode.*;
 import static com.Techeer.Team_C.global.utils.Constants.API_PREFIX;
 
 @RestController
-@RequestMapping(API_PREFIX+"/users")
+@RequestMapping(API_PREFIX + "/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -33,7 +33,9 @@ public class UserController {
     private final AuthService authService;
 
     @Autowired
-    public UserController(UserService userService,PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, UserRepository userRepository, AuthService authService){
+    public UserController(UserService userService, PasswordEncoder passwordEncoder,
+            JwtTokenProvider jwtTokenProvider, UserRepository userRepository,
+            AuthService authService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
@@ -53,13 +55,10 @@ public class UserController {
         member.setUserName(user.getUserName());
         member.setRoles(Collections.singletonList("ROLE_USER"));
 
-
-
         userService.join(member);
 
         return member.getUserId();
     }
-
 
 
     @GetMapping("/")

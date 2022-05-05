@@ -22,6 +22,7 @@ import static com.Techeer.Team_C.global.error.exception.ErrorCode.*;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -42,7 +43,8 @@ public class AuthService {
 
         // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
         //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        Authentication authentication = authenticationManagerBuilder.getObject()
+                .authenticate(authenticationToken);
 
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         TokenDto tokenDto = tokenProvider.createToken(authentication);
@@ -65,11 +67,13 @@ public class AuthService {
             throw new BusinessException("유효하지 않은 refresh Token 입니다.", INVALID_REFRESH_TOKEN);
         }
         // 2. Access Token 에서 Member ID 가져오기
-        Authentication authentication = tokenProvider.getAuthentication(tokenRefreshDto.getAccessToken());
+        Authentication authentication = tokenProvider.getAuthentication(
+                tokenRefreshDto.getAccessToken());
 
         // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
-                .orElseThrow(() -> new BusinessException("로그아웃된 사용자 입니다", MISMATCHED_USER_INFORMATION));
+                .orElseThrow(
+                        () -> new BusinessException("로그아웃된 사용자 입니다", MISMATCHED_USER_INFORMATION));
 
         // 4. Refresh Token 일치하는지 검사
         if (!refreshToken.getValue().equals(tokenRefreshDto.getRefreshToken())) {

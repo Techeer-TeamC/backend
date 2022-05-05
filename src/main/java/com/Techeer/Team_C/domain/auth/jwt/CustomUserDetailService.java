@@ -1,7 +1,6 @@
 package com.Techeer.Team_C.domain.auth.jwt;
 
 
-
 import com.Techeer.Team_C.domain.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +15,7 @@ public class CustomUserDetailService implements UserDetailsService {
     private final UserRepository memberRepository;
 
     @Autowired
-    public CustomUserDetailService(UserRepository memberRepository){
+    public CustomUserDetailService(UserRepository memberRepository) {
         this.memberRepository = memberRepository;
     }
 

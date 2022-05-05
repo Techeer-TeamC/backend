@@ -23,10 +23,11 @@ import static com.Techeer.Team_C.global.error.exception.ErrorCode.*;
 import static com.Techeer.Team_C.global.utils.Constants.API_PREFIX;
 
 @RestController
-@RequestMapping(API_PREFIX+"/auth")
+@RequestMapping(API_PREFIX + "/auth")
 @RequiredArgsConstructor
 
 public class AuthController {
+
     private final AuthService authService;
 
 
