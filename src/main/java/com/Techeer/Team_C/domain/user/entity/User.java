@@ -1,37 +1,62 @@
 package com.Techeer.Team_C.domain.user.entity;
 
-//import com.vladmihalcea.hibernate.type.array.IntArrayType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
 
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-//import org.hibernate.annotations.TypeDef;
 
-//import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import lombok.Setter;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 //JTW와 관련된 모듈
 
-@Getter
+
 @Setter
+@Getter
 @NoArgsConstructor
-//@Table(name = "test")
-//@TypeDef(name = "int-array", typeClass = IntArrayType.class)
-//@Entity
+@AllArgsConstructor
+@Builder
+@Table(name = "User")
+@Entity
 public class User implements UserDetails {
 
-    // 추후 mysql의 schema에 따른 property 맞추기
-//    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+
     private String userId;
+
     private String userName;
+
     private String password;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "USER_ROLES",
+            joinColumns = @JoinColumn(name = "ID")
+    )
+    @Builder.Default
     private List<String> roles = new ArrayList<>(); //User_Role or Admin Role
 
 
@@ -76,4 +101,6 @@ public class User implements UserDetails {
     public String getUserName() {
         return this.userName;
     }
+
+
 }

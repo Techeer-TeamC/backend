@@ -28,8 +28,8 @@ public class JwtTokenProvider {
 
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "bearer";
-    @Value("${jwt.secret}")
-    private String secretKey;   // 외부 파일로 따로 관리 예정
+    @Value("${jwt.secret}")   //.yml파일을 통해 secret키 관리
+    private String secretKey;
 
 
     private long tokenValidTime = 30 * 60 * 1000L; //토큰 유효시간 30분
@@ -38,12 +38,16 @@ public class JwtTokenProvider {
     // 객체 초기화, secretKey를 Base64로 인코딩한다.
     @PostConstruct
     protected void init() {
-        System.out.println(secretKey);
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
-        System.out.println(secretKey);
     }
 
     // JWT 토큰 생성
+    /**
+     * JWT토큰 생성
+     *
+     * @param authentication header의 토큰으로부터 가져온 권한정보
+     * @return TokenDto
+     */
     public TokenDto createToken(Authentication authentication) {
         // 권한들 가져오기
         String authorities = authentication.getAuthorities().stream()
@@ -96,6 +100,7 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
+    //토큰 복호화 함수
     private Claims parseClaims(String accessToken) {
         try {
             return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(accessToken).getBody();
@@ -103,7 +108,6 @@ public class JwtTokenProvider {
             return e.getClaims();
         }
     }
-    //토큰 복호화 함수
 
 
     // 토큰의 유효성 + 만료일자 확인

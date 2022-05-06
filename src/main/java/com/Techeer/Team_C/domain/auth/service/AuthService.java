@@ -29,6 +29,13 @@ public class AuthService {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
+
+    /**
+     * 로그인
+     *
+     * @param loginformDto 사용자가 입력한 로그인 데이터
+     * @return TokenTdo accessToken, refreshToken, 토큰만료시간의 정보를 담은 데이터 반환
+     */
     public TokenDto login(LoginFormDto loginformDto) {
 
         UserDto member = userService.findMember(loginformDto.getUserId())
@@ -61,6 +68,12 @@ public class AuthService {
         return tokenDto;
     }
 
+    /**
+     * refresh토큰 재발행
+     *
+     * @param tokenRefreshDto refresh 토큰에 대한 정보
+     * @return tokenDto 재발급된 accessToken , refreshToken , 토큰만료시간을 담은 dto
+     */
     public TokenDto reissue(TokenRefreshDto tokenRefreshDto) {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(tokenRefreshDto.getRefreshToken())) {

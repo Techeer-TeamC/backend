@@ -1,16 +1,13 @@
 package com.Techeer.Team_C.domain.user.repository;
 
-
 import com.Techeer.Team_C.domain.user.entity.User;
 
-
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository {
+public interface UserMysqlRepository extends JpaRepository<User, Long>, UserRepository {
 
-    User save(User user);  //회원 저장
-
-    Optional<User> findById(Long id);  //회원의 userId 값으로 정보 찾기
-
+    @Override
     Optional<User> findByUserId(String id);
+
 }

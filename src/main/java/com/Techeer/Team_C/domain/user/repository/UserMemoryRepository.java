@@ -5,10 +5,9 @@ import java.util.*;
 
 /*
 해당 repositorys는 mysql이 아닌, 메모리기반의 repository입니다.
-향후 mysql과 연결해 직접 데이터를 가져오고 저장하는 기능을 구현할 예정입니다.
  */
 
-//@Repository config/LoginConfig에서 bean설정
+
 public class UserMemoryRepository implements UserRepository {
 
     private static long sequence = 0L;
@@ -40,8 +39,4 @@ public class UserMemoryRepository implements UserRepository {
         return null;
     }
 
-    @Override
-    public List<User> findAll() {
-        return new ArrayList<>(store.values());
-    }
 }

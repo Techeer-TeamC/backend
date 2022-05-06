@@ -5,19 +5,15 @@ import com.Techeer.Team_C.domain.user.entity.User;
 import com.Techeer.Team_C.domain.user.repository.UserRepository;
 
 import com.Techeer.Team_C.global.error.exception.BusinessException;
-import org.apache.catalina.security.SecurityUtil;
+import javax.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.*;
 
-//@Service - config/Loginconfig 를 통해 bean 설정
 
 public class UserService {
 
@@ -40,19 +36,19 @@ public class UserService {
     /**
      * 회원가입
      *
-     * @param userdto
-     * @return string UserId;
+     * @param userdto 사용자가 입력한 회원가입 데이터
+     * @return string UserId 가입에 성공한 userId(이메일)
      */
+    @Transactional
     public String join(UserDto userdto) {
 
         //중복 이메일 검사
-        userRepository.findById(userdto.getId())
+        userRepository.findByUserId(userdto.getUserId())
                 .ifPresent(m -> {
                     throw new BusinessException("중복된 이메일입니다.", EMAIL_DUPLICATION);
                 });
 
         User user = new User();
-        user.setId(userdto.getId());
         user.setUserId((userdto.getUserId()));
         user.setPassword((userdto.getPassword()));
         user.setUserName((userdto.getUserName()));
@@ -62,28 +58,14 @@ public class UserService {
         return user.getUserId();
     }
 
-//    private String getEncodedPassword(String password){
-//        return "{noop}" + password;
-//    }  db 오류 날 시 해당 코드 사용 필요
-
-//
-//    /**
-//     * 전체 회원 조회
-//     * @return
-//     */
-//    public List<UserDto> findUsers() {
-//        List<User>  usersList= userRepository.findAll();
-//
-//        List<UserDto> userDtoList = usersList.stream().map(q -> of(q)).collect(Collectors.toList());
-//        return userDtoList;
-//    }
 
     /**
      * 특정 id값을 가지는 회원정보 조회
      *
-     * @param id
-     * @return
+     * @param userId 조회 할 기준의 이메일값 (userId)
+     * @return Optional<UserDto> userDto 데이터
      */
+    @Transactional
     public Optional<UserDto> findMember(String userId) {
 
         Optional<User> userByUserId = userRepository.findByUserId(userId);
@@ -91,7 +73,12 @@ public class UserService {
         return userDtoByUserId;
     }
 
-
+    /**
+     * header에 담긴 토큰정보를 가져와 해당 user객체의 정보 반환
+     *
+     * @return 해당 user객체의 데이터
+     */
+    @Transactional
     public Optional<UserDto> getMyinfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getName() == "anonymousUser"
