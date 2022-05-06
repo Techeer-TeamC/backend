@@ -21,6 +21,7 @@ repositories {
 dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-security' //로그인 기능을 위한 security
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1' //JWT 사용
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1' //javax/xml/bind/DatatypeConverter 에러 문제. jdk11의 관련 모듈 기본 참조
