@@ -3,7 +3,7 @@ package com.Techeer.Team_C.global.config;
 import com.Techeer.Team_C.domain.auth.jwt.JwtAuthenticationFilter;
 import com.Techeer.Team_C.domain.auth.jwt.JwtTokenProvider;
 import com.Techeer.Team_C.domain.auth.service.CustomOAuth2UserService;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,7 +15,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@RequiredArgsConstructor
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -52,21 +51,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests() // 요청에 대한 사용권한 체크
                 //.antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/ourboard/user/login").hasRole("USER")
+                .antMatchers("/api/v1/user/login").hasRole("USER")
                 .antMatchers("/", "/css/**", "/images/**", "/js/**", "/h2-console/**").permitAll()
-                .antMatchers("/api/v1/**").hasRole("USER") // /api/v1/** 은 USER권한만 접근 가능
+                //.antMatchers("/api/v1/**").hasRole("USER") // /api/v1/** 은 USER권한만 접근 가능
                 .anyRequest().permitAll() // 그외 나머지 요청은 누구나 접근 가능
                 .and()
                 .logout()
-                .logoutSuccessUrl("/")
+                .logoutSuccessUrl("/api/v1")
                 .and()
                 .oauth2Login()
+                .defaultSuccessUrl("/api/v1")
                 .userInfoEndpoint()
                 .userService(customOAuth2UserService)
                 .and().and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class);
         // JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 전에 넣는다
-        super.configure(http);
     }
 }

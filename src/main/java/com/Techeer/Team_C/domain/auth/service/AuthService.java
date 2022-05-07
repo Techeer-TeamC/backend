@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.*;
 
-
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -28,7 +27,6 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
-
 
     /**
      * 로그인
