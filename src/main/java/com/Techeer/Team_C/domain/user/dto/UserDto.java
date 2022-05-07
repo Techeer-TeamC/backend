@@ -1,5 +1,6 @@
 package com.Techeer.Team_C.domain.user.dto;
 
+import com.Techeer.Team_C.domain.user.entity.Role;
 import lombok.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,7 @@ public class UserDto {
     private String email;
     private String memberName;
     private String password;
-    private List<String> roles = new ArrayList<>();
+    private Role role;
 
 
 }

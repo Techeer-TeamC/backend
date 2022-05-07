@@ -3,6 +3,7 @@ package com.Techeer.Team_C.domain.user.controller;
 import com.Techeer.Team_C.domain.user.dto.SignupFormDto;
 import com.Techeer.Team_C.domain.user.dto.UserDto;
 import com.Techeer.Team_C.domain.auth.jwt.JwtTokenProvider;
+import com.Techeer.Team_C.domain.user.entity.Role;
 import com.Techeer.Team_C.domain.user.repository.UserRepository;
 import com.Techeer.Team_C.domain.auth.service.AuthService;
 import com.Techeer.Team_C.domain.user.service.UserService;
@@ -44,7 +45,7 @@ public class UserController {
         member.setEmail(user.getEmail());
         member.setPassword(passwordEncoder.encode(user.getPassword()));
         member.setMemberName(user.getMemberName());
-        member.setRoles(Collections.singletonList("ROLE_USER"));
+        member.setRole(Role.ROLE_USER);
 
         userService.join(member);
 

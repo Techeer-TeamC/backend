@@ -52,7 +52,7 @@ public class UserService {
         user.setEmail((userdto.getEmail()));
         user.setPassword((userdto.getPassword()));
         user.setMemberName((userdto.getMemberName()));
-        user.setRoles(userdto.getRoles());
+        user.setRole(userdto.getRole());
 
         userRepository.save(user);
         return user.getEmail();

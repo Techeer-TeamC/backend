@@ -1,10 +1,14 @@
 package com.Techeer.Team_C.domain.user.entity;
 
+import java.util.Collections;
+import java.util.Set;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -51,21 +55,12 @@ public class User implements UserDetails {
 
     private String password;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
-            name = "USER_ROLES",
-            joinColumns = @JoinColumn(name = "ID")
-    )
-    @Builder.Default
-    private List<String> roles = new ArrayList<>(); //User_Role or Admin Role
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-    }
+
+
 
 
     @Override
@@ -91,6 +86,13 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(role.toString()));
+        return authorities;
     }
 
     @Override
