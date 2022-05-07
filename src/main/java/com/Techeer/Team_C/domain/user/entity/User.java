@@ -59,10 +59,6 @@ public class User implements UserDetails {
     private Role role;
 
 
-
-
-
-
     @Override
     public String getUsername() {
         return id.toString();
