@@ -28,11 +28,11 @@ public class UserMemoryRepository implements UserRepository {
     }
 
     //저장된 ID값을 가지고 member객체 return
-    public Optional<User> findByUserId(String userId) {
+    public Optional<User> findByEmail(String email) {
 
         Set<Long> keySet = store.keySet();
         for (Long key : keySet) {
-            if (userId.equals(store.get(key).getUserId())) {
+            if (email.equals(store.get(key).getEmail())) {
                 return Optional.ofNullable(store.get(key));
             }
         }

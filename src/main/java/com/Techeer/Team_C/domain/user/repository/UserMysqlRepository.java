@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UserMysqlRepository extends JpaRepository<User, Long>, UserRepository {
 
     @Override
-    Optional<User> findByUserId(String id);
+    Optional<User> findByEmail(String id);
 
 }

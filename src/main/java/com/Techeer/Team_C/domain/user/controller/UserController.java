@@ -41,14 +41,14 @@ public class UserController {
     public String join(@RequestBody @Valid final SignupFormDto user) {
 
         UserDto member = new UserDto();
-        member.setUserId(user.getUserId());
+        member.setEmail(user.getEmail());
         member.setPassword(passwordEncoder.encode(user.getPassword()));
-        member.setUserName(user.getUserName());
+        member.setMemberName(user.getMemberName());
         member.setRoles(Collections.singletonList("ROLE_USER"));
 
         userService.join(member);
 
-        return member.getUserId();
+        return member.getEmail();
     }
 
 

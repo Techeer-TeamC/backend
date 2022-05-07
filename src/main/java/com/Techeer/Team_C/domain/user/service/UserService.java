@@ -37,40 +37,40 @@ public class UserService {
      * 회원가입
      *
      * @param userdto 사용자가 입력한 회원가입 데이터
-     * @return string UserId 가입에 성공한 userId(이메일)
+     * @return string email 가입에 성공한 email(이메일)
      */
     @Transactional
     public String join(UserDto userdto) {
 
         //중복 이메일 검사
-        userRepository.findByUserId(userdto.getUserId())
+        userRepository.findByEmail(userdto.getEmail())
                 .ifPresent(m -> {
                     throw new BusinessException("중복된 이메일입니다.", EMAIL_DUPLICATION);
                 });
 
         User user = new User();
-        user.setUserId((userdto.getUserId()));
+        user.setEmail((userdto.getEmail()));
         user.setPassword((userdto.getPassword()));
-        user.setUserName((userdto.getUserName()));
+        user.setMemberName((userdto.getMemberName()));
         user.setRoles(userdto.getRoles());
 
         userRepository.save(user);
-        return user.getUserId();
+        return user.getEmail();
     }
 
 
     /**
      * 특정 id값을 가지는 회원정보 조회
      *
-     * @param userId 조회 할 기준의 이메일값 (userId)
+     * @param email 조회 할 기준의 이메일값 (email)
      * @return Optional<UserDto> userDto 데이터
      */
     @Transactional
-    public Optional<UserDto> findMember(String userId) {
+    public Optional<UserDto> findMember(String email) {
 
-        Optional<User> userByUserId = userRepository.findByUserId(userId);
-        Optional<UserDto> userDtoByUserId = userByUserId.map(q -> of(q));
-        return userDtoByUserId;
+        Optional<User> userByemail = userRepository.findByEmail(email);
+        Optional<UserDto> userDtoByemail = userByemail.map(q -> of(q));
+        return userDtoByemail;
     }
 
     /**
@@ -87,8 +87,8 @@ public class UserService {
             throw new BusinessException("Security Context 에 인증 정보가 없습니다", EMPTY_TOKEN_DATA);
         }
 
-        Long userId = Long.parseLong(authentication.getName());
-        Optional<User> userById = userRepository.findById(userId);
+        Long id = Long.parseLong(authentication.getName());
+        Optional<User> userById = userRepository.findById(id);
         Optional<UserDto> userDtoById = userById.map(q -> of(q));
         return userDtoById;
     }

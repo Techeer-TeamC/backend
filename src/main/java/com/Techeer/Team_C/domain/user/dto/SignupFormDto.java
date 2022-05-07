@@ -11,11 +11,11 @@ import javax.validation.constraints.NotEmpty;
 public class SignupFormDto {
 
     @NotEmpty(message = "id값은 필수사항 입니다.")
-    private String userId;
+    private String email;
     @NotEmpty(message = "비밀번호 값은 필수사항 입니다.")
     private String password;
     @NotEmpty(message = "닉네임 값은 필수사항 입니다.")
-    private String userName;
+    private String memberName;
 
 
 }

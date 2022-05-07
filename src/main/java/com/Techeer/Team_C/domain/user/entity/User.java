@@ -45,9 +45,9 @@ public class User implements UserDetails {
     private Long id;
 
 
-    private String userId;
+    private String email;
 
-    private String userName;
+    private String memberName;
 
     private String password;
 
@@ -99,7 +99,7 @@ public class User implements UserDetails {
     }
 
     public String getUserName() {
-        return this.userName;
+        return this.memberName;
     }
 
 

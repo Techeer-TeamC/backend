@@ -38,7 +38,7 @@ public class AuthService {
      */
     public TokenDto login(LoginFormDto loginformDto) {
 
-        UserDto member = userService.findMember(loginformDto.getUserId())
+        UserDto member = userService.findMember(loginformDto.getEmail())
                 .orElseThrow(() -> new BusinessException("가입되지 않은 E-MAIL 입니다", EMAIL_NOT_FOUND));
 
         if (!passwordEncoder.matches(loginformDto.getPassword(), member.getPassword())) {
