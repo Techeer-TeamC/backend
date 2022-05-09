@@ -81,7 +81,7 @@ public class UserService {
     @Transactional
     public Optional<UserDto> getMyinfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || authentication.getName() == "anonymousUser"
+        if (authentication == null || authentication.getName() == "anonymousUser1"
                 || authentication.getName() == null) {
             System.out.printf(authentication.getName());
             throw new BusinessException("Security Context 에 인증 정보가 없습니다", EMPTY_TOKEN_DATA);
