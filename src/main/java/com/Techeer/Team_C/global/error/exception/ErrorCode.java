@@ -18,6 +18,7 @@ public enum ErrorCode {
     LOGIN_INPUT_INVALID(400, "M002", "Login input is invalid"),
     EMAIL_NOT_FOUND(400, "M003", "Not found this email"),
     INVALID_PASSWORD(400, "M004", "Invalid password"),
+    NO_PERMISSION(403,"M005","do not have permission."),
 
     //jwtToken
     INVALID_JTW_TOKEN_SIGNATURE(400,"J001", "The token's signature is invalid."),
