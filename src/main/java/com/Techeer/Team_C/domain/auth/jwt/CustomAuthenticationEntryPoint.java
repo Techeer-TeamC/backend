@@ -22,15 +22,15 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         String exception = String.valueOf(request.getAttribute("exception"));
         ErrorCode errorCode;
 
-        if (exception
-                == null) {
-           // AuthenticationEntryPoint.commence(request, response, authException);
+        if (exception == "null") {
+            errorCode = ErrorCode.EMPTY_TOKEN_DATA;
+            setResponse(response, errorCode); //Json형태로 Error값을 담음
             return;
         }
 
         if (exception.equals("INVALID_JTW_TOKEN_SIGNATURE")) {
             errorCode = ErrorCode.INVALID_JTW_TOKEN_SIGNATURE;
-            setResponse(response, errorCode);
+            setResponse(response, errorCode); //Json형태로 Error값을 담음
             return;
         }
         if (exception.equals("EXPIRED_JTW_TOKEN")) {

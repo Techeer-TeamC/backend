@@ -5,6 +5,7 @@ import com.Techeer.Team_C.domain.auth.dto.TokenDto;
 import com.Techeer.Team_C.global.error.exception.BusinessException;
 import io.jsonwebtoken.*;
 import javax.servlet.ServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.*;
 
-
+@Slf4j
 @Component
 public class JwtTokenProvider {
 
@@ -118,18 +119,21 @@ public class JwtTokenProvider {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-
+            log.info("잘못된 JWT 서명입니다.");
             request.setAttribute("exception", INVALID_JTW_TOKEN_SIGNATURE);
 
         } catch (ExpiredJwtException e) {
+            log.info("만료된 JWT 토큰입니다.");
             request.setAttribute("exception", EXPIRED_JTW_TOKEN);
 
 
         } catch (UnsupportedJwtException e) {
+            log.info("지원되지 않는 JWT 토큰입니다.");
             request.setAttribute("exception", UNSUPPORTED_JTW_TOKEN);
 
 
         } catch (IllegalArgumentException e) {
+            log.info("JWT 토큰이 잘못되었습니다.");
             request.setAttribute("exception", INVLAID_JTW_TOKEN);
 
         }
@@ -138,8 +142,21 @@ public class JwtTokenProvider {
     }
 
     public boolean validateToken(String jwtToken) {
-        Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
-        return !claims.getBody().getExpiration().before(new Date());
+        try {
+            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
+            return !claims.getBody().getExpiration().before(new Date());
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            log.info("잘못된 JWT 서명입니다.");
+        } catch (ExpiredJwtException e) {
+            log.info("만료된 JWT 토큰입니다.");
+        } catch (UnsupportedJwtException e) {
+            log.info("지원되지 않는 JWT 토큰입니다.");
+        } catch (IllegalArgumentException e) {
+            log.info("JWT 토큰이 잘못되었습니다.");
+        } catch (SignatureException e) {
+            log.info("기존의 JWT 토큰을 확인할 수 없습니다..");
+        }
+        return false;
     }
 
 
