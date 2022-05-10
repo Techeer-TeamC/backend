@@ -5,22 +5,25 @@ import com.Techeer.Team_C.domain.user.entity.User;
 import com.Techeer.Team_C.domain.user.repository.UserRepository;
 
 import com.Techeer.Team_C.global.error.exception.BusinessException;
+
 import javax.transaction.Transactional;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
 import java.util.Optional;
 
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.*;
 
-
+@Service
 public class UserService {
 
     @Autowired
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
-
 
     public UserService(UserRepository userRepository, ModelMapper modelMapper) {
         this.userRepository = userRepository;
@@ -31,7 +34,6 @@ public class UserService {
         return modelMapper.map(user, UserDto.class);
         // Serice에서는 user entitiy에 바로 접근하지 않고, User entitiy를 user Dto로 변경하여 dto에 접근
     }
-
 
     /**
      * 회원가입
@@ -57,7 +59,6 @@ public class UserService {
         userRepository.save(user);
         return user.getEmail();
     }
-
 
     /**
      * 특정 id값을 가지는 회원정보 조회
