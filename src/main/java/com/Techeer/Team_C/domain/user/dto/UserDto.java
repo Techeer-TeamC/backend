@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
+import org.json.simple.JSONObject;
 
 
 @Getter
@@ -21,5 +22,14 @@ public class UserDto {
     private String password;
     private Role role;
 
+    public JSONObject toJson() {
+        JSONObject obj = new JSONObject();
+        obj.put("id", id);
+        obj.put("email", email);
+        obj.put("memberName", memberName);
+        obj.put("password", password);
+        obj.put("Role", role);
 
+        return obj;
+    }
 }

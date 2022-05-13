@@ -16,13 +16,15 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
             AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        ErrorCode errorCode = ErrorCode. NO_PERMISSION;
+        ErrorCode errorCode = ErrorCode.NO_PERMISSION;
         response.setContentType("application/json;charset=UTF-8");
         response.setCharacterEncoding("utf-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         JSONObject json = new JSONObject();
-        json.put("code", errorCode.getCode());
         json.put("message", errorCode.getMessage());
+        json.put("status", errorCode.getStatus());
+        json.put("code", errorCode.getCode());
+        json.put("success", false);
         response.getWriter().print(json);
     }
 

@@ -26,14 +26,31 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/")
-    public TokenDto login(@RequestBody @Valid final LoginFormDto user) {
+    public String login(@RequestBody @Valid final LoginFormDto user) {
 
-        return authService.login(user);
+        TokenDto tokenData = authService.login(user);
+
+        JSONObject obj = new JSONObject();
+        JSONObject data = new JSONObject(tokenData.toJson());
+        obj.put("data", data);
+        obj.put("success", true);
+        obj.put("status", 200);
+
+        return obj.toString();
     }
 
     @PostMapping("/reissue")
-    public TokenDto reissue(@RequestBody TokenRefreshDto tokenRefreshDto) {
-        return authService.reissue(tokenRefreshDto);
+    public String reissue(@RequestBody TokenRefreshDto tokenRefreshDto) {
+
+        TokenDto tokenData = authService.reissue(tokenRefreshDto);
+
+        JSONObject obj = new JSONObject();
+        JSONObject data = new JSONObject(tokenData.toJson());
+        obj.put("data", data);
+        obj.put("success", true);
+        obj.put("status", 200);
+
+        return obj.toString();
     }
 
     @GetMapping("/kakao")
