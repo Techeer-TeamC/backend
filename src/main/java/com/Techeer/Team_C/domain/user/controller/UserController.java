@@ -8,6 +8,7 @@ import com.Techeer.Team_C.domain.user.repository.UserRepository;
 import com.Techeer.Team_C.domain.auth.service.AuthService;
 import com.Techeer.Team_C.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Optional;
-
+import org.json.simple.JSONObject;
 
 import static com.Techeer.Team_C.global.utils.Constants.API_PREFIX;
 
@@ -49,13 +50,29 @@ public class UserController {
 
         userService.join(member);
 
-        return member.getEmail();
+        JSONObject obj = new JSONObject();
+        obj.put("success", true);
+        obj.put("status", 200);
+        return obj.toString();
+
+
     }
 
 
     @GetMapping("/")
-    public Optional<UserDto> getMyMemberInfo() {
-        return userService.getMyinfo();
+    public String getMyMemberInfo() {
+
+        Optional<UserDto> userData = userService.getMyinfo();
+
+        JSONObject obj = new JSONObject();
+        JSONObject data = new JSONObject(userData.get().toJson());
+        obj.put("success", true);
+        obj.put("status", 200);
+        obj.put("data", data);
+
+        return obj.toString();
+
+
     }
 
 }

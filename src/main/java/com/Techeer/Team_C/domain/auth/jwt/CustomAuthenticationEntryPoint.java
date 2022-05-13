@@ -57,8 +57,11 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.setContentType("application/json;charset=UTF-8");
         response.setCharacterEncoding("utf-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        json.put("code", errorCode.getCode());
         json.put("message", errorCode.getMessage());
+        json.put("status", errorCode.getStatus());
+        json.put("code", errorCode.getCode());
+        json.put("success", false);
+
         response.getWriter().print(json);
     }
 
