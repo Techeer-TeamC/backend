@@ -61,10 +61,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests() // 요청에 대한 사용권한 체크
                 //.antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/api/v1/user/login").hasRole("USER")
+                .antMatchers("/api/v1/user/login", "/api/v1/users/", "/api/v1/auth/").hasRole("USER")
                 .antMatchers("/", "/css/**", "/images/**", "/js/**", "/h2-console/**").permitAll()
-                //.antMatchers("/api/v1/**").hasRole("USER") // /api/v1/** 은 USER권한만 접근 가능
-                .anyRequest().permitAll() // 그외 나머지 요청은 누구나 접근 가능
+                .anyRequest().permitAll()// 그외 나머지 요청은 누구나 접근 가능
+                .and()
+                .exceptionHandling()
+                .accessDeniedHandler(new CustomAccessDeniedHandler())
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .and()
                 .logout()
                 .logoutSuccessUrl("/api/v1")
