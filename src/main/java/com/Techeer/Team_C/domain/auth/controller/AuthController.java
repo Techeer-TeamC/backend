@@ -7,6 +7,7 @@ import com.Techeer.Team_C.domain.auth.service.AuthService;
 
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,6 +48,18 @@ public class AuthController {
         JSONObject obj = new JSONObject();
         JSONObject data = new JSONObject(tokenData.toJson());
         obj.put("data", data);
+        obj.put("success", true);
+        obj.put("status", 200);
+
+        return obj.toString();
+    }
+
+    @DeleteMapping("/")
+    public String logout(@RequestBody TokenRefreshDto tokenRefreshDto) {
+
+        authService.logout(tokenRefreshDto);
+        JSONObject obj = new JSONObject();
+
         obj.put("success", true);
         obj.put("status", 200);
 

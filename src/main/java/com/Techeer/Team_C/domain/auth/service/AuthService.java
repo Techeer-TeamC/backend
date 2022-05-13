@@ -104,4 +104,22 @@ public class AuthService {
         return newTokenDto;
     }
 
+    public void logout(TokenRefreshDto tokenRefreshDto) {
+        if (!tokenProvider.validateToken(tokenRefreshDto.getRefreshToken())) {
+            throw new BusinessException("유효하지 않은 refresh Token 입니다.", INVALID_REFRESH_TOKEN);
+        }
+
+        Authentication authentication = tokenProvider.getAuthentication(
+                tokenRefreshDto.getAccessToken());
+
+        RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
+                .orElseThrow(
+                        () -> new BusinessException("로그아웃된 사용자 입니다", MISMATCHED_USER_INFORMATION));
+
+        if (!refreshToken.getValue().equals(tokenRefreshDto.getRefreshToken())) {
+            throw new BusinessException("토큰과 유저정보가 서로 일치하지 않습니다.", LOGOUT_USER);
+        }
+
+        refreshTokenRepository.delete(refreshToken);
+    }
 }
