@@ -1,31 +1,32 @@
 package com.Techeer.Team_C.domain.user.service;
 
+import com.Techeer.Team_C.domain.user.dto.PasswordChangeRequestDto;
 import com.Techeer.Team_C.domain.user.dto.UserDto;
 import com.Techeer.Team_C.domain.user.entity.User;
 import com.Techeer.Team_C.domain.user.repository.UserRepository;
 
 import com.Techeer.Team_C.global.error.exception.BusinessException;
 import javax.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Optional;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.*;
 
-
+@Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
+
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
 
-
-    public UserService(UserRepository userRepository, ModelMapper modelMapper) {
-        this.userRepository = userRepository;
-        this.modelMapper = modelMapper;
-    }
 
     private UserDto of(User user) {
         return modelMapper.map(user, UserDto.class);
@@ -91,6 +92,34 @@ public class UserService {
         Optional<User> userById = userRepository.findById(id);
         Optional<UserDto> userDtoById = userById.map(q -> of(q));
         return userDtoById;
+    }
+
+    public void changePassword(PasswordChangeRequestDto formData) {
+        if (!formData.getNewPassword()
+                .equals(formData.getReNewPassword())) {  // 1. 새로운 비밀번호의 재입력값이 입력한 새 비밀번호와 일치 검사
+            throw new BusinessException("새 비밀번호의 값과 재 입력한 비밀번호의 값이 일치하지 않습니다.",
+                    NOT_DUPLICATE_PASSWORD);
+        }
+
+        if (formData.getNewPassword()
+                .equals(formData.getOldPassword())) { // 2. 변경할 비밀번호가 새 비밀번호과 같은지 검사
+            throw new BusinessException("새 비밀번호의 값은 이전 비밀번호와 다르게 입력해 주세요.", DUPLICATE_PASSWORDS);
+        }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long id = Long.parseLong(authentication.getName());
+
+        User user = userRepository.findById(id).get();
+        String oldPassword = user.getPassword(); //기존의 비밀번호
+
+        if (passwordEncoder.matches(formData.getNewPassword(),
+                oldPassword)) {   // 3. 기존의 입력 비밀번호가 적합한지 검사
+            throw new BusinessException("기존의 비밀번호가 잘못되었습니다.", INVALID_PASSWORD);
+        }
+
+        user.setPassword(passwordEncoder.encode(formData.getNewPassword()));
+        userRepository.save(user);
+
     }
 
 }

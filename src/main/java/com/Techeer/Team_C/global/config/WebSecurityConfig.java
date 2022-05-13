@@ -4,6 +4,7 @@ import com.Techeer.Team_C.domain.auth.jwt.CustomAccessDeniedHandler;
 import com.Techeer.Team_C.domain.auth.jwt.CustomAuthenticationEntryPoint;
 import com.Techeer.Team_C.domain.auth.jwt.JwtAuthenticationFilter;
 import com.Techeer.Team_C.domain.auth.jwt.JwtTokenProvider;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,13 +29,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public WebSecurityConfig(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
     }
-    // 암호화에 필요한 PasswordEncoder 를 Bean 등록합니다.
 
+    // 암호화에 필요한 PasswordEncoder 를 Bean 등록합니다.
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    //Dto 객체 변환을 위한 modelMapper를 bean 등록합니다.
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
 
     // authenticationManager를 Bean 등록합니다.
     @Bean
