@@ -56,9 +56,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests() // 요청에 대한 사용권한 체크
                 .antMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                .antMatchers("/api/v1/users/**", "/api/v1/auth/**").permitAll()
-                //.anyRequest().permitAll() // 그외 나머지 요청은 누구나 접근 가능  //permit은 토큰검증을 거치지 않음.
-                //.anyRequest().authenticated()
+                .antMatchers("/api/v1/users/", "/api/v1/auth/").hasRole("USER")
+                .anyRequest().permitAll() // 그외 나머지 요청은 누구나 접근 가능  //permit은 토큰검증을 거치지 않음.
                 .and()
                 .exceptionHandling()
                 .accessDeniedHandler(new CustomAccessDeniedHandler())

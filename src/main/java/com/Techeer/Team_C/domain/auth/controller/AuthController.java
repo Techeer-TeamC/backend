@@ -26,7 +26,7 @@ public class AuthController {
     private final AuthService authService;
 
 
-    @PostMapping("/")
+    @PostMapping("/new")
     public String login(@RequestBody @Valid final LoginFormDto user) {
 
         TokenDto tokenData = authService.login(user);

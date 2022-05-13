@@ -12,11 +12,8 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
-import java.util.Collections;
 import java.util.Optional;
-import org.json.simple.JSONObject;
 
 import static com.Techeer.Team_C.global.utils.Constants.API_PREFIX;
 
@@ -39,7 +36,7 @@ public class UserController {
     /**
      * 회원가입
      */
-    @PostMapping("/")
+    @PostMapping("/new")
     public String join(@RequestBody @Valid final SignupFormDto user) {
 
         UserDto member = new UserDto();
