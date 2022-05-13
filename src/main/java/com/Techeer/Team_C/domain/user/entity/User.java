@@ -1,5 +1,6 @@
 package com.Techeer.Team_C.domain.user.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 import javax.persistence.EnumType;
