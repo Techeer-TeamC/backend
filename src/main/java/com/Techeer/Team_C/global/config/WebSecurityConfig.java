@@ -4,6 +4,7 @@ import com.Techeer.Team_C.domain.auth.jwt.CustomAccessDeniedHandler;
 import com.Techeer.Team_C.domain.auth.jwt.CustomAuthenticationEntryPoint;
 import com.Techeer.Team_C.domain.auth.jwt.JwtAuthenticationFilter;
 import com.Techeer.Team_C.domain.auth.jwt.JwtTokenProvider;
+import com.Techeer.Team_C.domain.auth.service.CustomOAuth2UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -21,12 +22,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtTokenProvider jwtTokenProvider;
-    //private final WebAccessDeniedHandler webAccessDeniedHandler;
+    private final CustomOAuth2UserService customOAuth2UserService;
+
 
 
     @Autowired
-    public WebSecurityConfig(JwtTokenProvider jwtTokenProvider) {
+    public WebSecurityConfig(JwtTokenProvider jwtTokenProvider, CustomOAuth2UserService customOAuth2UserService) {
         this.jwtTokenProvider = jwtTokenProvider;
+        this.customOAuth2UserService = customOAuth2UserService;
     }
 
     // 암호화에 필요한 PasswordEncoder 를 Bean 등록합니다.

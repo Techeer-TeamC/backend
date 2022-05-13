@@ -60,8 +60,8 @@ public class AuthController {
     public String logout(@RequestBody TokenRefreshDto tokenRefreshDto) {
 
         authService.logout(tokenRefreshDto);
-        JSONObject obj = new JSONObject();
 
+        JSONObject obj = new JSONObject();
         obj.put("success", true);
         obj.put("status", 200);
 
