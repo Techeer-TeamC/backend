@@ -33,6 +33,10 @@ public enum ErrorCode {
     MISMATCHED_USER_INFORMATION(400, "J006", "Token data is not matched"),
     LOGOUT_USER(400, "J007", "Logged out user"),
 
+    //password Change
+    NOT_DUPLICATE_PASSWORD(400,"P001", "NewPassword doesn't match re-entered password"),
+    DUPLICATE_PASSWORDS(400,"P002","The new password and the old password are the same.")
+
     ;
     private final String code;
     private final String message;

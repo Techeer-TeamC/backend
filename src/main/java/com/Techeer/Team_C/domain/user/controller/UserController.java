@@ -1,5 +1,6 @@
 package com.Techeer.Team_C.domain.user.controller;
 
+import com.Techeer.Team_C.domain.user.dto.PasswordChangeRequestDto;
 import com.Techeer.Team_C.domain.user.dto.SignupFormDto;
 import com.Techeer.Team_C.domain.user.dto.UserDto;
 import com.Techeer.Team_C.domain.auth.jwt.JwtTokenProvider;
@@ -16,6 +17,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 import static com.Techeer.Team_C.global.utils.Constants.API_PREFIX;
+
 
 @RestController
 @RequestMapping(API_PREFIX + "/users")
@@ -70,6 +72,19 @@ public class UserController {
         return obj.toString();
 
 
+    }
+
+    @PutMapping("/")
+    public String changePassword(@RequestBody @Valid final PasswordChangeRequestDto dto) {
+
+        userService.changePassword(dto);
+
+        JSONObject obj = new JSONObject();
+
+        obj.put("success", true);
+        obj.put("status", 200);
+
+        return obj.toString();
     }
 
 }
