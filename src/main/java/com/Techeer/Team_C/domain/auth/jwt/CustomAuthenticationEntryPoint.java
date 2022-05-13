@@ -44,7 +44,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             return;
         }
         if (exception.equals("INVLAID_JTW_TOKEN")) {
-            errorCode = ErrorCode.INVLAID_JTW_TOKEN;
+            errorCode = ErrorCode.INVALID_JTW_TOKEN;
             setResponse(response, errorCode);
             return;
         }
