@@ -134,7 +134,7 @@ public class JwtTokenProvider {
 
         } catch (IllegalArgumentException e) {
             log.info("JWT 토큰이 잘못되었습니다.");
-            request.setAttribute("exception", INVLAID_JTW_TOKEN);
+            request.setAttribute("exception", INVALID_JTW_TOKEN);
 
         }
         return false;

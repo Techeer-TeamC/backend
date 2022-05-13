@@ -15,24 +15,24 @@ public enum ErrorCode {
 
 
     // Member
-    EMAIL_DUPLICATION(400, "M001", "Email is Duplication"),
-    LOGIN_INPUT_INVALID(400, "M002", "Login input is invalid"),
-    EMAIL_NOT_FOUND(400, "M003", "Not found this email"),
-    INVALID_PASSWORD(400, "M004", "Invalid password"),
+    EMAIL_DUPLICATION(401, "M001", "Email is Duplication"),
+    LOGIN_INPUT_INVALID(401, "M002", "Login input is invalid"),
+    EMAIL_NOT_FOUND(401, "M003", "Not found this email"),
+    INVALID_PASSWORD(401, "M004", "Invalid password"),
     NO_PERMISSION(403, "M005", "do not have permission."),
 
     //jwtToken
-    INVALID_JTW_TOKEN_SIGNATURE(400, "J001", "The token's signature is invalid."),
-    EXPIRED_JTW_TOKEN(400, "J002", "Token data has expired"),
-    UNSUPPORTED_JTW_TOKEN(400, "J003", "Unsupported token"),
-    INVLAID_JTW_TOKEN(400, "J004", "Jwt token is invalid"),
-    EMPTY_TOKEN_DATA(400, "J005", "There is no token data in the header."),
+    INVALID_JTW_TOKEN_SIGNATURE(401, "J001", "The token's signature is invalid."),
+    EXPIRED_JTW_TOKEN(401, "J002", "Token data has expired"),
+    UNSUPPORTED_JTW_TOKEN(401, "J003", "Unsupported token"),
+    INVALID_JTW_TOKEN(401, "J004", "Jwt token is invalid"),
+    EMPTY_TOKEN_DATA(401, "J005", "There is no token data in the header."),
 
 
     //refresh Token
-    INVALID_REFRESH_TOKEN(400, "J005", "Refresh token is invalid"),
-    MISMATCHED_USER_INFORMATION(400, "J006", "Token data is not matched"),
-    LOGOUT_USER(400, "J007", "Logged out user"),
+    MISMATCHED_USER_INFORMATION(401, "J006", "Token data is not matched"),
+    LOGOUT_USER(401, "J007", "Logged out user"),
+    INVALID_REFRESH_TOKEN(401, "J008", "Refresh token is invalid"),
 
     //password Change
     NOT_DUPLICATE_PASSWORD(400,"P001", "NewPassword doesn't match re-entered password"),
