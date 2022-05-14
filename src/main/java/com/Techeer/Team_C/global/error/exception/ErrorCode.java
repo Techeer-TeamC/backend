@@ -14,11 +14,11 @@ public enum ErrorCode {
     HANDLE_ACCESS_DENIED(403, "C006", "Access is Denied"),
 
     // Member
-    EMAIL_DUPLICATION(401, "M001", "Email is Duplication"),
+    EMAIL_DUPLICATION(401, "M001", "Email is duplication"),
     LOGIN_INPUT_INVALID(401, "M002", "Login input is invalid"),
     EMAIL_NOT_FOUND(401, "M003", "Not found this email"),
     INVALID_PASSWORD(401, "M004", "Invalid password"),
-    NO_PERMISSION(403, "M005", "do not have permission."),
+    NO_PERMISSION(403, "M005", "Do not have permission."),
 
     //jwtToken
     INVALID_JTW_TOKEN_SIGNATURE(401, "J001", "The token's signature is invalid."),

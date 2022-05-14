@@ -10,14 +10,14 @@ import com.Techeer.Team_C.global.error.exception.BusinessException;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
+
 
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.*;
 
@@ -56,6 +56,7 @@ public class UserService {
         user.setPassword((userdto.getPassword()));
         user.setMemberName((userdto.getMemberName()));
         user.setRole(userdto.getRole());
+        user.setActivated(true);
 
         userRepository.save(user);
         return user.getEmail();
