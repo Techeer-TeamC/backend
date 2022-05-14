@@ -46,7 +46,7 @@ public class User implements UserDetails {
     @NotNull
     private String memberName;
 
-    @NotNull
+    @Nullable
     private String password;
 
     @Enumerated(EnumType.STRING)
