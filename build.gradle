@@ -57,6 +57,8 @@ dependencies {
     //Dto와 entitiy 객체를 변환하기 위한 맵핑 라이브러리 ModelMapper 추가
 	implementation 'org.modelmapper:modelmapper:3.0.0'
 
+	//JSONObject 사용
+	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
 
 }

@@ -6,6 +6,8 @@ import com.Techeer.Team_C.domain.auth.dto.TokenRefreshDto;
 import com.Techeer.Team_C.domain.auth.service.AuthService;
 
 import lombok.RequiredArgsConstructor;
+import org.json.simple.JSONObject;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,15 +27,45 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/")
-    public TokenDto login(@RequestBody @Valid final LoginFormDto user) {
 
-        return authService.login(user);
+    @PostMapping("/new")
+    public String login(@RequestBody @Valid final LoginFormDto user) {
+
+        TokenDto tokenData = authService.login(user);
+
+        JSONObject obj = new JSONObject();
+        JSONObject data = new JSONObject(tokenData.toJson());
+        obj.put("data", data);
+        obj.put("success", true);
+        obj.put("status", 200);
+
+        return obj.toString();
     }
 
     @PostMapping("/reissue")
-    public TokenDto reissue(@RequestBody TokenRefreshDto tokenRefreshDto) {
-        return authService.reissue(tokenRefreshDto);
+    public String reissue(@RequestBody TokenRefreshDto tokenRefreshDto) {
+
+        TokenDto tokenData = authService.reissue(tokenRefreshDto);
+
+        JSONObject obj = new JSONObject();
+        JSONObject data = new JSONObject(tokenData.toJson());
+        obj.put("data", data);
+        obj.put("success", true);
+        obj.put("status", 200);
+
+        return obj.toString();
+    }
+
+    @DeleteMapping("/")
+    public String logout(@RequestBody TokenRefreshDto tokenRefreshDto) {
+
+        authService.logout(tokenRefreshDto);
+
+        JSONObject obj = new JSONObject();
+        obj.put("success", true);
+        obj.put("status", 200);
+
+        return obj.toString();
     }
 
     @GetMapping("/kakao")

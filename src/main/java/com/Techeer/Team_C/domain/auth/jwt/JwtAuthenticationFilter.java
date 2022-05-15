@@ -1,5 +1,11 @@
 package com.Techeer.Team_C.domain.auth.jwt;
 
+import static com.Techeer.Team_C.global.error.exception.ErrorCode.INVALID_JTW_TOKEN_SIGNATURE;
+
+import com.Techeer.Team_C.global.error.exception.BusinessException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +31,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
             FilterChain filterChain) throws IOException, ServletException {
@@ -36,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 2. validateToken 으로 토큰 유효성 검사
         // 정상 토큰이면 해당 토큰으로 Authentication 을 가져와서 SecurityContext 에 저장
 
-        if (token != null && jwtTokenProvider.validateToken(token)) {
+        if (token != null && jwtTokenProvider.validateToken(request, token)) {
             Authentication authentication = jwtTokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

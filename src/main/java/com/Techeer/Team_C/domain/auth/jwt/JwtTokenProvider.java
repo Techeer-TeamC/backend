@@ -4,6 +4,8 @@ package com.Techeer.Team_C.domain.auth.jwt;
 import com.Techeer.Team_C.domain.auth.dto.TokenDto;
 import com.Techeer.Team_C.global.error.exception.BusinessException;
 import io.jsonwebtoken.*;
+import javax.servlet.ServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
 
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.*;
 
-
+@Slf4j
 @Component
 public class JwtTokenProvider {
 
@@ -42,6 +44,7 @@ public class JwtTokenProvider {
     }
 
     // JWT 토큰 생성
+
     /**
      * JWT토큰 생성
      *
@@ -111,23 +114,49 @@ public class JwtTokenProvider {
 
 
     // 토큰의 유효성 + 만료일자 확인
+    public boolean validateToken(ServletRequest request, String jwtToken) {
+        try {
+            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
+            return !claims.getBody().getExpiration().before(new Date());
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            log.info("잘못된 JWT 서명입니다.");
+            request.setAttribute("exception", INVALID_JTW_TOKEN_SIGNATURE);
+
+        } catch (ExpiredJwtException e) {
+            log.info("만료된 JWT 토큰입니다.");
+            request.setAttribute("exception", EXPIRED_JTW_TOKEN);
+
+
+        } catch (UnsupportedJwtException e) {
+            log.info("지원되지 않는 JWT 토큰입니다.");
+            request.setAttribute("exception", UNSUPPORTED_JTW_TOKEN);
+
+
+        } catch (IllegalArgumentException e) {
+            log.info("JWT 토큰이 잘못되었습니다.");
+            request.setAttribute("exception", INVALID_JTW_TOKEN);
+
+        }
+        return false;
+
+    }
+
     public boolean validateToken(String jwtToken) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            throw new BusinessException("JWT 서명이 잘못되었습니다.", INVALID_JTW_TOKEN_SIGNATURE);
-
+            log.info("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {
-            throw new BusinessException("만료된 JWT 토큰입니다.", EXPIRED_JTW_TOKEN);
-
+            log.info("만료된 JWT 토큰입니다.");
         } catch (UnsupportedJwtException e) {
-            throw new BusinessException("지원되지 않는 JWT 토큰입니다..", UNSUPPORTED_JTW_TOKEN);
-
+            log.info("지원되지 않는 JWT 토큰입니다.");
         } catch (IllegalArgumentException e) {
-            throw new BusinessException("JWT 토큰이 잘못되었습니다.", INVLAID_JTW_TOKEN);
+            log.info("JWT 토큰이 잘못되었습니다.");
+        } catch (SignatureException e) {
+            log.info("기존의 JWT 토큰을 확인할 수 없습니다..");
         }
-
+        return false;
     }
 
 
