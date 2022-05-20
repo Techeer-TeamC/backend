@@ -12,17 +12,23 @@ import com.Techeer.Team_C.domain.user.dto.UserDto;
 import com.Techeer.Team_C.domain.user.entity.User;
 import com.Techeer.Team_C.domain.user.repository.UserRepository;
 import com.Techeer.Team_C.global.error.exception.BusinessException;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 
 public class ProductSerivce {
+
     private final ProductMysqlRepository productMysqlRepository;
-  //  private final ProductRegisterMysqlRepository productRegisterMysqlRepository;
+    //  private final ProductRegisterMysqlRepository productRegisterMysqlRepository;
     private final ModelMapper modelMapper;
 
 
@@ -33,26 +39,22 @@ public class ProductSerivce {
 
     public Optional<ProductDto> findProduct(Long id) {
 
-        Product temp = new Product();
-        temp.setActivated(true);
-        temp.setOrigin_price(500);
-        temp.setMinimum_price(0);
-        temp.setName("아이이");
-        temp.setProduct_detail("아아아아아");
-        temp.setProduct_image("asdsad");
-        temp.setShipment("asdads");
-
-
-        productMysqlRepository.save(temp);
-
         Optional<Product> product = productMysqlRepository.findById(id);
-        if(!product.isPresent()) {
+        if (!product.isPresent()) {
             throw new BusinessException("해당 상품 정보가 존재하지 않습니다.", PRODUCT_NOT_FOUND);
         }
 
         Optional<ProductDto> productDto = product.map(q -> of(q));
 
         return productDto;
+    }
+
+    public List<ProductDto> pageList(String keyword, Pageable page) {
+        Page<Product> lists = productMysqlRepository.findByNameContaining(keyword, page);
+        List<ProductDto> results = lists.getContent().stream().map(q -> of(q))
+                .collect(Collectors.toList());
+
+        return results;
     }
 
 }
