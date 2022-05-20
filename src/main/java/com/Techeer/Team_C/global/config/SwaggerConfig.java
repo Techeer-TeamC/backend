@@ -33,7 +33,7 @@ public class SwaggerConfig {  // Swagger
                 .select()
                 .apis(RequestHandlerSelectors.basePackage(
                         "com.Techeer.Team_C.domain.")) //API문서를 사용할 범위 지정
-                .paths(PathSelectors.ant("/api/v1")) //API의 url경로 지정
+                .paths(PathSelectors.ant("/api/v1/**")) //API의 url경로 지정
                 .build()
                 .apiInfo(apiInfo())
                 .securityContexts(Arrays.asList(securityContext()))
