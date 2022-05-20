@@ -9,6 +9,7 @@ import com.Techeer.Team_C.domain.user.dto.SignupFormDto;
 import com.Techeer.Team_C.domain.user.dto.UserDto;
 import com.Techeer.Team_C.domain.user.entity.Role;
 import com.Techeer.Team_C.domain.user.service.UserService;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +44,7 @@ public class ProductController {
     }
 
     @GetMapping("/")
-    @ApiOperation(value = "물품 데이터 조회", notes = "물품 데이터 조회 API")
+    @ApiOperation(value = "물품 데이터 조회", notes = "특정 하나의 물품정보 데이터를 조회하는 API")
     public String showDetail(@RequestBody @RequestParam("id") Long boardId) {
 
         Optional<ProductDto> productData = productSerivce.findProduct(boardId);
@@ -58,6 +59,10 @@ public class ProductController {
     }
 
     @GetMapping("/search")
+    @ApiOperation(value = "물품 검색 조회", notes = "검색 내용의 물품리스트를 조회하는 API")
+    @ApiImplicitParam(
+            name = "keyword", value = "검색 할 내용")
+
     public Object showSearch(@RequestBody @RequestParam("keyword") String keyword,
             @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC)
                     Pageable page) {
