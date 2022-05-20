@@ -43,7 +43,7 @@ public class UserService {
      * @return string email 가입에 성공한 email(이메일)
      */
     @Transactional
-    public String join(UserDto userdto) {
+    public void join(UserDto userdto) {
 
         //중복 이메일 검사
         userRepository.findByEmail(userdto.getEmail())
@@ -59,7 +59,6 @@ public class UserService {
         user.setActivated(true);
 
         userRepository.save(user);
-        return user.getEmail();
     }
 
     /**

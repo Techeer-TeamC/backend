@@ -35,8 +35,10 @@ public enum ErrorCode {
 
     //password Change
     NOT_DUPLICATE_PASSWORD(400,"P001", "NewPassword doesn't match re-entered password"),
-    DUPLICATE_PASSWORDS(400,"P002","The new password and the old password are the same.")
+    DUPLICATE_PASSWORDS(400,"P002","The new password and the old password are the same."),
 
+    //Product
+    PRODUCT_NOT_FOUND(400,"I001","Not found product")
     ;
     private final String code;
     private final String message;

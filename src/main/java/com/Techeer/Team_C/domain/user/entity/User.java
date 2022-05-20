@@ -1,9 +1,8 @@
 package com.Techeer.Team_C.domain.user.entity;
 
+//import com.Techeer.Team_C.domain.product.entity.ProductRegisterId;
 import com.Techeer.Team_C.global.utils.dto.BaseTimeEntity;
 import com.Techeer.Team_C.global.utils.dto.BooleanToYNConverter;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -46,6 +45,7 @@ public class User extends BaseTimeEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "USER_ID")
     private Long id;
 
     @Column(unique = true)
@@ -64,6 +64,8 @@ public class User extends BaseTimeEntity implements UserDetails {
     @NotNull
     @Convert(converter = BooleanToYNConverter.class)
     private boolean activated;
+
+   // private ProductRegisterId product_registerId;
 
     @Override
     public String getUsername() {
