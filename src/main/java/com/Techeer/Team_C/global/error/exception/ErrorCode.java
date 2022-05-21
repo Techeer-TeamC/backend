@@ -19,6 +19,7 @@ public enum ErrorCode {
     EMAIL_NOT_FOUND(401, "M003", "Not found this email"),
     INVALID_PASSWORD(401, "M004", "Invalid password"),
     NO_PERMISSION(403, "M005", "Do not have permission."),
+    USER_NOT_FOUND(401,"M006","Not found this User"),
 
     //jwtToken
     INVALID_JTW_TOKEN_SIGNATURE(401, "J001", "The token's signature is invalid."),

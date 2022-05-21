@@ -3,6 +3,7 @@ package com.Techeer.Team_C.domain.product.controller;
 import static com.Techeer.Team_C.global.utils.Constants.API_PREFIX;
 
 import com.Techeer.Team_C.domain.product.dto.ProductDto;
+import com.Techeer.Team_C.domain.product.dto.ProductRegisterRequestDto;
 import com.Techeer.Team_C.domain.product.entity.Product;
 import com.Techeer.Team_C.domain.product.service.ProductSerivce;
 import com.Techeer.Team_C.domain.user.dto.SignupFormDto;
@@ -86,5 +87,17 @@ public class ProductController {
 
     }
 
+    @PostMapping("/resister")
+    public String add(@RequestBody @Valid final ProductRegisterRequestDto productRegisterRequestDto) {
 
+
+
+       productSerivce.addResister(productRegisterRequestDto);
+       JSONObject obj = new JSONObject();
+       obj.put("success", true);
+       obj.put("status", 200);
+       return obj.toString();
+
+
+    }
 }

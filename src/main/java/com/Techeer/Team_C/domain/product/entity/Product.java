@@ -3,6 +3,7 @@ package com.Techeer.Team_C.domain.product.entity;
 
 import com.Techeer.Team_C.global.utils.dto.BaseTimeEntity;
 import com.Techeer.Team_C.global.utils.dto.BooleanToYNConverter;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -10,6 +11,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,7 +26,6 @@ public class Product extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "PRODUCT_ID")
     private long product_id;
 
     private String product_image;
@@ -46,5 +47,6 @@ public class Product extends BaseTimeEntity {
     @Convert(converter = BooleanToYNConverter.class)
     private boolean activated;
 
-    //private ProductRegisterId product_registerId;
+    @OneToMany(mappedBy = "product")
+    private List<ProductRegister> product_register;
 }

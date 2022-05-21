@@ -1,8 +1,10 @@
 package com.Techeer.Team_C.domain.user.entity;
 
-//import com.Techeer.Team_C.domain.product.entity.ProductRegisterId;
+import com.Techeer.Team_C.domain.product.entity.ProductRegister;
+import com.Techeer.Team_C.domain.product.entity.ProductRegisterId;
 import com.Techeer.Team_C.global.utils.dto.BaseTimeEntity;
 import com.Techeer.Team_C.global.utils.dto.BooleanToYNConverter;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -13,6 +15,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -65,7 +68,8 @@ public class User extends BaseTimeEntity implements UserDetails {
     @Convert(converter = BooleanToYNConverter.class)
     private boolean activated;
 
-   // private ProductRegisterId product_registerId;
+    @OneToMany(mappedBy = "user")
+    private List<ProductRegister> product_register;
 
     @Override
     public String getUsername() {
