@@ -14,20 +14,18 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@IdClass(ProductRegisterId.class)
 public class ProductRegister {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long register_id;
 
     private Integer desired_price;
-
+    @Id
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "userId")
     private User user;
 
-
+    @Id
     @ManyToOne
-    @JoinColumn(name="product_id")
+    @JoinColumn(name="productId")
     private Product product;
 
 
