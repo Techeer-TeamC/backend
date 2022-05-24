@@ -37,7 +37,7 @@ public class ProductSerivce {
     private final UserRepository userRepository;
 
 
-    private ProductDto of(Product product) {
+    private ProductDto dtoConverter(Product product) {
         return modelMapper.map(product, ProductDto.class);
 
     }
@@ -49,17 +49,17 @@ public class ProductSerivce {
             throw new BusinessException("해당 상품 정보가 존재하지 않습니다.", PRODUCT_NOT_FOUND);
         }
 
-        Optional<ProductDto> productDto = product.map(q -> of(q));
+        return product.map(productEntity -> dtoConverter(productEntity));
 
-        return productDto;
+
     }
 
     public List<ProductDto> pageList(String keyword, Pageable page) {
         Page<Product> lists = productMysqlRepository.findByNameContaining(keyword, page);
-        List<ProductDto> results = lists.getContent().stream().map(q -> of(q))
+
+        return lists.getContent().stream().map(productEntity -> dtoConverter(productEntity))
                 .collect(Collectors.toList());
 
-        return results;
     }
 
 

@@ -31,7 +31,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
 
-    private UserDto of(User user) {
+    private UserDto dtoConverter(User user) {
         return modelMapper.map(user, UserDto.class);
         // Serice에서는 user entitiy에 바로 접근하지 않고, User entitiy를 user Dto로 변경하여 dto에 접근
     }
@@ -71,8 +71,9 @@ public class UserService {
     public Optional<UserDto> findMember(String email) {
 
         Optional<User> userByemail = userRepository.findByEmail(email);
-        Optional<UserDto> userDtoByemail = userByemail.map(q -> of(q));
-        return userDtoByemail;
+
+        return userByemail.map(userEntity -> dtoConverter(userEntity));
+
     }
 
     /**
@@ -89,8 +90,8 @@ public class UserService {
 
         Long id = Long.parseLong(authentication.getName());
         Optional<User> userById = userRepository.findById(id);
-        Optional<UserDto> userDtoById = userById.map(q -> of(q));
-        return userDtoById;
+        return userById.map(userEntity -> dtoConverter(userEntity));
+
     }
 
     public void changePassword(PasswordChangeRequestDto formData) {

@@ -28,7 +28,7 @@ public class Product extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long product_id;
 
-    private String product_image;
+    private String image;
 
     private String name;
 
@@ -36,10 +36,10 @@ public class Product extends BaseTimeEntity {
 
     private int minimum_price;
 
-    private String product_link;
+    private String link;
 
     @Column(columnDefinition = "TEXT")  //글자 수 제한 없음
-    private String product_detail;
+    private String detail;
 
     private String shipment;
 

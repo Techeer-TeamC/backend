@@ -1,7 +1,7 @@
 package com.Techeer.Team_C.domain.user.entity;
 
 import com.Techeer.Team_C.domain.product.entity.ProductRegister;
-import com.Techeer.Team_C.domain.product.entity.ProductRegisterId;
+//import com.Techeer.Team_C.domain.product.entity.ProductRegisterId;
 import com.Techeer.Team_C.global.utils.dto.BaseTimeEntity;
 import com.Techeer.Team_C.global.utils.dto.BooleanToYNConverter;
 import java.util.List;
@@ -49,7 +49,7 @@ public class User extends BaseTimeEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID")
-    private Long id;
+    private Long userId;
 
     @Column(unique = true)
     @NotNull
@@ -73,7 +73,7 @@ public class User extends BaseTimeEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return id.toString();
+        return userId.toString();
     }
 
     @Override

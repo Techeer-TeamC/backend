@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(API_PREFIX + "/product")
+@RequestMapping(API_PREFIX + "/products")
 public class ProductController {
 
     private ProductSerivce productSerivce;
@@ -44,9 +44,10 @@ public class ProductController {
         this.productSerivce = productSerivce;
     }
 
-    @GetMapping("/")
+    @GetMapping("/{id}")
     @ApiOperation(value = "물품 데이터 조회", notes = "특정 하나의 물품정보 데이터를 조회하는 API")
-    public String showDetail(@RequestBody @RequestParam("id") Long boardId) {
+
+    public String showDetail(@RequestBody @PathVariable("id") Long boardId) {
 
         Optional<ProductDto> productData = productSerivce.findProduct(boardId);
 

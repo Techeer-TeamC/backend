@@ -18,7 +18,7 @@ import org.json.simple.JSONObject;
 public class UserDto {
 
     @ApiModelProperty(example = "회원 식별 Id")
-    private Long id;
+    private Long userId;
 
     @ApiModelProperty(example = "회원 아이디(이메일)")
     private String email;
@@ -34,7 +34,7 @@ public class UserDto {
 
     public JSONObject toJson() {
         JSONObject obj = new JSONObject();
-        obj.put("id", id);
+        obj.put("id", userId);
         obj.put("email", email);
         obj.put("memberName", memberName);
         obj.put("password", password);
