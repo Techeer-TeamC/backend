@@ -1,0 +1,69 @@
+plugins {
+    id 'org.springframework.boot' version '2.6.6'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+group = 'com.Techeer'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    implementation 'org.springframework.boot:spring-boot-starter-security' //로그인 기능을 위한 security
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1' //JWT 사용
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    //javax/xml/bind/DatatypeConverter 에러 문제. jdk11의 관련 모듈 기본 참조
+
+    // jwt 관련 의존성
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+    runtimeClasspath group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
+    runtimeClasspath group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+
+    // lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    //mysql
+    runtimeOnly 'mysql:mysql-connector-java'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation group: 'com.vladmihalcea', name: 'hibernate-types-52', version: '2.10.4'
+
+    // swagger
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+
+    // entity error
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    //Dto와 entitiy 객체를 변환하기 위한 맵핑 라이브러리 ModelMapper 추가
+    implementation 'org.modelmapper:modelmapper:3.0.0'
+
+	//JSONObject 사용
+	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+
+    //jsoup
+    implementation 'org.jsoup:jsoup:1.14.3'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
