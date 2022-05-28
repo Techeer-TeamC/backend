@@ -1,6 +1,10 @@
 package com.Techeer.Team_C.domain.product.service;
 
+import com.Techeer.Team_C.domain.product.entity.Mall;
+import com.Techeer.Team_C.domain.product.entity.ProductDto;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -32,32 +36,45 @@ public class ProductCrawler {
         return productUrl;
     }
 
-    public String DanawaCrawling(){
+    public ProductDto DanawaCrawling(String url){
         HttpClient httpClient = new DefaultHttpClient();
-        HttpGet httpget = new HttpGet("http://prod.danawa.com/info/?pcode=15461990&keyword=%EB%A7%A5%EB%B6%81%ED%94%84%EB%A1%9C+m1&cate=112758");
+        HttpGet httpget = new HttpGet(url);
+        ProductDto productDto = new ProductDto();
+        List<Mall> mallList = new LinkedList<>();
         try {
             httpClient.execute(httpget, new BasicResponseHandler() {
                 @Override
                 public String handleResponse(HttpResponse response) throws HttpResponseException, IOException {
                     // 웹페이지 한글 처리를 위한 인코딩
-                    String res = new String(super.handleResponse(response).getBytes("8859_1"),
-                        "euc-kr");
+                    String res = new String(super.handleResponse(response).getBytes("utf-8"),
+                        "utf-8");
                     Document doc = Jsoup.parse(res);
-                    Elements rows = doc.select("table.lwst_tbl tbody");
-                    StringBuilder builder = new StringBuilder();
-                    for (Element row : rows) {
-                        Iterator<Element> iterElem = row.getElementsByTag("tr").iterator();
-                        for (int i = 1; iterElem.hasNext(); i++){
-                            Element priceClass = iterElem.next().child(1);
-                            Iterator<Element> priceTag = priceClass.getElementsByClass("prc_t").iterator();
-                            String priceValue = priceTag.next().childNode(0).toString();
-                            builder.append(i + ". : " + priceValue + "   \t");
-                            System.out.println(builder.toString());
-                        }
+
+                    Elements image = doc.select("div.photo_w a img"); // product thumb
+                    String title = doc.select("div.top_summary h3.prod_tit").text();
+                    productDto.setTitle(title);
+                    productDto.setImage("http:"+image.attr("src"));
+
+                    Elements mallInfo = doc.select("table.lwst_tbl tbody.high_list").first().children();
+                    for (Element row : mallInfo) {
+                        String mallLink= row.select("td.mall div a").attr("href");
+                        Elements priceInfo = row.select("td.price a span");
+                        String cacheOrCard = priceInfo.select("span.txt_dsc").text();
+                        String price = priceInfo.select("span.txt_prc").text();
+                        String delivery = row.select("td.ship div span.stxt.deleveryBaseSection").text();
+                        String interestFree = row.select("td.bnfit div a").text();
+                        Mall mall = Mall.builder().link(mallLink)
+                            .price(price)
+                            .delivery(delivery)
+                            .interestFree(interestFree).build();
+                        mall.setPaymentOption(cacheOrCard);
+                        mallList.add(mall);
                     }
-                    return builder.toString();
+                    productDto.setMallInfo(mallList);
+                    return response.toString();
                 }
             });
+            return productDto;
         } catch (ClientProtocolException e) {
             e.printStackTrace();
         } catch (IOException e) {

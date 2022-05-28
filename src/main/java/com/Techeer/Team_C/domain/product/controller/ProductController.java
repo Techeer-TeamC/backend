@@ -1,5 +1,6 @@
 package com.Techeer.Team_C.domain.product.controller;
 
+import com.Techeer.Team_C.domain.product.entity.ProductDto;
 import com.Techeer.Team_C.domain.product.service.ProductCrawler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +25,8 @@ public class ProductController {
     }
 
     @GetMapping("/test")
-    public ResponseEntity<String> TestInformation() {
-        return ResponseEntity.ok(productCrawler.DanawaCrawling());
+    public ResponseEntity<ProductDto> TestInformation(@RequestParam String url) {
+        return ResponseEntity.ok(productCrawler.DanawaCrawling(url));
     }
 
 }
