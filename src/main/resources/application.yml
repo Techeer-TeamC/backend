@@ -1,0 +1,26 @@
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  main:
+    allow-bean-definition-overriding: true
+  profiles:
+    include: oauth, secret
+
+  datasource:
+    url: jdbc:mysql://${ip}:3306/test?useUnicode=true&useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true&characterSetResults=UTF-8&characterEncoding=UTF-8
+    username: test
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    generate-ddl: true
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+
+ip: db
