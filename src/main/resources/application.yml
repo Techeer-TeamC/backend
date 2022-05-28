@@ -8,7 +8,7 @@ spring:
     include: oauth, secret
 
   datasource:
-    url: jdbc:mysql://${ip}:3306/test?useUnicode=true&useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true&characterSetResults=UTF-8&characterEncoding=UTF-8
+    url: jdbc:mysql://teamc-database.clypm8vzwvdb.ap-northeast-2.rds.amazonaws.com:3306/teamC_DB
     username: test
     password: password
     driver-class-name: com.mysql.cj.jdbc.Driver
