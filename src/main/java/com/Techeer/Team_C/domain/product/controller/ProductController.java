@@ -24,9 +24,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,9 +49,9 @@ public class ProductController {
     @GetMapping("/{id}")
     @ApiOperation(value = "물품 데이터 조회", notes = "특정 하나의 물품정보 데이터를 조회하는 API")
 
-    public String showDetail(@RequestBody @PathVariable("id") Long boardId) {
+    public String showDetail(@RequestBody @PathVariable("id") Long productId) {
 
-        Optional<ProductDto> productData = productSerivce.findProduct(boardId);
+        Optional<ProductDto> productData = productSerivce.findProduct(productId);
 
         JSONObject data = new JSONObject(productData.get().toJson());
         JSONObject obj = new JSONObject();
@@ -88,17 +90,41 @@ public class ProductController {
 
     }
 
-    @PostMapping("/resister")
-    public String add(@RequestBody @Valid final ProductRegisterRequestDto productRegisterRequestDto) {
+    @PostMapping("/register")
+    public String add(
+            @RequestBody @Valid final ProductRegisterRequestDto productRegisterRequestDto) {
 
-
-
-       productSerivce.addResister(productRegisterRequestDto);
-       JSONObject obj = new JSONObject();
-       obj.put("success", true);
-       obj.put("status", 200);
-       return obj.toString();
+        productSerivce.addResister(productRegisterRequestDto);
+        JSONObject obj = new JSONObject();
+        obj.put("success", true);
+        obj.put("status", 200);
+        return obj.toString();
 
 
     }
+
+    @DeleteMapping("/register/{id}")
+    public String deleteResister(@RequestBody @PathVariable("id") Long productId) {
+        productSerivce.deleteResister(productId);
+        JSONObject obj = new JSONObject();
+        obj.put("success", true);
+        obj.put("status", 200);
+        return obj.toString();
+    }
+
+//    @PutMapping("/resister/{id}")
+//    public String editResister(@RequestBody @PathVariable("id") Long productId) {
+//        productSerivce.editResister(productId);
+//        obj.put("success", true);
+//        obj.put("status", 200);
+//        return obj.toString();
+//    }
+
+//    @GetMapping("/register")
+//    public String showResister(@RequestBody){
+//        productSerivce.showRe
+//    }
+
+
+
 }

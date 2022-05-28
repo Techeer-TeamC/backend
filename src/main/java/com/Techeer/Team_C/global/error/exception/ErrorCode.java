@@ -39,7 +39,10 @@ public enum ErrorCode {
     DUPLICATE_PASSWORDS(400,"P002","The new password and the old password are the same."),
 
     //Product
-    PRODUCT_NOT_FOUND(400,"I001","Not found product")
+    PRODUCT_NOT_FOUND(400,"I001","Not found product"),
+
+    //ProductResister
+    PRODUCTREGISTER_NOT_FOUND(400, "I002", "Not found productRegister")
     ;
     private final String code;
     private final String message;

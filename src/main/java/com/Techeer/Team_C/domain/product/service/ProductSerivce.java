@@ -2,6 +2,7 @@ package com.Techeer.Team_C.domain.product.service;
 
 
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.EMPTY_TOKEN_DATA;
+import static com.Techeer.Team_C.global.error.exception.ErrorCode.PRODUCTREGISTER_NOT_FOUND;
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.PRODUCT_NOT_FOUND;
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.USER_NOT_FOUND;
 
@@ -9,6 +10,7 @@ import com.Techeer.Team_C.domain.product.dto.ProductDto;
 import com.Techeer.Team_C.domain.product.dto.ProductRegisterRequestDto;
 import com.Techeer.Team_C.domain.product.entity.Product;
 import com.Techeer.Team_C.domain.product.entity.ProductRegister;
+import com.Techeer.Team_C.domain.product.entity.ProductRegisterId;
 import com.Techeer.Team_C.domain.product.repository.ProductMysqlRepository;
 
 import com.Techeer.Team_C.domain.product.repository.ProductRegisterMysqlRepository;
@@ -87,6 +89,38 @@ public class ProductSerivce {
         insertData.setProduct(productById.get());
 
         productRegisterMysqlRepository.save(insertData);
+
+    }
+
+    public void deleteResister(Long productId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getName() == null) {
+            throw new BusinessException("Security Context 에 인증 정보가 없습니다", EMPTY_TOKEN_DATA);
+        }
+
+        Long userId = Long.parseLong(authentication.getName());
+        Optional<User> userById = userRepository.findById(userId);
+        if (!userById.isPresent()) {
+            throw new BusinessException("존재하지 않는 사용자 입니다.", USER_NOT_FOUND);
+        }
+        Optional<Product> productById = productMysqlRepository.findById(productId);
+        if (!productById.isPresent()) {
+            throw new BusinessException("존재하지 않는 물품 입니다.", PRODUCT_NOT_FOUND);
+        }
+
+        ProductRegisterId productRegisterId = ProductRegisterId.builder()
+                .productId(productId)
+                .userId(userId)
+                .build();
+
+        productRegisterMysqlRepository.findById(productRegisterId)
+                .ifPresentOrElse(productRegister -> {
+                            productRegisterMysqlRepository.deleteById(productRegisterId);
+                        },
+                        () -> {
+                            throw new BusinessException("등록하지 않은 물품입니다.",
+                                    PRODUCTREGISTER_NOT_FOUND);
+                        });
 
     }
 }
