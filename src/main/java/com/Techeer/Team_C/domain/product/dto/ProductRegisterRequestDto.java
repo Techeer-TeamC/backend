@@ -7,11 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ProductRegisterRequestDto {
-    @NotNull
-    String id;
 
     @NotNull
     Integer desired_price;
-
 
 }

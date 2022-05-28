@@ -69,7 +69,7 @@ public class User extends BaseTimeEntity implements UserDetails {
     private boolean activated;
 
     @OneToMany(mappedBy = "user")
-    private List<ProductRegister> product_register;
+    private List<ProductRegister> productRegister;
 
     @Override
     public String getUsername() {

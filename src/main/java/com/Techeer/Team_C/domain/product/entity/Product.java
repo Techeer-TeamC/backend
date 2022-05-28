@@ -16,7 +16,6 @@ import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.security.core.userdetails.UserDetails;
 
 @EntityListeners(AuditingEntityListener.class)
 @Getter
@@ -26,15 +25,15 @@ public class Product extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long product_id;
+    private long productId;
 
     private String image;
 
     private String name;
 
-    private int origin_price;
+    private int originPrice;
 
-    private int minimum_price;
+    private int minimumPrice;
 
     private String link;
 
@@ -48,5 +47,5 @@ public class Product extends BaseTimeEntity {
     private boolean activated;
 
     @OneToMany(mappedBy = "product")
-    private List<ProductRegister> product_register;
+    private List<ProductRegister> productRegister;
 }
