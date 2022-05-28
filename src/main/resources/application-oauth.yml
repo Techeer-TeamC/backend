@@ -1,0 +1,24 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${google-client-id}
+            client-secret: ${google-client-secret}
+            scope: ${google-scope}
+          kakao:
+            client-id: ${kakao-client-id}
+            redirect-uri: ${kakao-redirect-uri}
+            client-authentication-method: ${kakao-authentication-method}
+            authorization-grant-type: ${kakao-authorization-grant-type}
+            client-secret : ${kakao-client-secret}
+            scope: ${kakao-scope}
+            client-name: ${kakao-client-name}
+
+        provider:
+          kakao:
+            authorization-uri: ${kakao-authorization-uri}
+            token-uri: ${kakao-token-uri}
+            user-info-uri: ${kakao-user-info-uri}
+            user-name-attribute: ${kakao-user-name-attribue}

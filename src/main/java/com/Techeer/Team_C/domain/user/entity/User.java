@@ -1,14 +1,21 @@
 package com.Techeer.Team_C.domain.user.entity;
 
+import com.Techeer.Team_C.global.utils.dto.BaseTimeEntity;
+import com.Techeer.Team_C.global.utils.dto.BooleanToYNConverter;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,6 +26,8 @@ import java.util.Collection;
 
 import lombok.Setter;
 
+
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -31,15 +40,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 @AllArgsConstructor
 @Builder
 @Table(name = "User")
+@EntityListeners(AuditingEntityListener.class)
 @Entity
-public class User implements UserDetails {
+public class User extends BaseTimeEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
+    @NotNull
     private String email;
 
+    @NotNull
     private String memberName;
 
     @Nullable
@@ -47,6 +60,10 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @NotNull
+    @Convert(converter = BooleanToYNConverter.class)
+    private boolean activated;
 
     @Override
     public String getUsername() {
