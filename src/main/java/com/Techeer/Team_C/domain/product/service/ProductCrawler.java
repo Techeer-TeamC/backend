@@ -2,7 +2,7 @@ package com.Techeer.Team_C.domain.product.service;
 
 import com.Techeer.Team_C.domain.product.entity.Mall;
 import com.Techeer.Team_C.domain.product.entity.ProductDto;
-import java.util.Iterator;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +19,10 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
 @Service
 @RequiredArgsConstructor
 public class ProductCrawler {
+
     public String searchProductPage(String item) throws IOException {
         String baseUrl = "http://search.danawa.com/dsearch.php?query=";
         String firstQuery = baseUrl + item;
@@ -36,7 +35,7 @@ public class ProductCrawler {
         return productUrl;
     }
 
-    public ProductDto DanawaCrawling(String url){
+    public ProductDto DanawaCrawling(String url) {
         HttpClient httpClient = new DefaultHttpClient();
         HttpGet httpget = new HttpGet(url);
         ProductDto productDto = new ProductDto();
@@ -44,7 +43,8 @@ public class ProductCrawler {
         try {
             httpClient.execute(httpget, new BasicResponseHandler() {
                 @Override
-                public String handleResponse(HttpResponse response) throws HttpResponseException, IOException {
+                public String handleResponse(HttpResponse response)
+                    throws HttpResponseException, IOException {
                     // 웹페이지 한글 처리를 위한 인코딩
                     String res = new String(super.handleResponse(response).getBytes("utf-8"),
                         "utf-8");
@@ -53,15 +53,17 @@ public class ProductCrawler {
                     Elements image = doc.select("div.photo_w a img"); // product thumb
                     String title = doc.select("div.top_summary h3.prod_tit").text();
                     productDto.setTitle(title);
-                    productDto.setImage("http:"+image.attr("src"));
+                    productDto.setImage("http:" + image.attr("src"));
 
-                    Elements mallInfo = doc.select("table.lwst_tbl tbody.high_list").first().children();
+                    Elements mallInfo = doc.select("table.lwst_tbl tbody.high_list").first()
+                        .children();
                     for (Element row : mallInfo) {
-                        String mallLink= row.select("td.mall div a").attr("href");
+                        String mallLink = row.select("td.mall div a").attr("href");
                         Elements priceInfo = row.select("td.price a span");
                         String cacheOrCard = priceInfo.select("span.txt_dsc").text();
                         String price = priceInfo.select("span.txt_prc").text();
-                        String delivery = row.select("td.ship div span.stxt.deleveryBaseSection").text();
+                        String delivery = row.select("td.ship div span.stxt.deleveryBaseSection")
+                            .text();
                         String interestFree = row.select("td.bnfit div a").text();
                         Mall mall = Mall.builder().link(mallLink)
                             .price(price)

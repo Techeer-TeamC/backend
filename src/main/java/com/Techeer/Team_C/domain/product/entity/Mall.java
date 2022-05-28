@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class Mall {
+
     private String link;
     private String price;
     private String delivery;

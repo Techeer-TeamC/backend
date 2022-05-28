@@ -1,7 +1,6 @@
 package com.Techeer.Team_C.domain.product.entity;
 
 import java.util.List;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
