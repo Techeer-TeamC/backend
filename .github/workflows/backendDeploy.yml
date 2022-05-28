@@ -37,9 +37,11 @@ jobs:
         env:
           OAUTH_PROPERTIES: ${{ secrets.OAUTH_PROPERTIES }}
           SECRET_PROPERTIES: ${{ secrets.SECRET_PROPERTIES }}
+          APPLICATION_PROPERTIES: ${{ secrets.APPLICATION_PROPERTIES }}
         run: |
           echo $OAUTH_PROPERTIES > ./src/main/resources/application-oauth.yml
           echo $SECRET_PROPERTIES > ./src/main/resources/application-secret.yml
+          echo $APPLICATION_PROPERTIES > ./src/main/resources/application.yml
 
       - name: Build with Gradle
         run: ./gradlew clean build
