@@ -129,6 +129,7 @@ application-oauth.properties
 
 # build file
 build/**
+build/tmp/**
 
 # gradle file
 .gradle/**
