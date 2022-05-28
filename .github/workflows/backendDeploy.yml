@@ -33,15 +33,41 @@ jobs:
         run: chmod +x ./gradlew
         shell: bash
 
-      - name: Create Application Property
+      - name: Set Application.yml Property
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./src/main/resources/application.yml
         env:
-          OAUTH_PROPERTIES: ${{ secrets.OAUTH_PROPERTIES }}
-          SECRET_PROPERTIES: ${{ secrets.SECRET_PROPERTIES }}
-          APPLICATION_PROPERTIES: ${{ secrets.APPLICATION_PROPERTIES }}
-        run: |
-          echo $OAUTH_PROPERTIES > ./src/main/resources/application-oauth.yml
-          echo $SECRET_PROPERTIES > ./src/main/resources/application-secret.yml
-          echo $APPLICATION_PROPERTIES > ./src/main/resources/application.yml
+          spring.datasource.username: ${{ secrets.DATASOURCE_NAME }}
+          spring.datasource.password: ${{ secrets.DATASOURCE_PASSWORD }}
+          spring.datasource.url: ${{ secrets.DATASOURCE_URL }}
+
+      - name: Set Application-oauth.yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./src/main/resources/application-oauth.yml
+        env:
+          spring.security.oauth2.client.registration.google.client-id: ${{ secrets.GOOGLE_CLIENT_ID }}
+          spring.security.oauth2.client.registration.google.client-secret : ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          spring.security.oauth2.client.registration.google.scope: ${{ secrets.GOOGLE_SCOPE }}
+          spring.security.oauth2.client.registration.kakao.client-id: ${{ secrets.KAKAO_CLIENT_ID }}
+          spring.security.oauth2.client.registration.kakao.redirect-uri: ${{ secrets.KAKAO_REDIRECT_ID }}
+          spring.security.oauth2.client.registration.kakao.client-authentication-method: ${{ secrets.KAKAO_CLIENT_METHOD }}
+          spring.security.oauth2.client.registration.kakao.authorization-grant-type: ${{ secrets.KAKAO_AUTH_TYPE }}
+          spring.security.oauth2.client.registration.kakao.client-secret: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          spring.security.oauth2.client.registration.kakao.scpoe: ${{ secrets.KAKAO_SCOPE }}
+          spring.security.oauth2.client.registration.kakao.client-name: ${{ secrets.KAKAO_CLIENT_NAME }}
+          spring.security.oauth2.client.provider.kakao.authorization-uri: ${{ secrets.KAKAO_AUTH_URI }}
+          spring.security.oauth2.client.provider.kakao.token-uri: ${{ secrets.KAKAO_TOKEN_URI }}
+          spring.security.oauth2.client.provider.kakao.user-info-uri: ${{ secrets.KAKAO_USER_INFO_URI }}
+          spring.security.oauth2.client.provider.kakao.user-name-attribute: ${{ secrets.KAKAO_USER_NAME_ATTRIBUTE }}
+
+      - name: Set Application-secret.yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./src/main/resources/application-secret.yml
+        env:
+          jwt.secret: ${{ secrets.JWT_SECRET }}
 
       - name: Build with Gradle
         run: ./gradlew clean build
