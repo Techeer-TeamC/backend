@@ -33,6 +33,14 @@ jobs:
         run: chmod +x ./gradlew
         shell: bash
 
+      - name: Create Application Property
+        env:
+          OAUTH_PROPERTIES: ${{ secrets.OAUTH_PROPERTIES }}
+          SECRET_PROPERTIES: ${{ secrets.SECRET_PROPERTIES }}
+        run: |
+          echo $OAUTH_PROPERTIES > ./src/main/resources/application-oauth.yml
+          echo $SECRET_PROPERTIES > ./src/main/resources/application-secret.yml
+
       - name: Build with Gradle
         run: ./gradlew clean build
         shell: bash
@@ -51,7 +59,7 @@ jobs:
       - name: Download task definition
         run: |
           aws ecs describe-task-definition --task-definition backend --query taskDefinition > task-definition.json
-      
+
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
