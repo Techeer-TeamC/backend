@@ -26,7 +26,7 @@ public class ProductController {
 
 
     @GetMapping("/product-detail-page")
-    public ResponseEntity<ProductDto> TestInformation(@RequestParam String url) {
+    public ResponseEntity<ProductDto> DanawaDetailpageCrawling(@RequestParam String url) {
         return ResponseEntity.ok(productCrawler.DanawaCrawling(url));
     }
 
