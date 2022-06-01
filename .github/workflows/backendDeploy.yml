@@ -101,5 +101,5 @@ jobs:
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: backend
-          cluster: fishIt-Cluster
+          cluster: fishIt
           wait-for-service-stability: true
