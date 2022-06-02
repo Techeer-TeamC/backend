@@ -9,15 +9,15 @@ import org.json.simple.JSONObject;
 @Setter
 public class ProductDto {
 
-    private long product_id;
+    private long productId;
 
     private String image;
 
     private String name;
 
-    private int origin_price;
+    private int originPrice;
 
-    private int minimum_price;
+    private int minimumPrice;
 
     private String link;
 
@@ -27,9 +27,9 @@ public class ProductDto {
 
     public JSONObject toJson() { //향후 DB에 저장될 속성값에 따라 명확하게 변경예정. 지금은 간단한 정보만 출력
         JSONObject obj = new JSONObject();
-        obj.put("id", product_id);
+        obj.put("id", productId);
         obj.put("name", name);
-        obj.put("price", origin_price);
+        obj.put("price", originPrice);
 
         return obj;
     }
