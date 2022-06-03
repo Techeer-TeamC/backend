@@ -2,7 +2,7 @@ name: Deploy Backend to Amazon ECS
 on:
   push:
     branches:
-      - 'feature/deploy'
+      - 'main'
 
 jobs:
   deploy:
