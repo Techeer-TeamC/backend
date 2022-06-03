@@ -44,7 +44,7 @@ public class Product extends BaseTimeEntity {
 
     @NotNull
     @Convert(converter = BooleanToYNConverter.class)
-    private boolean activated;
+    private boolean status;
 
     @OneToMany(mappedBy = "product")
     private List<ProductRegister> productRegister;
