@@ -8,9 +8,9 @@ spring:
     include: oauth, secret
 
   datasource:
-    url: jdbc:mysql://teamc-database.clypm8vzwvdb.ap-northeast-2.rds.amazonaws.com:3306/teamC_DB
-    username: test
-    password: password
+    url: ${{ secrets.DATASOURCE_URL }}
+    username: ${{ secrets.DATASOURCE_NAME }}
+    password: ${{ secrets.DATASOURCE_PASSWORD }}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database: mysql
