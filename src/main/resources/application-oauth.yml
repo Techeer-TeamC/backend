@@ -21,4 +21,4 @@ spring:
             authorization-uri: ${kakao-authorization-uri}
             token-uri: ${kakao-token-uri}
             user-info-uri: ${kakao-user-info-uri}
-            user-name-attribute: ${kakao-user-name-attribue}
+            user-name-attribute: ${kakao-user-name-attribute}
