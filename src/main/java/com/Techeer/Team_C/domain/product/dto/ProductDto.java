@@ -25,6 +25,8 @@ public class ProductDto {
 
     private String shipment;
 
+    private boolean status;
+
     public JSONObject toJson() { //향후 DB에 저장될 속성값에 따라 명확하게 변경예정. 지금은 간단한 정보만 출력
         JSONObject obj = new JSONObject();
         obj.put("id", productId);

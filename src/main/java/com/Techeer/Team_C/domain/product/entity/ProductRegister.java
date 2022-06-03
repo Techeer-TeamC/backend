@@ -2,6 +2,8 @@ package com.Techeer.Team_C.domain.product.entity;
 
 import com.Techeer.Team_C.domain.user.entity.User;
 import com.Techeer.Team_C.global.utils.dto.BaseTimeEntity;
+
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
@@ -12,6 +14,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+
+import com.Techeer.Team_C.global.utils.dto.BooleanToYNConverter;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,29 +28,33 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"userId", "productId"})) //unique로 묶
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"userId", "productId"}))
 public class ProductRegister extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long productRegisterId;
 
-    private Integer desired_price;
+    private int desiredPrice;
 
     @ManyToOne
     @JoinColumn(name = "userId")
     private User user;
 
-
     @ManyToOne
     @JoinColumn(name = "productId")
     private Product product;
 
+    @NotNull
+    @Convert(converter = BooleanToYNConverter.class)
+    private boolean status;
+
     @Builder
-    public ProductRegister(User user, Product product, Integer desired_price) {
+    public ProductRegister(User user, Product product, Integer desiredPrice, boolean status) {
         this.user = user;
         this.product = product;
-        this.desired_price = desired_price;
+        this.desiredPrice = desiredPrice;
+        this.status = status;
     }
 
 }
