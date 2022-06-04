@@ -13,8 +13,8 @@
 .idea/**/aws.xml
 
 #properties
-application-oauth.properties
-application-secret.properties
+application-oauth.yml
+application-secret.yml
 client_secret_*
 
 # Gradle
