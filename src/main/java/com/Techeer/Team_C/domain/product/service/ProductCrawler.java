@@ -1,7 +1,7 @@
 package com.Techeer.Team_C.domain.product.service;
 
 import com.Techeer.Team_C.domain.product.entity.Mall;
-import com.Techeer.Team_C.domain.product.entity.ProductDto;
+import com.Techeer.Team_C.domain.product.dto.ProductDto;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
