@@ -8,9 +8,9 @@ spring:
     include: oauth, secret
 
   datasource:
-    url: jdbc:mysql://${ip}:3306/test?useUnicode=true&useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true&characterSetResults=UTF-8&characterEncoding=UTF-8
-    username: test
-    password: password
+    url: ${{ secrets.DATASOURCE_URL }}
+    username: ${{ secrets.DATASOURCE_NAME }}
+    password: ${{ secrets.DATASOURCE_PASSWORD }}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database: mysql

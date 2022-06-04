@@ -18,7 +18,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.OAS_30)
             .useDefaultResponseMessages(false)
             .select()
-            .apis(RequestHandlerSelectors.basePackage("com.Techeer.Team_C.controller"))
+            .apis(RequestHandlerSelectors.basePackage("com.Techeer.Team_C"))
             .paths(PathSelectors.any())
             .build()
             .apiInfo(new ApiInfoBuilder().title("Techeer Team C Swagger")
