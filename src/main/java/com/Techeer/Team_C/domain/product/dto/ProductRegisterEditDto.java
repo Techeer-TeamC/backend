@@ -1,14 +1,12 @@
 package com.Techeer.Team_C.domain.product.dto;
 
+import com.Techeer.Team_C.domain.product.entity.ProductRegister;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
-
 @Getter
 @Setter
-public class ProductRegisterRequestDto {
+public class ProductRegisterEditDto {
 
-    @NotNull
     private int desiredPrice;
 }

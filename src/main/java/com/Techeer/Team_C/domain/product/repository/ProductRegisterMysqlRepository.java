@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ProductRegisterMysqlRepository extends JpaRepository<ProductRegister, Long> {
 
-    List<ProductRegister> findAllByUser(User user);
+    List<ProductRegister> findAllByUser(Long userId);
 
     @Transactional
     default ProductRegister build(User user, Product product, int desiredPrice, boolean status) {
@@ -21,6 +21,8 @@ public interface ProductRegisterMysqlRepository extends JpaRepository<ProductReg
                 .status(status)
                 .build();
 
-        return saveAndFlush(productRegister);
+        saveAndFlush(productRegister);
+
+        return productRegister;
     }
 }
