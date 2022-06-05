@@ -28,12 +28,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"userId", "productId"}))
+//@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"userId", "productId"}))
 public class ProductRegister extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long productRegisterId;
+    private Long productRegisterId;
 
     private int desiredPrice;
 
@@ -55,6 +55,13 @@ public class ProductRegister extends BaseTimeEntity {
         this.product = product;
         this.desiredPrice = desiredPrice;
         this.status = status;
+    }
+
+    public void update(User user, Product product, int desiredPrice) {
+        this.desiredPrice = desiredPrice;
+        this.user = user;
+        this.product = product;
+        this.status = true;
     }
 
 }
