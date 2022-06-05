@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BaseResponseDto {
-    private String message;
+    private boolean success;
     private String status;
 
-    public static BaseResponseDto fromEntity(String status, String message) {
+    public static BaseResponseDto fromEntity(String status, boolean success) {
         return BaseResponseDto.builder()
                 .status(status)
-                .message(message)
+                .success(success)
                 .build();
     }
 }
