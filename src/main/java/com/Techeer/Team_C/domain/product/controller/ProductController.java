@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ser.Serializers;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.models.Response;
+import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,15 +41,11 @@ import static com.Techeer.Team_C.global.utils.Constants.API_PREFIX;
 
 @RestController
 @RequestMapping(API_PREFIX + "/products")
+@RequiredArgsConstructor
 public class ProductController {
 
-    private ProductService productService;
-    private ProductRegisterMapper mapper;
-
-    @Autowired
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
+    private final ProductService productService;
+    private final ProductRegisterMapper mapper;
 
     @GetMapping("/{id}")
     @ApiOperation(value = "물품 데이터 조회", notes = "특정 하나의 물품정보 데이터를 조회하는 API")
@@ -99,29 +96,20 @@ public class ProductController {
     @ApiOperation(value = "상품 알림 등록", notes = "상품 알림 등록 API, 헤더에 토큰 정보 필요")
     public ResponseEntity<ProductRegisterResponseDto> save(@RequestBody @Valid final ProductRegisterRequestDto productRegisterRequestDto, @PathVariable("id") Long productId) {
 
-        ProductRegister entity = productService.saveRegister(productRegisterRequestDto, productId);
-
-        return ResponseEntity.ok(mapper.toResponseDto(entity));
-
-//        return ResponseEntity
-//                .ok(mapper.toResponseDto(productService.saveRegister(productRegisterRequestDto, productId)));
+        return ResponseEntity.ok(mapper.toResponseDto(productService.saveRegister(productRegisterRequestDto, productId)));
     }
 
     @PutMapping("/register/{id}")
     @ApiOperation(value = "상품 알림 등록 정보 수정", notes = "상품 알림 등록 정보 수정 API, 헤더에 토큰 정보 필요")
-    public ResponseEntity<ProductRegisterResponseDto> editRegister(@RequestBody @Valid final ProductRegisterEditDto productEditDto, @PathVariable("id") Long productRegisterId) {
+    public ResponseEntity<ProductRegisterResponseDto> editRegister(@RequestBody @Valid final ProductRegisterEditDto productEditDto, @PathVariable("id") Long productId) {
 
-//        return ResponseEntity
-//                .ok(mapper.toResponseDto(productService.editRegister(productEditDto, productRegisterId)));
-
-//        return ResponseEntity.ok().body(mapper.toResponseDto(productService.editRegister(productEditDto, productRegisterId)));
-        return new ResponseEntity<>(mapper.toResponseDto(productService.editRegister(productEditDto, productRegisterId)), HttpStatus.ACCEPTED);
+        return ResponseEntity.ok(mapper.toResponseDto(productService.editRegister(productEditDto, productId)));
     }
 
     @ApiOperation(value = "상품 알림 등록 삭제", notes = "상품 알림 등록 삭제 API, 헤더에 토큰 정보 필요")
     @DeleteMapping("/register/{id}")
-    public ResponseEntity<Void> deleteResister(@PathVariable("id") Long productRegisterId) {
-        productService.deleteRegister(productRegisterId);
+    public ResponseEntity<Void> deleteResister(@PathVariable("id") Long productId) {
+        productService.deleteRegister(productId);
 
         return ResponseEntity.noContent().build();
     }
