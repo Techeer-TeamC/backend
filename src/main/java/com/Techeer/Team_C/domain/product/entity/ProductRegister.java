@@ -28,7 +28,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-//@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"userId", "productId"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "product_id"}))
 public class ProductRegister extends BaseTimeEntity {
 
     @Id
@@ -38,11 +38,11 @@ public class ProductRegister extends BaseTimeEntity {
     private int desiredPrice;
 
     @ManyToOne
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "productId")
+    @JoinColumn(name = "product_id")
     private Product product;
 
     @NotNull
