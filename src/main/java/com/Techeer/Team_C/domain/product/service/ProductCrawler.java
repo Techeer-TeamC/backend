@@ -61,10 +61,14 @@ public class ProductCrawler {
                         String mallLink = row.select("td.mall div a").attr("href");
                         Elements priceInfo = row.select("td.price a span");
                         String cacheOrCard = priceInfo.select("span.txt_dsc").text();
-                        String[] prices = priceInfo.select("span.txt_prc").text().split("원")[0].split(",");
-                        String price = "";
-                        for (String piece : prices ){
-                            price += piece;
+                        String[] priceSplit = priceInfo.select("span.txt_prc").text().split("원")[0].split(",");
+                        String priceStr = "";
+                        int price = 0;
+                        for (String piece : priceSplit ){
+                            priceStr += piece;
+                        }
+                        if (!priceStr.isEmpty()){
+                            price = Integer.parseInt(priceStr);
                         }
 
                         String deliveryInfo = row.select("td.ship div span.stxt.deleveryBaseSection")
@@ -76,11 +80,12 @@ public class ProductCrawler {
                             for (String piece : split) {
                                 pieces += piece;
                             }
-                            delivery = Integer.parseInt(pieces);
+                            if (!pieces.isEmpty())
+                                delivery = Integer.parseInt(pieces);
                         }
                         String interestFree = row.select("td.bnfit div a").text();
                         MallDto mallDto = MallDto.builder().link(mallLink)
-                                .price(Integer.parseInt(price))
+                            .price(price)
                             .delivery(delivery)
                             .interestFree(interestFree).build();
                         mallDto.setPaymentOption(cacheOrCard);
