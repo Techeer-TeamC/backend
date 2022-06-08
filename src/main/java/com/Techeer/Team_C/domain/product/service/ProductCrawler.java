@@ -1,7 +1,11 @@
 package com.Techeer.Team_C.domain.product.service;
 
+import static com.Techeer.Team_C.global.error.exception.ErrorCode.INTERNAL_SERVER_ERROR;
+import static com.Techeer.Team_C.global.error.exception.ErrorCode.INVALID_INPUT_VALUE;
+
 import com.Techeer.Team_C.domain.product.dto.MallDto;
 import com.Techeer.Team_C.domain.product.dto.ProductDto;
+import com.Techeer.Team_C.global.error.exception.BusinessException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -97,11 +101,10 @@ public class ProductCrawler {
             });
             return productDto;
         } catch (ClientProtocolException e) {
-            e.printStackTrace();
+            throw new BusinessException(e.getMessage(),INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new BusinessException(e.getMessage(), INVALID_INPUT_VALUE);
         }
-        return null;
     }
 
 }

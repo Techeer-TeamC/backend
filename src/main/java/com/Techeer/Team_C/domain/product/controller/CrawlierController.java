@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(API_PREFIX + "/product")
+@RequestMapping(API_PREFIX + "/crawler")
 @RequiredArgsConstructor
 public class CrawlierController {
 
