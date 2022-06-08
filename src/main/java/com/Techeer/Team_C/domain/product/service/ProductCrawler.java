@@ -1,6 +1,6 @@
 package com.Techeer.Team_C.domain.product.service;
 
-import com.Techeer.Team_C.domain.product.entity.Mall;
+import com.Techeer.Team_C.domain.product.dto.MallDto;
 import com.Techeer.Team_C.domain.product.dto.ProductDto;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -39,7 +39,7 @@ public class ProductCrawler {
         HttpClient httpClient = new DefaultHttpClient();
         HttpGet httpget = new HttpGet(url);
         ProductDto productDto = new ProductDto();
-        List<Mall> mallList = new LinkedList<>();
+        List<MallDto> mallDtoList = new LinkedList<>();
         try {
             httpClient.execute(httpget, new BasicResponseHandler() {
                 @Override
@@ -61,18 +61,32 @@ public class ProductCrawler {
                         String mallLink = row.select("td.mall div a").attr("href");
                         Elements priceInfo = row.select("td.price a span");
                         String cacheOrCard = priceInfo.select("span.txt_dsc").text();
-                        String price = priceInfo.select("span.txt_prc").text();
-                        String delivery = row.select("td.ship div span.stxt.deleveryBaseSection")
+                        String[] prices = priceInfo.select("span.txt_prc").text().split("원")[0].split(",");
+                        String price = "";
+                        for (String piece : prices ){
+                            price += piece;
+                        }
+
+                        String deliveryInfo = row.select("td.ship div span.stxt.deleveryBaseSection")
                             .text();
+                        int delivery = 0;
+                        if (!(deliveryInfo.compareTo("무료배송")==1)){
+                            String[] split = deliveryInfo.split("원")[0].split(",");
+                            String pieces = "";
+                            for (String piece : split) {
+                                pieces += piece;
+                            }
+                            delivery = Integer.parseInt(pieces);
+                        }
                         String interestFree = row.select("td.bnfit div a").text();
-                        Mall mall = Mall.builder().link(mallLink)
-                            .price(price)
+                        MallDto mallDto = MallDto.builder().link(mallLink)
+                                .price(Integer.parseInt(price))
                             .delivery(delivery)
                             .interestFree(interestFree).build();
-                        mall.setPaymentOption(cacheOrCard);
-                        mallList.add(mall);
+                        mallDto.setPaymentOption(cacheOrCard);
+                        mallDtoList.add(mallDto);
                     }
-                    productDto.setMallInfo(mallList);
+                    productDto.setMallDtoInfo(mallDtoList);
                     return response.toString();
                 }
             });

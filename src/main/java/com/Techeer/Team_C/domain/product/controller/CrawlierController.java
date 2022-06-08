@@ -13,16 +13,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(API_PREFIX + "/search")
+@RequestMapping(API_PREFIX + "/product")
 @RequiredArgsConstructor
-public class ProductController {
+public class CrawlierController {
 
     private final ProductCrawler productCrawler;
 
-    @GetMapping("/")
+    @GetMapping("/search")
     public String searchProduct(@RequestParam String item) throws IOException {
-        String productPage = productCrawler.searchProductPage(item);
-        return productPage;
+        return productCrawler.searchProductPage(item);
     }
 
 
