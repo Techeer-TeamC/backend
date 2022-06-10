@@ -1,10 +1,5 @@
 package com.Techeer.Team_C.domain.product.service;
 
-import static com.Techeer.Team_C.global.error.exception.ErrorCode.EMPTY_TOKEN_DATA;
-import static com.Techeer.Team_C.global.error.exception.ErrorCode.PRODUCTREGISTER_NOT_FOUND;
-import static com.Techeer.Team_C.global.error.exception.ErrorCode.PRODUCT_NOT_FOUND;
-import static com.Techeer.Team_C.global.error.exception.ErrorCode.USER_NOT_FOUND;
-
 import com.Techeer.Team_C.domain.product.dto.ProductDto;
 import com.Techeer.Team_C.domain.product.dto.ProductRegisterEditDto;
 import com.Techeer.Team_C.domain.product.dto.ProductRegisterRequestDto;
@@ -27,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.Techeer.Team_C.global.error.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -79,6 +76,10 @@ public class ProductService {
         Optional<Product> productById = productMysqlRepository.findById(productId);
         if (!productById.isPresent()) {
             throw new BusinessException("존재하지 않는 물품 입니다.", PRODUCT_NOT_FOUND);
+        }
+        Optional<ProductRegister> productRegisterById = productRegisterMysqlRepository.findByUserAndProduct(userById.get(), productById.get());
+        if(!productRegisterById.isPresent()) {
+            throw new BusinessException("이미 등록한 상품입니다.", DUPLICATE_PRODUCTREGISTER);
         }
 
         ProductRegister productRegister = productRegisterMysqlRepository.build(userById.get(), productById.get(), productRegisterRequestDto.getDesiredPrice(), true);
