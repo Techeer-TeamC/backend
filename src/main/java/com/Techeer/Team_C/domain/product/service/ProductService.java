@@ -78,7 +78,7 @@ public class ProductService {
             throw new BusinessException("존재하지 않는 물품 입니다.", PRODUCT_NOT_FOUND);
         }
         Optional<ProductRegister> productRegisterById = productRegisterMysqlRepository.findByUserAndProduct(userById.get(), productById.get());
-        if(!productRegisterById.isPresent()) {
+        if(productRegisterById.isPresent()) {
             throw new BusinessException("이미 등록한 상품입니다.", DUPLICATE_PRODUCTREGISTER);
         }
 

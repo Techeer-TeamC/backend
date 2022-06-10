@@ -42,7 +42,7 @@ public enum ErrorCode {
     PRODUCT_NOT_FOUND(400,"I001","Not found product"),
 
     //ProductResister
-    PRODUCTREGISTER_NOT_FOUND(400, "I002", "ProductRegister is not registered"),
+    PRODUCTREGISTER_NOT_FOUND(400, "I002", "Product not registered"),
     DUPLICATE_PRODUCTREGISTER(400, "I003", "Already exist productRegister" )
     ;
     private final String code;
