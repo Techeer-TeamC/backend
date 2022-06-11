@@ -5,6 +5,7 @@ import com.Techeer.Team_C.domain.auth.dto.TokenDto;
 import com.Techeer.Team_C.domain.auth.dto.TokenRefreshDto;
 import com.Techeer.Team_C.domain.auth.service.AuthService;
 
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,6 +30,7 @@ public class AuthController {
 
 
     @PostMapping("/new")
+    @ApiOperation(value = "로그인", notes = "로그인 API")
     public String login(@RequestBody @Valid final LoginFormDto user) {
 
         TokenDto tokenData = authService.login(user);
@@ -43,6 +45,7 @@ public class AuthController {
     }
 
     @PostMapping("/reissue")
+    @ApiOperation(value = "refreshToekn 재발급", notes = "refreshToken 재발급 API, , 헤더에 토큰 정보 필요")
     public String reissue(@RequestBody TokenRefreshDto tokenRefreshDto) {
 
         TokenDto tokenData = authService.reissue(tokenRefreshDto);
@@ -57,6 +60,7 @@ public class AuthController {
     }
 
     @DeleteMapping("/")
+    @ApiOperation(value = "로그아웃", notes = "DB에 저장된 refreshToken을 삭제 , 헤더에 토큰 정보 필요")
     public String logout(@RequestBody TokenRefreshDto tokenRefreshDto) {
 
         authService.logout(tokenRefreshDto);
@@ -69,11 +73,13 @@ public class AuthController {
     }
 
     @GetMapping("/kakao")
+    @ApiOperation(value = "kakao 소셜 로그인", notes = "소셜로그인 API (kakao)")
     public void kakaoCallback(@RequestParam String code) {
         System.out.println(code);
     }
 
     @GetMapping("/google")
+    @ApiOperation(value = "google 소셜 로그인", notes = "소설로그인 API (google)")
     public void googleCallback(@RequestParam String code) {
         System.out.println(code);
     }
