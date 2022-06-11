@@ -55,10 +55,15 @@ public class ProductService {
         return lists.getContent().stream().map(productEntity -> dtoConverter(productEntity)).collect(Collectors.toList());
     }
 
+    public Integer searchCount(String keyword){
+        return productMysqlRepository.countByNameContaining(keyword);
+    }
+
     public List<ProductRegister> registerList(Long userId) {
         Optional<User> user = userRepository.findById(userId);
         return productRegisterMysqlRepository.findAllByUser(user.get());
     }
+
 
     @Transactional
     public ProductRegister saveRegister(ProductRegisterRequestDto productRegisterRequestDto, Long productId) {

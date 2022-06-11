@@ -63,7 +63,9 @@ public class ProductController {
         //size : 한 번에 나타날 최대 개수
         //sort : 분류 기준
         List<ProductDto> resultList = productService.pageList(keyword, page);
+        Integer totalCount = productService.searchCount(keyword); //총 검색 개수
         JSONArray jarray = new JSONArray();
+
 
         for (int i = 0; i < resultList.size(); i++) {  //한 페이지에 보여줄 결과를 Json 리스트에 넣음
             JSONObject data = new JSONObject(resultList.get(i).toJson());
@@ -74,6 +76,7 @@ public class ProductController {
         obj.put("success", true);
         obj.put("status", 200);
         obj.put("data", jarray);
+        obj.put("totalCount",totalCount);
         return obj.toString();
     }
 
