@@ -31,7 +31,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
 
-    private UserDto of(User user) {
+    private UserDto dtoConverter(User user) {
         return modelMapper.map(user, UserDto.class);
         // Serice에서는 user entitiy에 바로 접근하지 않고, User entitiy를 user Dto로 변경하여 dto에 접근
     }
@@ -43,7 +43,7 @@ public class UserService {
      * @return string email 가입에 성공한 email(이메일)
      */
     @Transactional
-    public String join(UserDto userdto) {
+    public void join(UserDto userdto) {
 
         //중복 이메일 검사
         userRepository.findByEmail(userdto.getEmail())
@@ -59,7 +59,6 @@ public class UserService {
         user.setActivated(true);
 
         userRepository.save(user);
-        return user.getEmail();
     }
 
     /**
@@ -72,8 +71,9 @@ public class UserService {
     public Optional<UserDto> findMember(String email) {
 
         Optional<User> userByemail = userRepository.findByEmail(email);
-        Optional<UserDto> userDtoByemail = userByemail.map(q -> of(q));
-        return userDtoByemail;
+
+        return userByemail.map(userEntity -> dtoConverter(userEntity));
+
     }
 
     /**
@@ -84,16 +84,14 @@ public class UserService {
     @Transactional
     public Optional<UserDto> getMyinfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || authentication.getName() == "anonymousUser1"
-                || authentication.getName() == null) {
-            System.out.printf(authentication.getName());
+        if (authentication == null || authentication.getName() == null) {
             throw new BusinessException("Security Context 에 인증 정보가 없습니다", EMPTY_TOKEN_DATA);
         }
 
         Long id = Long.parseLong(authentication.getName());
         Optional<User> userById = userRepository.findById(id);
-        Optional<UserDto> userDtoById = userById.map(q -> of(q));
-        return userDtoById;
+        return userById.map(userEntity -> dtoConverter(userEntity));
+
     }
 
     public void changePassword(PasswordChangeRequestDto formData) {

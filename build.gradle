@@ -31,8 +31,6 @@ dependencies {
 	runtimeClasspath group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
 	runtimeClasspath group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
 
-
-
 	// lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -44,8 +42,12 @@ dependencies {
 	implementation group: 'com.vladmihalcea', name: 'hibernate-types-52', version: '2.10.4'
 
 	// swagger
-	implementation 'io.springfox:springfox-boot-starter:3.0.0'
-	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+	implementation (group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'){
+		exclude module: 'swagger-annotations' exclude module: 'swagger-models'
+	}
+	implementation 'io.swagger:swagger-annotations:1.6.6'
+	implementation 'io.swagger:swagger-models:1.6.6'
+	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 
 	// entity error
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -59,8 +61,6 @@ dependencies {
 
 	//JSONObject 사용
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
-
-
 }
 
 tasks.named('test') {
