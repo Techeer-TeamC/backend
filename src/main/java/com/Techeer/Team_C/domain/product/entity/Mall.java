@@ -1,6 +1,7 @@
 package com.Techeer.Team_C.domain.product.entity;
 
 import com.Techeer.Team_C.global.utils.dto.BaseTimeEntity;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -21,9 +22,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class Mall extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "MALL_ID")
     private long mallId;
 
+    private String name;           // 쇼핑몰 이름
     private String link;           // 쇼핑몰 링크
     private String price;          // 쇼핑몰 제품 가격
     private Integer delivery;      // 무료배송 여부 (0 -> 무료배송)
@@ -31,7 +34,9 @@ public class Mall extends BaseTimeEntity {
     private String paymentOption;  // 최저가 or 현금 가능 여부
 
     @ManyToOne(fetch = FetchType.LAZY) //N+1문제 회피
-    @JoinColumn(name = "mall_id")
+    @JoinColumn(name = "product_id")
     private Product product;
+
+
 
 }
