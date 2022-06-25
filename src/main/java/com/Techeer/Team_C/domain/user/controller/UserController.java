@@ -23,7 +23,6 @@ import static com.Techeer.Team_C.global.utils.Constants.API_PREFIX;
 
 @RestController
 @RequestMapping(API_PREFIX + "/users")
-
 public class UserController {
 
     private final UserService userService;

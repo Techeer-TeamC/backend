@@ -2,11 +2,9 @@
 package com.Techeer.Team_C.domain.auth.jwt;
 
 import com.Techeer.Team_C.domain.auth.dto.TokenDto;
-import com.Techeer.Team_C.global.error.exception.BusinessException;
 import io.jsonwebtoken.*;
 import javax.servlet.ServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,7 +12,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;

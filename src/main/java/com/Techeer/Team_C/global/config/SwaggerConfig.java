@@ -29,31 +29,31 @@ public class SwaggerConfig {  // Swagger
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .useDefaultResponseMessages(false)
-                .select()
-                .apis(RequestHandlerSelectors.basePackage(
-                        "com.Techeer.Team_C.domain.")) //API문서를 사용할 범위 지정
+            .useDefaultResponseMessages(false)
+            .select()
+            .apis(RequestHandlerSelectors.basePackage(
+                "com.Techeer.Team_C.domain")) //API문서를 사용할 범위 지정
                 .paths(PathSelectors.ant("/api/v1/**")) //API의 url경로 지정
-                .build()
-                .apiInfo(apiInfo())
-                .securityContexts(Arrays.asList(securityContext()))
-                .securitySchemes(Arrays.asList(apiKey()));
+            .build()
+            .apiInfo(apiInfo())
+            .securityContexts(Arrays.asList(securityContext()))
+            .securitySchemes(Arrays.asList(apiKey()));
 
     }
 
     private SecurityContext securityContext() {
         return springfox
-                .documentation
-                .spi.service
-                .contexts
-                .SecurityContext
-                .builder()
-                .securityReferences(defaultAuth()).forPaths(PathSelectors.any()).build();
+            .documentation
+            .spi.service
+            .contexts
+            .SecurityContext
+            .builder()
+            .securityReferences(defaultAuth()).forPaths(PathSelectors.any()).build();
     }
 
     List<SecurityReference> defaultAuth() {
         AuthorizationScope authorizationScope = new AuthorizationScope("global",
-                "accessEverything");
+            "accessEverything");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
         return Arrays.asList(new SecurityReference("Bearer +accessToken", authorizationScopes));
@@ -61,10 +61,10 @@ public class SwaggerConfig {  // Swagger
 
     public ApiInfo apiInfo() {  // API의 이름, 현재 버전, API에 대한 정보
         return new ApiInfoBuilder()
-                .title(API_NAME)
-                .version(API_VERSION)
-                .description(API_DESCRIPTION)
-                .build();
+            .title(API_NAME)
+            .version(API_VERSION)
+            .description(API_DESCRIPTION)
+            .build();
     }
 
     private ApiKey apiKey() {
