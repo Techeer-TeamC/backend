@@ -1,42 +1,46 @@
 package com.Techeer.Team_C.domain.product.dto;
 
+import com.Techeer.Team_C.domain.product.entity.Mall;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 @Getter
 @Setter
 public class ProductDto {
 
-//    private String title;
-//    private String image;
-//    private List<MallDto> mallDtoInfo;
-//}
     private long productId;
 
     private String image;
 
     private String name;
 
-    private int originPrice;
-
-    private int minimumPrice;
-
-    private String link;
-
-    private String detail;
-
-    private String shipment;
+    private List<Mall> mallInfo;
 
     private boolean status;
 
-    public JSONObject toJson() { //향후 DB에 저장될 속성값에 따라 명확하게 변경예정. 지금은 간단한 정보만 출력
-        JSONObject obj = new JSONObject();
-        obj.put("id", productId);
-        obj.put("name", name);
-        obj.put("price", originPrice);
+    public JSONObject toJson() {
+        JSONObject productObj = new JSONObject();
+        JSONArray mallArray = new JSONArray();
 
-        return obj;
+        for (int i = 0; i < mallInfo.size(); i++) {
+            JSONObject data = new JSONObject();
+            data.put("name", mallInfo.get(i).getName());
+            data.put("link", mallInfo.get(i).getLink());
+            data.put("price", mallInfo.get(i).getPrice());
+            data.put("delivery", mallInfo.get(i).getDelivery());
+            data.put("interestFree", mallInfo.get(i).getInterestFree());
+            data.put("paymentOption", mallInfo.get(i).getPaymentOption());
+            mallArray.add(data);
+        }
+
+        productObj.put("id", productId);
+        productObj.put("name", name);
+        productObj.put("image", image);
+        productObj.put("mallInfo", mallArray);
+
+        return productObj;
     }
 }

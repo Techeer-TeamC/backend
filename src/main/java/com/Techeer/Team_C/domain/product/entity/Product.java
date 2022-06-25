@@ -40,7 +40,7 @@ public class Product extends BaseTimeEntity {
     @OneToMany(mappedBy = "product")
     private List<ProductRegister> productRegister;
 
-    @OneToMany(mappedBy ="product" , cascade = CascadeType.ALL, orphanRemoval = true) //영속화 설정
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true) //영속화 설정
     private List<Mall> mallInfo = new ArrayList<>(); //제품에 대한 쇼핑몰 Info , ArrayList<>초기화로 null 오류 방지
 
 

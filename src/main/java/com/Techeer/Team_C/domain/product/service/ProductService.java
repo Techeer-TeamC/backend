@@ -52,10 +52,11 @@ public class ProductService {
     public List<ProductDto> pageList(String keyword, Pageable page) {
         Page<Product> lists = productMysqlRepository.findByNameContaining(keyword, page);
 
-        return lists.getContent().stream().map(productEntity -> dtoConverter(productEntity)).collect(Collectors.toList());
+        return lists.getContent().stream().map(productEntity -> dtoConverter(productEntity))
+                .collect(Collectors.toList());
     }
 
-    public Integer searchCount(String keyword){
+    public Integer searchCount(String keyword) {
         return productMysqlRepository.countByNameContaining(keyword);
     }
 
@@ -66,7 +67,8 @@ public class ProductService {
 
 
     @Transactional
-    public ProductRegister saveRegister(ProductRegisterRequestDto productRegisterRequestDto, Long productId) {
+    public ProductRegister saveRegister(ProductRegisterRequestDto productRegisterRequestDto,
+            Long productId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getName() == null) {
@@ -82,19 +84,22 @@ public class ProductService {
         if (!productById.isPresent()) {
             throw new BusinessException("존재하지 않는 물품 입니다.", PRODUCT_NOT_FOUND);
         }
-        Optional<ProductRegister> productRegisterById = productRegisterMysqlRepository.findByUserAndProduct(userById.get(), productById.get());
-        if(productRegisterById.isPresent()) {
+        Optional<ProductRegister> productRegisterById = productRegisterMysqlRepository.findByUserAndProduct(
+                userById.get(), productById.get());
+        if (productRegisterById.isPresent()) {
             throw new BusinessException("이미 등록한 상품입니다.", DUPLICATE_PRODUCTREGISTER);
         }
 
-        ProductRegister productRegister = productRegisterMysqlRepository.build(userById.get(), productById.get(), productRegisterRequestDto.getDesiredPrice(), true);
+        ProductRegister productRegister = productRegisterMysqlRepository.build(userById.get(),
+                productById.get(), productRegisterRequestDto.getDesiredPrice(), true);
         productRegisterMysqlRepository.save(productRegister);
 
         return productRegister;
     }
 
     @Transactional
-    public ProductRegister editRegister(ProductRegisterEditDto productRegisterEditDto, Long productId) {
+    public ProductRegister editRegister(ProductRegisterEditDto productRegisterEditDto,
+            Long productId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getName() == null) {
             throw new BusinessException("Security Context 에 인증 정보가 없습니다", EMPTY_TOKEN_DATA);
@@ -105,14 +110,16 @@ public class ProductService {
         if (!userById.isPresent()) {
             throw new BusinessException("존재하지 않는 사용자 입니다.", USER_NOT_FOUND);
         }
-        Optional<ProductRegister> productRegisterById = productRegisterMysqlRepository.findByUserAndProduct(userById.get(), productMysqlRepository.findById(productId).get());
+        Optional<ProductRegister> productRegisterById = productRegisterMysqlRepository.findByUserAndProduct(
+                userById.get(), productMysqlRepository.findById(productId).get());
 
         if (!productRegisterById.isPresent()) {
             throw new BusinessException("등록하지 않은 물품 입니다.", PRODUCTREGISTER_NOT_FOUND);
         }
 
         ProductRegister entity = productRegisterById.get();
-        entity.update(entity.getUser(), entity.getProduct(), productRegisterEditDto.getDesiredPrice());
+        entity.update(entity.getUser(), entity.getProduct(),
+                productRegisterEditDto.getDesiredPrice());
 
         productRegisterMysqlRepository.save(entity);
         return entity;
@@ -137,7 +144,8 @@ public class ProductService {
             throw new BusinessException("존재하지 않는 물품입니다.", PRODUCT_NOT_FOUND);
         }
 
-        Optional<ProductRegister> productRegisterById = productRegisterMysqlRepository.findByUserAndProduct(userById.get(), productById.get());
+        Optional<ProductRegister> productRegisterById = productRegisterMysqlRepository.findByUserAndProduct(
+                userById.get(), productById.get());
         productRegisterById.ifPresentOrElse(productRegister -> {
             productRegisterById.get().setStatus(false);
             productRegisterMysqlRepository.save(productRegister);
