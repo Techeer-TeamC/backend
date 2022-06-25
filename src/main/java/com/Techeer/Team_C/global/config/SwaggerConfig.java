@@ -27,19 +27,6 @@ public class SwaggerConfig {  // Swagger
     private static final String API_DESCRIPTION = "Team C fish_it API 명세서";
 
     @Bean
-//<<<<<<< HEAD
-//    public Docket api2() {
-//        return new Docket(DocumentationType.OAS_30)
-//            .useDefaultResponseMessages(false)
-//            .select()
-//            .apis(RequestHandlerSelectors.basePackage("com.Techeer.Team_C.domain"))
-//            .paths(PathSelectors.any())
-//            .build()
-//            .apiInfo(new ApiInfoBuilder().title("Techeer Team C Swagger")
-//                .description("specification")
-//                .version("1.0")
-//                .build());
-//=======
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .useDefaultResponseMessages(false)
