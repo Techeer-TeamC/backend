@@ -4,6 +4,7 @@ import static com.Techeer.Team_C.global.error.exception.ErrorCode.INTERNAL_SERVE
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.INVALID_INPUT_VALUE;
 
 import com.Techeer.Team_C.domain.product.dto.MallDto;
+import com.Techeer.Team_C.domain.product.dto.ProductCrawlingDto;
 import com.Techeer.Team_C.domain.product.dto.ProductDto;
 import com.Techeer.Team_C.global.error.exception.BusinessException;
 import java.io.IOException;
@@ -39,10 +40,10 @@ public class ProductCrawler {
         return productUrl;
     }
 
-    public ProductDto DanawaCrawling(String url) {
+    public ProductCrawlingDto DanawaCrawling(String url) {
         HttpClient httpClient = new DefaultHttpClient();
         HttpGet httpget = new HttpGet(url);
-        ProductDto productDto = new ProductDto();
+        ProductCrawlingDto productDto = new ProductCrawlingDto();
         List<MallDto> mallDtoList = new LinkedList<>();
         try {
             httpClient.execute(httpget, new BasicResponseHandler() {
@@ -78,7 +79,7 @@ public class ProductCrawler {
                         String deliveryInfo = row.select("td.ship div span.stxt.deleveryBaseSection")
                             .text();
                         int delivery = 0;
-                        if (!(deliveryInfo.compareTo("무료배송")==1)){
+                        if ((deliveryInfo.compareTo("무료배송")==1)){
                             String[] split = deliveryInfo.split("원")[0].split(",");
                             String pieces = "";
                             for (String piece : split) {

@@ -19,6 +19,7 @@ public enum ErrorCode {
     EMAIL_NOT_FOUND(401, "M003", "Not found this email"),
     INVALID_PASSWORD(401, "M004", "Invalid password"),
     NO_PERMISSION(403, "M005", "Do not have permission."),
+    USER_NOT_FOUND(401,"M006","Not found this User"),
 
     //jwtToken
     INVALID_JTW_TOKEN_SIGNATURE(401, "J001", "The token's signature is invalid."),
@@ -35,8 +36,14 @@ public enum ErrorCode {
 
     //password Change
     NOT_DUPLICATE_PASSWORD(400,"P001", "NewPassword doesn't match re-entered password"),
-    DUPLICATE_PASSWORDS(400,"P002","The new password and the old password are the same.")
+    DUPLICATE_PASSWORDS(400,"P002","The new password and the old password are the same."),
 
+    //Product
+    PRODUCT_NOT_FOUND(400,"I001","Not found product"),
+
+    //ProductResister
+    PRODUCTREGISTER_NOT_FOUND(400, "I002", "Product not registered"),
+    DUPLICATE_PRODUCTREGISTER(400, "I003", "Already exist productRegister" )
     ;
     private final String code;
     private final String message;

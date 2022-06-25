@@ -8,6 +8,8 @@ import com.Techeer.Team_C.domain.user.entity.Role;
 import com.Techeer.Team_C.domain.user.repository.UserRepository;
 import com.Techeer.Team_C.domain.auth.service.AuthService;
 import com.Techeer.Team_C.domain.user.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,7 @@ public class UserController {
      * 회원가입
      */
     @PostMapping("/new")
+    @ApiOperation(value = "회원가입", notes = "회원가입 API")
     public String join(@RequestBody @Valid final SignupFormDto user) {
 
         UserDto member = new UserDto();
@@ -58,6 +61,7 @@ public class UserController {
 
 
     @GetMapping("/")
+    @ApiOperation(value = "User 정보 조회", notes = "정보조회 API , 헤더에 토큰 정보 필요")
     public String getMyMemberInfo() {
 
         Optional<UserDto> userData = userService.getMyinfo();
@@ -74,6 +78,7 @@ public class UserController {
     }
 
     @PutMapping("/")
+    @ApiOperation(value = "비밀번호 변경", notes = "비밀번호 변경 API, 헤더에 토큰 정보 필요")
     public String changePassword(@RequestBody @Valid final PasswordChangeRequestDto dto) {
 
         userService.changePassword(dto);
