@@ -59,7 +59,7 @@ public class ProductController {
     @ApiOperation(value = "물품 검색 조회", notes = "검색 내용의 물품리스트를 조회하는 API")
     @ApiImplicitParam(name = "keyword", value = "검색 할 내용")
 
-    public String showSearch(@RequestBody @RequestParam("keyword") String keyword, @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable page) {
+    public String showSearch(@RequestBody @RequestParam("keyword") String keyword, @PageableDefault(size = 9, sort = "name", direction = Sort.Direction.ASC) Pageable page) {
         //size : 한 번에 나타날 최대 개수
         //sort : 분류 기준
         List<ProductDto> resultList = productService.pageList(keyword, page);
