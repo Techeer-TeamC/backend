@@ -7,6 +7,7 @@ import com.Techeer.Team_C.domain.product.dto.ProductRegisterMapper;
 import com.Techeer.Team_C.domain.product.service.ProductCrawler;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,7 +28,7 @@ public class CrawlierController {
 
 
     @GetMapping("/product-detail-page")
-    public BaseResponse<ProductCrawlingDto> DanawaDetailpageCrawling(@RequestParam String url) {
-        return new BaseResponse<>(true,201, productCrawler.DanawaCrawling(url));
+    public ResponseEntity<ProductCrawlingDto> DanawaDetailpageCrawling(@RequestParam String url) {
+        return ResponseEntity.ok(productCrawler.DanawaCrawling(url));
     }
 }

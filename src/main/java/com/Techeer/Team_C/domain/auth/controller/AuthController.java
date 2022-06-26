@@ -8,6 +8,7 @@ import com.Techeer.Team_C.domain.auth.service.AuthService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,7 +52,7 @@ public class AuthController {
     public ResponseEntity<Void> logout(@RequestBody TokenRefreshDto tokenRefreshDto) {
 
         authService.logout(tokenRefreshDto);
-        return ResponseEntity.ok(null);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping("/kakao")

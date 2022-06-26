@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -51,7 +52,7 @@ public class UserController {
         member.setRole(Role.ROLE_USER);
         userService.join(member);
 
-        return ResponseEntity.ok(null);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 
 
     }
@@ -72,7 +73,7 @@ public class UserController {
             @RequestBody @Valid final PasswordChangeRequestDto dto) {
 
         userService.changePassword(dto);
-        return ResponseEntity.ok(null);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }
