@@ -1,6 +1,7 @@
 package com.Techeer.Team_C.domain.product.entity;
 
 import com.Techeer.Team_C.global.utils.dto.BaseTimeEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -33,6 +34,7 @@ public class Mall extends BaseTimeEntity {
     private String interestFree;   // 할부 기간
     private String paymentOption;  // 최저가 or 현금 가능 여부
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY) //N+1문제 회피
     @JoinColumn(name = "product_id")
     private Product product;

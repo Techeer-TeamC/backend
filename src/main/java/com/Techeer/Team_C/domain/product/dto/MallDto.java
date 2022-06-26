@@ -17,6 +17,6 @@ public class MallDto {
     private Integer delivery;
     private String interestFree;
     private String paymentOption;
-    private Product product;
+
 
 }

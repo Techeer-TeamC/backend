@@ -3,6 +3,9 @@ package com.Techeer.Team_C.domain.product.entity;
 
 import com.Techeer.Team_C.global.utils.dto.BaseTimeEntity;
 import com.Techeer.Team_C.global.utils.dto.BooleanToYNConverter;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators.IntSequenceGenerator;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -40,6 +43,7 @@ public class Product extends BaseTimeEntity {
     @OneToMany(mappedBy = "product")
     private List<ProductRegister> productRegister;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true) //영속화 설정
     private List<Mall> mallInfo = new ArrayList<>(); //제품에 대한 쇼핑몰 Info , ArrayList<>초기화로 null 오류 방지
 
