@@ -1,6 +1,7 @@
 package com.Techeer.Team_C.domain.product.service;
 
 import com.Techeer.Team_C.domain.product.dto.ProductDto;
+import com.Techeer.Team_C.domain.product.dto.ProductPageListResponseDto;
 import com.Techeer.Team_C.domain.product.dto.ProductRegisterEditDto;
 import com.Techeer.Team_C.domain.product.dto.ProductRegisterRequestDto;
 import com.Techeer.Team_C.domain.product.entity.Product;
@@ -39,21 +40,29 @@ public class ProductService {
         return modelMapper.map(product, ProductDto.class);
     }
 
-    public Optional<ProductDto> findProduct(Long id) {
+
+    public ProductDto findProduct(Long id) {
 
         Optional<Product> product = productMysqlRepository.findById(id);
         if (!product.isPresent()) {
             throw new BusinessException("해당 상품 정보가 존재하지 않습니다.", PRODUCT_NOT_FOUND);
         }
 
-        return product.map(productEntity -> dtoConverter(productEntity));
+        return product.map(productEntity -> dtoConverter(productEntity)).get();
     }
 
-    public List<ProductDto> pageList(String keyword, Pageable page) {
+    public ProductPageListResponseDto pageList(String keyword, Pageable page) {
         Page<Product> lists = productMysqlRepository.findByNameContaining(keyword, page);
 
-        return lists.getContent().stream().map(productEntity -> dtoConverter(productEntity))
-                .collect(Collectors.toList());
+        ProductPageListResponseDto result = new ProductPageListResponseDto();
+
+        result.setData(lists.getContent().stream().map(productEntity -> dtoConverter(productEntity))
+                .collect(Collectors.toList()));
+
+        result.setTotalCount(productMysqlRepository.countByNameContaining(keyword));
+
+        return result;
+
     }
 
     public Integer searchCount(String keyword) {

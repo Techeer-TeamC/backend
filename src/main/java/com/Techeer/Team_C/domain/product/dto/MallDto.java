@@ -10,7 +10,6 @@ import lombok.Setter;
 @Builder
 public class MallDto {
 
-    private Long mallId;
     private String link;
     private String name;
     private Integer price;
