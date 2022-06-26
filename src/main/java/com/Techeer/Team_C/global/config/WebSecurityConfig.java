@@ -64,10 +64,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests() // 요청에 대한 사용권한 체크
                 //.antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/api/v1/users/", "/api/v1/auth/", "/api/v1/products/register/*")
+                .antMatchers("/api/v1/users/", "/api/v1/auth/", "/api/v1/products/register/*", "/api/v1/user/login")
                 .hasRole("USER")
-                .antMatchers("/", "/css/**", "/images/**", "/js/**", "/h2-console/**",
-                        "/api/v1/user/login").permitAll()
+                .antMatchers("/", "/css/**", "/images/**", "/js/**", "/h2-console/**").permitAll()
                 .anyRequest().permitAll()// 그외 나머지 요청은 누구나 접근 가능
                 .and()
                 .exceptionHandling()
@@ -87,3 +86,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 전에 넣는다
     }
 }
+
