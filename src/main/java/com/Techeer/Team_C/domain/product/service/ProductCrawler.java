@@ -6,6 +6,7 @@ import static com.Techeer.Team_C.global.error.exception.ErrorCode.INVALID_INPUT_
 import com.Techeer.Team_C.domain.product.dto.MallDto;
 import com.Techeer.Team_C.domain.product.dto.ProductCrawlingDto;
 import com.Techeer.Team_C.domain.product.dto.ProductDto;
+import com.Techeer.Team_C.domain.product.entity.ProductRegister;
 import com.Techeer.Team_C.global.error.exception.BusinessException;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ProductCrawler {
 
+
     public String searchProductPage(String item) throws IOException {
         String baseUrl = "http://search.danawa.com/dsearch.php?query=";
         String firstQuery = baseUrl + item;
@@ -40,7 +42,8 @@ public class ProductCrawler {
         return productUrl;
     }
 
-    public ProductCrawlingDto DanawaCrawling(String url) {
+    public ProductCrawlingDto DanawaCrawling(String url,
+        ProductRegister productRegister) {
         HttpClient httpClient = new DefaultHttpClient();
         HttpGet httpget = new HttpGet(url);
         ProductCrawlingDto productDto = new ProductCrawlingDto();
