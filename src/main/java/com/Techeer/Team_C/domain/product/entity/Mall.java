@@ -11,7 +11,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -19,7 +22,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @Setter
 @Entity
-
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Mall extends BaseTimeEntity {
 
     @Id
@@ -29,7 +34,7 @@ public class Mall extends BaseTimeEntity {
 
     private String name;           // 쇼핑몰 이름
     private String link;           // 쇼핑몰 링크
-    private String price;          // 쇼핑몰 제품 가격
+    private Integer price;          // 쇼핑몰 제품 가격
     private Integer delivery;      // 무료배송 여부 (0 -> 무료배송)
     private String interestFree;   // 할부 기간
     private String paymentOption;  // 최저가 or 현금 가능 여부
