@@ -13,6 +13,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
@@ -23,7 +25,6 @@ import static com.Techeer.Team_C.global.utils.Constants.API_PREFIX;
 
 @RestController
 @RequestMapping(API_PREFIX + "/users")
-
 public class UserController {
 
     private final UserService userService;
@@ -42,20 +43,16 @@ public class UserController {
      */
     @PostMapping("/new")
     @ApiOperation(value = "회원가입", notes = "회원가입 API")
-    public String join(@RequestBody @Valid final SignupFormDto user) {
+    public ResponseEntity<Void> join(@RequestBody @Valid final SignupFormDto user) {
 
         UserDto member = new UserDto();
         member.setEmail(user.getEmail());
         member.setPassword(passwordEncoder.encode(user.getPassword()));
         member.setMemberName(user.getMemberName());
         member.setRole(Role.ROLE_USER);
-
         userService.join(member);
 
-        JSONObject obj = new JSONObject();
-        obj.put("success", true);
-        obj.put("status", 200);
-        return obj.toString();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 
 
     }
@@ -63,33 +60,20 @@ public class UserController {
 
     @GetMapping("/")
     @ApiOperation(value = "User 정보 조회", notes = "정보조회 API , 헤더에 토큰 정보 필요")
-    public String getMyMemberInfo() {
+    public ResponseEntity<UserDto> getMyMemberInfo() {
 
-        Optional<UserDto> userData = userService.getMyinfo();
-
-        JSONObject obj = new JSONObject();
-        JSONObject data = new JSONObject(userData.get().toJson());
-        obj.put("success", true);
-        obj.put("status", 200);
-        obj.put("data", data);
-
-        return obj.toString();
+        return ResponseEntity.ok(userService.getMyinfo().get());
 
 
     }
 
     @PutMapping("/")
     @ApiOperation(value = "비밀번호 변경", notes = "비밀번호 변경 API, 헤더에 토큰 정보 필요")
-    public String changePassword(@RequestBody @Valid final PasswordChangeRequestDto dto) {
+    public ResponseEntity<Void> changePassword(
+            @RequestBody @Valid final PasswordChangeRequestDto dto) {
 
         userService.changePassword(dto);
-
-        JSONObject obj = new JSONObject();
-
-        obj.put("success", true);
-        obj.put("status", 200);
-
-        return obj.toString();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }

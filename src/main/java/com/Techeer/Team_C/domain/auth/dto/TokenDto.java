@@ -25,15 +25,5 @@ public class TokenDto {
     @ApiModelProperty(example = "accessToken의 만료 시간")
     private Long accessTokenExpiresIn;
 
-    public JSONObject toJson() {
-        JSONObject obj = new JSONObject();
-        obj.put("grantType", grantType);
-        obj.put("accessToken", accessToken);
-        obj.put("refreshToken", refreshToken);
-        obj.put("accessTokenExpiresIn", accessTokenExpiresIn);
-
-        return obj;
-
-    }
 }
 

@@ -5,17 +5,11 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Getter
 @Setter
-public class ProductDto {
+public class ProductPageListResponseDto {
 
-    private long productId;
+    private List<ProductDto> data;
+    private Integer totalCount;
 
-    private String image;
-
-    private String name;
-
-    private List<Mall> mallInfo;
-    
 }

@@ -50,18 +50,16 @@ public class ProductRegister extends BaseTimeEntity {
     private boolean status;
 
     @Builder
-    public ProductRegister(User user, Product product, Integer desiredPrice, boolean status) {
+    public ProductRegister(User user, Product product, int desiredPrice, boolean status) {
         this.user = user;
         this.product = product;
         this.desiredPrice = desiredPrice;
         this.status = status;
     }
 
-    public void update(User user, Product product, int desiredPrice) {
+    public void update(int desiredPrice, boolean status) {
         this.desiredPrice = desiredPrice;
-        this.user = user;
-        this.product = product;
-        this.status = true;
+        this.status = status;
     }
 
 }

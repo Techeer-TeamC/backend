@@ -16,6 +16,7 @@
 #properties
 application-oauth.yml
 application-secret.yml
+client_secret_*
 
 # Gradle
 .gradle
@@ -129,6 +130,7 @@ application-oauth.properties
 
 # build file
 build/**
+build/tmp/**
 
 # gradle file
 .gradle/**
