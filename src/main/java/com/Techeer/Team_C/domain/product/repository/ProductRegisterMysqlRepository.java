@@ -12,6 +12,8 @@ import java.util.Optional;
 public interface ProductRegisterMysqlRepository extends JpaRepository<ProductRegister, Long> {
 
     List<ProductRegister> findAllByUser(User user);
+    
+    ProductRegister findByUserId(Long userId);
 
     Optional<ProductRegister> findByUserAndProduct(User user, Product product);
 
