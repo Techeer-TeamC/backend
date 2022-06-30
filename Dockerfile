@@ -18,14 +18,17 @@ FROM openjdk:11-jdk
 #jar파일 생성 후 복사
 COPY build/libs/*.jar app.jar
 
-ENV DOCKERIZE_VERSION v0.6.1
 
-# install dockerize
-RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+# Local DB를 통해서 테스트시에만 아래 주석 해제해주세요!
 
-# db가 setting 된 후 backend 시작을 위함
-ENTRYPOINT ["dockerize", "-wait", "tcp://db:3306", "-timeout", "20s"]
+#ENV DOCKERIZE_VERSION v0.6.1
+#
+## install dockerize
+#RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+#    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+#
+## db가 setting 된 후 backend 시작을 위함
+#ENTRYPOINT ["dockerize", "-wait", "tcp://db:3306", "-timeout", "20s"]
 
 #컨테이너가 실행될 때 명령어 수행
 CMD ["java","-jar","/app.jar"]
