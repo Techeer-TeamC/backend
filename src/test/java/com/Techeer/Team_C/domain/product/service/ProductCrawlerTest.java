@@ -10,7 +10,7 @@ class ProductCrawlerTest {
 //    ProductCrawler crawler = new ProductCrawler();
 //
 //    @Test
-//    public void getProductPage() thprices IOException{
+//    public void getProductPage() throws IOException{
 //        //given
 //        String url = "http://search.danawa.com/dsearch.php?query=%EB%A7%A5%EB%B6%81+%ED%94%84%EB%A1%9C+14";
 //

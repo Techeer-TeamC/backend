@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(API_PREFIX + "/crawler")
 @RequiredArgsConstructor
-public class CrawlierController {
+public class CrawlerController {
 
     private final ProductCrawler productCrawler;
     private final ProductRegisterMapper mapper;
