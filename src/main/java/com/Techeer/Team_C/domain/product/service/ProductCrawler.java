@@ -1,20 +1,25 @@
 package com.Techeer.Team_C.domain.product.service;
 
+import static com.Techeer.Team_C.global.error.exception.ErrorCode.DUPLICATE_PRODUCTREGISTER;
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.INTERNAL_SERVER_ERROR;
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.INVALID_INPUT_VALUE;
 
 import com.Techeer.Team_C.domain.product.dto.MallDto;
 import com.Techeer.Team_C.domain.product.dto.ProductCrawlingDto;
+import com.Techeer.Team_C.domain.product.dto.ProductListDto;
 import com.Techeer.Team_C.domain.product.entity.Mall;
 import com.Techeer.Team_C.domain.product.entity.Product;
+import com.Techeer.Team_C.domain.product.entity.ProductRegister;
 import com.Techeer.Team_C.domain.product.repository.ProductMysqlRepository;
 import com.Techeer.Team_C.domain.product.repository.ProductRegisterMysqlRepository;
+import com.Techeer.Team_C.domain.user.entity.User;
 import com.Techeer.Team_C.domain.user.repository.UserMysqlRepository;
 import com.Techeer.Team_C.global.error.exception.BusinessException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -147,7 +152,96 @@ public class ProductCrawler {
     }
 
 
-    public void storeProduct(ProductCrawlingDto productCrawlingDto, int userId) {
+    /*
+        product가 DB에 이미 등록되어 있는지
+            1. 등록되어 있는 경우, 해당 user가 product를 등록하였는지
+                1) user가 등록한 product인 경우, 종료
+                2) 등록하지 않은 경우, 해당 product에 user를 ProductRegister로 등록
+            2. 등록되지 않은 경우, product & productRegister를 생성하여 DB에 저장
 
+     */
+    @Transactional
+    public void storeProduct(ProductCrawlingDto productCrawlingDto, int userId, int desirePrice) {
+        List<Mall> mallList = new LinkedList<>();
+        Optional<Product> entiredProduct = productMysqlRepository.findByName(productCrawlingDto.getTitle());
+            if (entiredProduct.isEmpty()){
+                for (MallDto mallDto : productCrawlingDto.getMallDtoInfo()){
+                    mallList.add(Mall.builder()
+                        .name(mallDto.getName())
+                        .link(mallDto.getLink())
+                        .price(mallDto.getPrice())
+                        .delivery(mallDto.getDelivery())
+                        .interestFree(mallDto.getInterestFree())
+                        .paymentOption(mallDto.getPaymentOption())
+                        .build());
+                }
+                Product product = Product.builder()
+                    .name(productCrawlingDto.getTitle())
+                    .image(productCrawlingDto.getImage())
+                    .mallInfo(mallList)
+                    .build();
+                User user = userMysqlRepository.getById((long) userId);
+
+                ProductRegister productRegister =
+                    ProductRegister.builder()
+                        .product(product)
+                        .desiredPrice(desirePrice)
+                        .status(true)
+                        .user(user)
+                        .build();
+                user.getProductRegister().add(productRegister);
+                product.getProductRegister().add(productRegister);
+                productMysqlRepository.save(product);
+                productRegisterMysqlRepository.save(productRegister);
+            }
+            else {
+                User user = userMysqlRepository.getById((long) userId);
+
+                for (ProductRegister productRegister : entiredProduct.get().getProductRegister()){
+                    if (productRegister.getUser().getUserId() == userId){
+                        throw new BusinessException("이미 등록한 상품입니다.", DUPLICATE_PRODUCTREGISTER);
+                    }
+                }
+//                ProductRegister productRegister = ProductRegister.builder()
+//                entiredProduct.get().getProductRegister().add()
+            }
+    }
+
+    public List<ProductListDto> productList(String productName) {
+        String url = "http://search.danawa.com/dsearch.php?k1="+productName+"&module=goods&act=dispMain";
+        List<ProductListDto> productListDtoList = new LinkedList<>();
+        try {
+            Document doc = Jsoup.connect(url).get();
+            Elements elements = doc.select(
+                "div.main_prodlist.main_prodlist_list ul li[id][class=prod_item]");
+            for (Element product : elements) {
+                String productUrl = product.select("div div.prod_info p a").attr("href");
+                String title = product.select("div div.prod_info p a").text();
+                String thumbImageUrl =
+                    "http:" + product.select("div div.thumb_image a img").attr("src");
+                Element priceInfoList = product.select("div div.prod_pricelist ul li")
+                    .first();
+                int price = 0;
+                Elements minimumPriceElement = priceInfoList.select("p.price_sect a strong");
+                String minimumPrice = minimumPriceElement.text();
+                String[] priceSplit = minimumPrice.split(",");
+                String priceStr = "";
+                for (String piece : priceSplit) {
+                    priceStr += piece;
+                }
+                // 가격 비교 예정인 제품은 0원으로 표기함
+                if (!priceStr.isEmpty() && !priceStr.equals("가격비교예정")) {
+                    price = Integer.parseInt(priceStr);
+                }
+                productListDtoList.add(ProductListDto.builder()
+                    .title(title)
+                    .url(productUrl)
+                    .imageUrl(thumbImageUrl)
+                    .minimumPrice(price).build());
+            }
+            return productListDtoList;
+        } catch (IOException e){
+            throw new BusinessException(e.getMessage(), INVALID_INPUT_VALUE);
+        }
     }
 }
