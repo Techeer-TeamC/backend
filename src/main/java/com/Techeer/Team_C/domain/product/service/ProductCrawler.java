@@ -10,11 +10,7 @@ import com.Techeer.Team_C.domain.product.dto.ProductListDto;
 import com.Techeer.Team_C.domain.product.dto.ProductListResponseDto;
 import com.Techeer.Team_C.domain.product.entity.Mall;
 import com.Techeer.Team_C.domain.product.entity.Product;
-import com.Techeer.Team_C.domain.product.entity.ProductRegister;
 import com.Techeer.Team_C.domain.product.repository.ProductMysqlRepository;
-import com.Techeer.Team_C.domain.product.repository.ProductRegisterMysqlRepository;
-import com.Techeer.Team_C.domain.user.entity.User;
-import com.Techeer.Team_C.domain.user.repository.UserMysqlRepository;
 import com.Techeer.Team_C.global.error.exception.BusinessException;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -30,20 +26,16 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
-import springfox.documentation.spring.web.json.Json;
 
 @Service
 @RequiredArgsConstructor
 public class ProductCrawler {
 
     private final ProductMysqlRepository productMysqlRepository;
-    private final ProductRegisterMysqlRepository productRegisterMysqlRepository;
-    private final UserMysqlRepository userMysqlRepository;
 
     public String searchProductPage(String item) throws IOException {
         String baseUrl = "http://search.danawa.com/dsearch.php?query=";
@@ -80,7 +72,7 @@ public class ProductCrawler {
                     String title = doc.select("div.top_summary h3.prod_tit").text();
                     Optional<Product> productRegisted = productMysqlRepository.findByName(title);
 
-                    if (productRegisted.isEmpty()){ // DB에 저장되어있는 product가 아닐 때
+                    if (productRegisted.isEmpty()) { // DB에 저장되어있는 product가 아닐 때
                         Elements image = doc.select("div.photo_w a img"); // product thumb
                         productDto.setTitle(title);
                         productDto.setImage("http:" + image.attr("src"));
@@ -92,26 +84,29 @@ public class ProductCrawler {
                             String mallLink = row.select("td.mall div a").attr("href");
                             Elements priceInfo = row.select("td.price a span");
                             String paymentOption = priceInfo.select("span.txt_dsc").text();
-                            String[] priceSplit = priceInfo.select("span.txt_prc").text().split("원")[0].split(",");
+                            String[] priceSplit = priceInfo.select("span.txt_prc").text()
+                                .split("원")[0].split(",");
                             String priceStr = "";
                             int price = 0;
-                            for (String piece : priceSplit ){
+                            for (String piece : priceSplit) {
                                 priceStr += piece;
                             }
-                            if (!priceStr.isEmpty()){
+                            if (!priceStr.isEmpty()) {
                                 price = Integer.parseInt(priceStr);
                             }
-                            String deliveryInfo = row.select("td.ship div span.stxt.deleveryBaseSection")
+                            String deliveryInfo = row.select(
+                                    "td.ship div span.stxt.deleveryBaseSection")
                                 .text();
                             int delivery = 0;
-                            if ((deliveryInfo.compareTo("무료배송")==1)){
+                            if ((deliveryInfo.compareTo("무료배송") == 1)) {
                                 String[] split = deliveryInfo.split("원")[0].split(",");
                                 String pieces = "";
                                 for (String piece : split) {
                                     pieces += piece;
                                 }
-                                if (!pieces.isEmpty())
+                                if (!pieces.isEmpty()) {
                                     delivery = Integer.parseInt(pieces);
+                                }
                             }
                             String interestFree = row.select("td.bnfit div a").text();
                             MallDto mallDto = MallDto.builder()
@@ -130,7 +125,7 @@ public class ProductCrawler {
                         productDto.setTitle(product.getName());
                         productDto.setImage(product.getImage());
                         List<Mall> mallList = product.getMallInfo();
-                        for(Mall mall : mallList){
+                        for (Mall mall : mallList) {
                             MallDto mallDto = MallDto.builder()
                                 .name(mall.getName())
                                 .link(mall.getLink())
@@ -148,70 +143,44 @@ public class ProductCrawler {
             });
             return productDto;
         } catch (ClientProtocolException e) {
-            throw new BusinessException(e.getMessage(),INTERNAL_SERVER_ERROR);
+            throw new BusinessException(e.getMessage(), INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
             throw new BusinessException(e.getMessage(), INVALID_INPUT_VALUE);
         }
     }
 
-
-    /*
-        product가 DB에 이미 등록되어 있는지
-            1. 등록되어 있는 경우, 해당 user가 product를 등록하였는지
-                1) user가 등록한 product인 경우, 종료
-                2) 등록하지 않은 경우, 해당 product에 user를 ProductRegister로 등록
-            2. 등록되지 않은 경우, product & productRegister를 생성하여 DB에 저장
-
-     */
     @Transactional
-    public void storeProduct(ProductCrawlingDto productCrawlingDto, int userId, int desirePrice) {
+    public void storeProduct(ProductCrawlingDto productCrawlingDto) {
         List<Mall> mallList = new LinkedList<>();
-        Optional<Product> entiredProduct = productMysqlRepository.findByName(productCrawlingDto.getTitle());
-            if (entiredProduct.isEmpty()){
-                for (MallDto mallDto : productCrawlingDto.getMallDtoInfo()){
-                    mallList.add(Mall.builder()
-                        .name(mallDto.getName())
-                        .link(mallDto.getLink())
-                        .price(mallDto.getPrice())
-                        .delivery(mallDto.getDelivery())
-                        .interestFree(mallDto.getInterestFree())
-                        .paymentOption(mallDto.getPaymentOption())
-                        .build());
-                }
-                Product product = Product.builder()
-                    .name(productCrawlingDto.getTitle())
-                    .image(productCrawlingDto.getImage())
-                    .mallInfo(mallList)
-                    .build();
-                User user = userMysqlRepository.getById((long) userId);
+        Optional<Product> entiredProduct = productMysqlRepository.findByName(
+            productCrawlingDto.getTitle());
 
-                ProductRegister productRegister =
-                    ProductRegister.builder()
-                        .product(product)
-                        .desiredPrice(desirePrice)
-                        .status(true)
-                        .user(user)
-                        .build();
-                user.getProductRegister().add(productRegister);
-                product.getProductRegister().add(productRegister);
-                productMysqlRepository.save(product);
-                productRegisterMysqlRepository.save(productRegister);
+        if (!entiredProduct.isEmpty()) {
+            throw new BusinessException("이미 등록한 상품입니다.", DUPLICATE_PRODUCTREGISTER);
+        } else {
+            for (MallDto mallDto : productCrawlingDto.getMallDtoInfo()) {
+                mallList.add(Mall.builder()
+                    .name(mallDto.getName())
+                    .link(mallDto.getLink())
+                    .price(mallDto.getPrice())
+                    .delivery(mallDto.getDelivery())
+                    .interestFree(mallDto.getInterestFree())
+                    .paymentOption(mallDto.getPaymentOption())
+                    .build());
             }
-            else {
-                User user = userMysqlRepository.getById((long) userId);
+            Product product = Product.builder()
+                .name(productCrawlingDto.getTitle())
+                .image(productCrawlingDto.getImage())
+                .mallInfo(mallList)
+                .build();
 
-                for (ProductRegister productRegister : entiredProduct.get().getProductRegister()){
-                    if (productRegister.getUser().getUserId() == userId){
-                        throw new BusinessException("이미 등록한 상품입니다.", DUPLICATE_PRODUCTREGISTER);
-                    }
-                }
-//                ProductRegister productRegister = ProductRegister.builder()
-//                entiredProduct.get().getProductRegister().add()
-            }
+            productMysqlRepository.save(product);
+        }
     }
 
     public ProductListResponseDto productList(String searchWard) {
-        String url = "http://search.danawa.com/dsearch.php?k1="+searchWard+"&module=goods&act=dispMain";
+        String url =
+            "http://search.danawa.com/dsearch.php?k1=" + searchWard + "&module=goods&act=dispMain";
         List<ProductListDto> productListDtoList = new LinkedList<>();
         try {
             Document doc = Jsoup.connect(url).get();
@@ -224,10 +193,11 @@ public class ProductCrawler {
 
                 String thumbImageUrl = "http:";
                 Elements imageUrlElement = product.select("div div.thumb_image a img");
-                if (imageUrlElement.hasAttr("src"))
+                if (imageUrlElement.hasAttr("src")) {
                     thumbImageUrl += imageUrlElement.attr("src");
-                else
+                } else {
                     thumbImageUrl += imageUrlElement.attr("data-original");
+                }
 
                 Element priceInfoList = product.select("div div.prod_pricelist ul li")
                     .first();
@@ -255,7 +225,7 @@ public class ProductCrawler {
                 .totalNumber(totalNubmer)
                 .productListDtoList(productListDtoList)
                 .build();
-        } catch (IOException e){
+        } catch (IOException e) {
             throw new BusinessException(e.getMessage(), INVALID_INPUT_VALUE);
         }
     }
