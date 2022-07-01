@@ -30,6 +30,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -220,8 +221,14 @@ public class ProductCrawler {
             for (Element product : elements) {
                 String productUrl = product.select("div div.prod_info p a").attr("href");
                 String title = product.select("div div.prod_info p a").text();
-                String thumbImageUrl =
-                    "http:" + product.select("div div.thumb_image a img").attr("src");
+
+                String thumbImageUrl = "http:";
+                Elements imageUrlElement = product.select("div div.thumb_image a img");
+                if (imageUrlElement.hasAttr("src"))
+                    thumbImageUrl += imageUrlElement.attr("src");
+                else
+                    thumbImageUrl += imageUrlElement.attr("data-original");
+
                 Element priceInfoList = product.select("div div.prod_pricelist ul li")
                     .first();
                 int price = 0;
