@@ -28,15 +28,15 @@ public class AlarmService {
     private final UserRepository userRepository;
 
     @Async
-    public String sendMail(Long id, Long userId) throws MessagingException {
-        Optional<Product> product = productMysqlRepository.findById(id);
-        Optional<User> user = userRepository.findById(userId);
+    public String sendMail(Long id, User user) throws MessagingException { // id = productId
+        Optional<Product> product = productMysqlRepository.findById(id); // product data 가져오기
+        Optional<User> userData = userRepository.findById(user.getUserId()); // user data 가져오기
 
         Context context = new Context();
         context.setVariable("product_name", product.get().getName());
         context.setVariable("product_image", product.get().getImage());
         context.setVariable("price_link", product.get().getLink());
-        context.setVariable("desire_price", productRegisterMysqlRepository.findByUserId(userId).getDesiredPrice());
+        context.setVariable("desire_price", productRegisterMysqlRepository.findByUser(user).getDesiredPrice());
         context.setVariable("price", product.get().getOriginPrice());
         // thymeleaf 변수 설정
 
@@ -47,7 +47,7 @@ public class AlarmService {
         MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
         messageHelper.setSubject("상품 가격 하락 알림");
         messageHelper.setText(process, true);
-        messageHelper.setTo(user.get().getEmail());
+        messageHelper.setTo(userData.get().getEmail()); //user.get().getEmail()
         javaMailSender.send(message);
         return "Sent";
     }
