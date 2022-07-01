@@ -7,6 +7,7 @@ import static com.Techeer.Team_C.global.error.exception.ErrorCode.INVALID_INPUT_
 import com.Techeer.Team_C.domain.product.dto.MallDto;
 import com.Techeer.Team_C.domain.product.dto.ProductCrawlingDto;
 import com.Techeer.Team_C.domain.product.dto.ProductListDto;
+import com.Techeer.Team_C.domain.product.dto.ProductListResponseDto;
 import com.Techeer.Team_C.domain.product.entity.Mall;
 import com.Techeer.Team_C.domain.product.entity.Product;
 import com.Techeer.Team_C.domain.product.entity.ProductRegister;
@@ -33,6 +34,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
+import springfox.documentation.spring.web.json.Json;
 
 @Service
 @RequiredArgsConstructor
@@ -207,13 +209,14 @@ public class ProductCrawler {
             }
     }
 
-    public List<ProductListDto> productList(String productName) {
-        String url = "http://search.danawa.com/dsearch.php?k1="+productName+"&module=goods&act=dispMain";
+    public ProductListResponseDto productList(String searchWard) {
+        String url = "http://search.danawa.com/dsearch.php?k1="+searchWard+"&module=goods&act=dispMain";
         List<ProductListDto> productListDtoList = new LinkedList<>();
         try {
             Document doc = Jsoup.connect(url).get();
             Elements elements = doc.select(
                 "div.main_prodlist.main_prodlist_list ul li[id][class=prod_item]");
+            int totalNubmer = 0;
             for (Element product : elements) {
                 String productUrl = product.select("div div.prod_info p a").attr("href");
                 String title = product.select("div div.prod_info p a").text();
@@ -238,8 +241,13 @@ public class ProductCrawler {
                     .url(productUrl)
                     .imageUrl(thumbImageUrl)
                     .minimumPrice(price).build());
+                totalNubmer++;
             }
-            return productListDtoList;
+
+            return ProductListResponseDto.builder()
+                .totalNumber(totalNubmer)
+                .productListDtoList(productListDtoList)
+                .build();
         } catch (IOException e){
             throw new BusinessException(e.getMessage(), INVALID_INPUT_VALUE);
         }
