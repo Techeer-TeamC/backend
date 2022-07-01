@@ -27,6 +27,7 @@ public class AlarmService {
     private final ProductRegisterMysqlRepository productRegisterMysqlRepository;
     private final UserRepository userRepository;
 
+    @Async
     public String sendMail(Long id, Long userId) throws MessagingException {
         Optional<Product> product = productMysqlRepository.findById(id);
         Optional<User> user = userRepository.findById(userId);
