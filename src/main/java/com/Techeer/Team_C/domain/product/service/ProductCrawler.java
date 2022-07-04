@@ -57,9 +57,9 @@ public class ProductCrawler {
             2-2. DB product와 crawling data의 최저가 mall 가격정보 비교
                 2-2-1. mall은 동일한데 가격만 다를 경우, 가격 업데이트
                 2-2-2. mall도 다를 경우, 내림차순으로 가격 정렬..?
-        다나와 크롤링을 할 때 마다 제품이 있을 경우 가격 정보를 업데이트하게 되면, 최저가만 업데이트하고 나머지 mall 정보는 시간마다 update를
-        하는 쪽이 나을지..
+        현재는 최저가 정보만 mallList의 첫 번째 mall에 적용, 추후 7/5 회의 때 정하기
      */
+    @Transactional
     public ProductCrawlingDto DanawaCrawling(String url) {
         HttpClient httpClient = new DefaultHttpClient();
         HttpGet httpget = new HttpGet(url);
@@ -134,10 +134,26 @@ public class ProductCrawler {
 
                         }
                         productDto.setMallDtoInfo(mallDtoList);
+
                     } else {    // db에 저장되어있는 product인 경우,
                         Product product = productRegistered.get();
-//                        List<Mall> registeredMall = product.getMallInfo();
-//
+                        Mall registeredMinimumMall = product.getMallInfo().get(0);
+
+                        String [] priceText = doc.select(
+                            "div.lowest_top div.row.lowest_price span.lwst_prc a em").text().split(",");
+                        String priceStr = "";
+                        int price = 0;
+                        for (String piece : priceText) {
+                            priceStr += piece;
+                        }
+                        if (!priceStr.isEmpty()) {
+                            price = Integer.parseInt(priceStr);
+                        }
+
+                        // 영속성에 의해 DB 최저가 자동 update
+                        if (registeredMinimumMall.getPrice() > price)
+                            registeredMinimumMall.setPrice(price);
+
 //                        for (int i = 0; i<mallInfo.size(); i++) {
 //                            Element row = mallInfo.get(i);
 //                            Mall mall = registeredMall.get(i);
