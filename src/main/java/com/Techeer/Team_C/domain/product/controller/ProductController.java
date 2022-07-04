@@ -6,6 +6,7 @@ import com.Techeer.Team_C.domain.product.dto.ProductRegisterEditDto;
 import com.Techeer.Team_C.domain.product.dto.ProductRegisterMapper;
 import com.Techeer.Team_C.domain.product.dto.ProductRegisterRequestDto;
 import com.Techeer.Team_C.domain.product.dto.ProductRegisterResponseDto;
+import com.Techeer.Team_C.domain.product.entity.Mall;
 import com.Techeer.Team_C.domain.product.service.ProductService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -91,5 +92,10 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @ApiOperation(value = "상품의 몰 정보", notes = "crawling 시 최저가 업데이트 여부 확인을 위함")
+    @GetMapping("/product/mallList/{id}")
+    public ResponseEntity<List<Mall>> getMallList(@PathVariable("id") Long productId) {
+        return ResponseEntity.ok(productService.getProductMallList(productId));
+    }
 
 }

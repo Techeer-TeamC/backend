@@ -44,6 +44,4 @@ public class Mall extends BaseTimeEntity {
     @JoinColumn(name = "product_id")
     private Product product;
 
-
-
 }
