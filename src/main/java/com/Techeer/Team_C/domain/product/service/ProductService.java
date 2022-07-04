@@ -4,8 +4,10 @@ import com.Techeer.Team_C.domain.product.dto.ProductDto;
 import com.Techeer.Team_C.domain.product.dto.ProductPageListResponseDto;
 import com.Techeer.Team_C.domain.product.dto.ProductRegisterEditDto;
 import com.Techeer.Team_C.domain.product.dto.ProductRegisterRequestDto;
+import com.Techeer.Team_C.domain.product.entity.Mall;
 import com.Techeer.Team_C.domain.product.entity.Product;
 import com.Techeer.Team_C.domain.product.entity.ProductRegister;
+import com.Techeer.Team_C.domain.product.repository.ProductMallMysqlRepository;
 import com.Techeer.Team_C.domain.product.repository.ProductMysqlRepository;
 import com.Techeer.Team_C.domain.product.repository.ProductRegisterMysqlRepository;
 import com.Techeer.Team_C.domain.user.entity.User;
@@ -15,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -28,12 +31,12 @@ import static com.Techeer.Team_C.global.error.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
-
 public class ProductService {
 
     private final ProductMysqlRepository productMysqlRepository;
     private final ProductRegisterMysqlRepository productRegisterMysqlRepository;
     private final ModelMapper modelMapper;
+    private final ProductMallMysqlRepository productMallMysqlRepository;
     private final UserRepository userRepository;
 
     private ProductDto dtoConverter(Product product) {
@@ -176,5 +179,22 @@ public class ProductService {
             throw new BusinessException("등록하지 않은 물품입니다.", PRODUCTREGISTER_NOT_FOUND);
         });
 
+    }
+
+    public List<Mall> getProductMallList(Long productId) {
+        Optional<Product> productById = productMysqlRepository.findById(productId);
+        if (!productById.isPresent()) {
+            throw new BusinessException("존재하지 않는 물품입니다.", PRODUCT_NOT_FOUND);
+        }
+
+        Optional<List<Mall>> RegisteredProductMallList =
+            productMallMysqlRepository.findAllByProduct(
+                Product.builder().
+                    productId(productId).build());
+        if (!RegisteredProductMallList.isPresent()) {
+            throw new BusinessException("mall 정보가 존재하지 않습니다.", Mall_NOT_FOUND);
+        }
+
+        return RegisteredProductMallList.get();
     }
 }

@@ -40,10 +40,11 @@ public enum ErrorCode {
 
     //Product
     PRODUCT_NOT_FOUND(400,"I001","Not found product"),
+    Mall_NOT_FOUND(400,"I002", "Not found Mall"),
 
     //ProductResister
-    PRODUCTREGISTER_NOT_FOUND(400, "I002", "Product not registered"),
-    DUPLICATE_PRODUCTREGISTER(400, "I003", "Product already registered" )
+    PRODUCTREGISTER_NOT_FOUND(400, "I003", "Product not registered"),
+    DUPLICATE_PRODUCTREGISTER(400, "I004", "Product already registered" )
     ;
     private final String code;
     private final String message;

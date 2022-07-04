@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ProductCrawlingDto {
+
     private String title;
     private String image;
     private List<MallDto> mallDtoInfo;

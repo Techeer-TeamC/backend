@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 
 public interface ProductMysqlRepository extends JpaRepository<Product,Long> {
-    Optional<Product> findByName(String name);
     Page<Product> findByNameContaining(String name, Pageable pageable);
     Integer countByNameContaining(@Param("name") String name);
+    Optional<Product> findByName(String name);
 }
