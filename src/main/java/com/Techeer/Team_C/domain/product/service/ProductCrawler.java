@@ -70,9 +70,9 @@ public class ProductCrawler {
                     Document doc = Jsoup.parse(res);
 
                     String title = doc.select("div.top_summary h3.prod_tit").text();
-                    Optional<Product> productRegisted = productMysqlRepository.findByName(title);
+                    Optional<Product> productRegistered = productMysqlRepository.findByName(title);
 
-                    if (productRegisted.isEmpty()) { // DB에 저장되어있는 product가 아닐 때
+                    if (productRegistered.isEmpty()) { // DB에 저장되어있는 product가 아닐 때
                         Elements image = doc.select("div.photo_w a img"); // product thumb
                         productDto.setTitle(title);
                         productDto.setImage("http:" + image.attr("src"));
@@ -121,7 +121,7 @@ public class ProductCrawler {
                         }
                         productDto.setMallDtoInfo(mallDtoList);
                     } else {    // db에 저장되어있는 product인 경우,
-                        Product product = productRegisted.get();
+                        Product product = productRegistered.get();
                         productDto.setTitle(product.getName());
                         productDto.setImage(product.getImage());
                         List<Mall> mallList = product.getMallInfo();
@@ -152,10 +152,10 @@ public class ProductCrawler {
     @Transactional
     public void storeProduct(ProductCrawlingDto productCrawlingDto) {
         List<Mall> mallList = new LinkedList<>();
-        Optional<Product> entiredProduct = productMysqlRepository.findByName(
+        Optional<Product> registeredProduct = productMysqlRepository.findByName(
             productCrawlingDto.getTitle());
 
-        if (!entiredProduct.isEmpty()) {
+        if (!registeredProduct.isEmpty()) {
             throw new BusinessException("이미 등록한 상품입니다.", DUPLICATE_PRODUCTREGISTER);
         } else {
             for (MallDto mallDto : productCrawlingDto.getMallDtoInfo()) {
@@ -171,6 +171,7 @@ public class ProductCrawler {
             Product product = Product.builder()
                 .name(productCrawlingDto.getTitle())
                 .image(productCrawlingDto.getImage())
+                .status(true)
                 .mallInfo(mallList)
                 .build();
 
@@ -178,9 +179,9 @@ public class ProductCrawler {
         }
     }
 
-    public ProductListResponseDto productList(String searchWard) {
+    public ProductListResponseDto productList(String searchWord) {
         String url =
-            "http://search.danawa.com/dsearch.php?k1=" + searchWard + "&module=goods&act=dispMain";
+            "http://search.danawa.com/dsearch.php?k1=" + searchWord + "&module=goods&act=dispMain";
         List<ProductListDto> productListDtoList = new LinkedList<>();
         try {
             Document doc = Jsoup.connect(url).get();

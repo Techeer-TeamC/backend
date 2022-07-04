@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,12 +31,12 @@ public class CrawlerController {
         return productCrawler.searchProductPage(item);
     }
 
-    @PutMapping("/product")
+    @PostMapping("/product")
     @ApiOperation(value = "특정 물품 저장")
     public ResponseEntity<Void> registerProduct(
         @RequestBody ProductCrawlingDto productCrawlingDto) {
         productCrawler.storeProduct(productCrawlingDto);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/search/product")
