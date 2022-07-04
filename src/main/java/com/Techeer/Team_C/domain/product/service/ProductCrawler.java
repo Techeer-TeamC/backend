@@ -52,7 +52,13 @@ public class ProductCrawler {
     /*
         product가 이미 DB에 저장되어있는지
         1. 저장되어있지 않을 경우 crawling 하여 product를 생성
-        2. 저장되어있는 경우 해당 데이터를 가져와 반환
+        2. 저장되어있는 경우
+            2-1. product의 mall 정보 list를 crawling
+            2-2. DB product와 crawling data의 최저가 mall 가격정보 비교
+                2-2-1. mall은 동일한데 가격만 다를 경우, 가격 업데이트
+                2-2-2. mall도 다를 경우, 내림차순으로 가격 정렬..?
+        다나와 크롤링을 할 때 마다 제품이 있을 경우 가격 정보를 업데이트하게 되면, 최저가만 업데이트하고 나머지 mall 정보는 시간마다 update를
+        하는 쪽이 나을지..
      */
     public ProductCrawlingDto DanawaCrawling(String url) {
         HttpClient httpClient = new DefaultHttpClient();
@@ -71,16 +77,24 @@ public class ProductCrawler {
 
                     String title = doc.select("div.top_summary h3.prod_tit").text();
                     Optional<Product> productRegistered = productMysqlRepository.findByName(title);
+                    Elements mallInfo = doc.select("table.lwst_tbl tbody.high_list tr.add_delivery");
 
                     if (productRegistered.isEmpty()) { // DB에 저장되어있는 product가 아닐 때
                         Elements image = doc.select("div.photo_w a img"); // product thumb
                         productDto.setTitle(title);
                         productDto.setImage("http:" + image.attr("src"));
 
-                        Elements mallInfo = doc.select("table.lwst_tbl tbody.high_list").first()
-                            .children();
                         for (Element row : mallInfo) {
-                            String mallName = row.select("td.mall div a img").attr("alt");
+                            Element mallNameElement = row.select("td.mall div a").first();
+                            String mallName = "";
+                            // mall title 정보가 다른 tag에 저장되어있는 case를 위함
+                            if (mallNameElement.children().isEmpty()){
+                                mallName = mallNameElement.attr("title");
+                            }
+                            else{
+                                mallName = mallNameElement.child(0).attr("alt");
+                            }
+
                             String mallLink = row.select("td.mall div a").attr("href");
                             Elements priceInfo = row.select("td.price a span");
                             String paymentOption = priceInfo.select("span.txt_dsc").text();
@@ -122,6 +136,62 @@ public class ProductCrawler {
                         productDto.setMallDtoInfo(mallDtoList);
                     } else {    // db에 저장되어있는 product인 경우,
                         Product product = productRegistered.get();
+//                        List<Mall> registeredMall = product.getMallInfo();
+//
+//                        for (int i = 0; i<mallInfo.size(); i++) {
+//                            Element row = mallInfo.get(i);
+//                            Mall mall = registeredMall.get(i);
+//                            String mallName = row.select("td.mall div a img").attr("alt");
+//                            Elements priceInfo = row.select("td.price a span");
+//                            String[] priceSplit = priceInfo.select("span.txt_prc").text()
+//                                .split("원")[0].split(",");
+//                            String priceStr = "";
+//                            int price = 0;
+//                            for (String piece : priceSplit) {
+//                                priceStr += piece;
+//                            }
+//                            if (!priceStr.isEmpty()) {
+//                                price = Integer.parseInt(priceStr);
+//                            }
+//
+//                            // 최저가 비교
+//                            if (mall.getPrice() > price){
+//                                //mall 정보 비교
+//                                if (mall.getName().equals(mallName)){
+//                                    mall.setPrice(price);
+//                                }
+//                                else{
+//                                    String mallLink = row.select("td.mall div a").attr("href");
+//                                    String paymentOption = priceInfo.select("span.txt_dsc").text();
+//                                    String deliveryInfo = row.select(
+//                                            "td.ship div span.stxt.deleveryBaseSection")
+//                                        .text();
+//                                    int delivery = 0;
+//                                    if ((deliveryInfo.compareTo("무료배송") == 1)) {
+//                                        String[] split = deliveryInfo.split("원")[0].split(",");
+//                                        String pieces = "";
+//                                        for (String piece : split) {
+//                                            pieces += piece;
+//                                        }
+//                                        if (!pieces.isEmpty()) {
+//                                            delivery = Integer.parseInt(pieces);
+//                                        }
+//                                    }
+//                                    String interestFree = row.select("td.bnfit div a").text();
+//
+//                                    mall = Mall.builder()
+//                                        .name(mallName)
+//                                        .link(mallLink)
+//                                        .price(price)
+//                                        .delivery(delivery)
+//                                        .interestFree(interestFree)
+//                                        .paymentOption(paymentOption)
+//                                        .build();
+//                                }
+//                                break;
+//                            }
+//                        }
+
                         productDto.setTitle(product.getName());
                         productDto.setImage(product.getImage());
                         List<Mall> mallList = product.getMallInfo();
@@ -158,6 +228,12 @@ public class ProductCrawler {
         if (!registeredProduct.isEmpty()) {
             throw new BusinessException("이미 등록한 상품입니다.", DUPLICATE_PRODUCTREGISTER);
         } else {
+            Product product = Product.builder()
+                .name(productCrawlingDto.getTitle())
+                .image(productCrawlingDto.getImage())
+                .status(true)
+                .build();
+
             for (MallDto mallDto : productCrawlingDto.getMallDtoInfo()) {
                 mallList.add(Mall.builder()
                     .name(mallDto.getName())
@@ -166,14 +242,10 @@ public class ProductCrawler {
                     .delivery(mallDto.getDelivery())
                     .interestFree(mallDto.getInterestFree())
                     .paymentOption(mallDto.getPaymentOption())
+                    .product(product)
                     .build());
             }
-            Product product = Product.builder()
-                .name(productCrawlingDto.getTitle())
-                .image(productCrawlingDto.getImage())
-                .status(true)
-                .mallInfo(mallList)
-                .build();
+            product.setMallInfo(mallList);
 
             productMysqlRepository.save(product);
         }
