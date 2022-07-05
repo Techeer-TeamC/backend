@@ -42,6 +42,10 @@ public class Product extends BaseTimeEntity {
 
     private String name;
 
+    private String url;
+
+    private Integer minimumPrice;
+
     @NotNull
     @Convert(converter = BooleanToYNConverter.class)
     private boolean status;

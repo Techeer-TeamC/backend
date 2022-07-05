@@ -49,12 +49,7 @@ public class ProductCrawler {
     /*
         product가 이미 DB에 저장되어있는지
         1. 저장되어있지 않을 경우 crawling 하여 product를 생성
-        2. 저장되어있는 경우
-            2-1. product의 mall 정보 list를 crawling
-            2-2. DB product와 crawling data의 최저가 mall 가격정보 비교
-                2-2-1. mall은 동일한데 가격만 다를 경우, 가격 업데이트
-                2-2-2. mall도 다를 경우, 내림차순으로 가격 정렬..?
-        현재는 최저가 정보만 mallList의 첫 번째 mall에 적용, 추후 7/5 회의 때 정하기
+        2. 저장되어있는 경우 product의 최저가 정보를 crawling하여 product에 update
      */
     @Transactional
     public ProductCrawlingDto DanawaCrawling(String url) {
@@ -75,14 +70,19 @@ public class ProductCrawler {
                     String title = doc.select("div.top_summary h3.prod_tit").text();
                     Optional<Product> productRegistered = productMysqlRepository.findByName(title);
                     Elements mallInfo = doc.select(
-                        "table.lwst_tbl tbody.high_list tr.add_delivery");
+                        "table.lwst_tbl tbody.high_list tr");
 
                     if (productRegistered.isEmpty()) { // DB에 저장되어있는 product가 아닐 때
                         Elements image = doc.select("div.photo_w a img"); // product thumb
                         productDto.setTitle(title);
+                        productDto.setUrl(url);
                         productDto.setImage("http:" + image.attr("src"));
 
                         for (Element row : mallInfo) {
+                            String mallLink = row.select("td.mall div a").attr("href");
+                            // 불필요 데이터 전처리
+                            if (mallLink.contains("info"))
+                                continue;
                             Element mallNameElement = row.select("td.mall div a").first();
                             String mallName = "";
                             // mall title 정보가 다른 tag에 저장되어있는 case를 위함
@@ -92,7 +92,6 @@ public class ProductCrawler {
                                 mallName = mallNameElement.child(0).attr("alt");
                             }
 
-                            String mallLink = row.select("td.mall div a").attr("href");
                             Elements priceInfo = row.select("td.price a span");
                             String paymentOption = priceInfo.select("span.txt_dsc").text();
                             String[] priceSplit = priceInfo.select("span.txt_prc").text()
@@ -131,10 +130,10 @@ public class ProductCrawler {
 
                         }
                         productDto.setMallDtoInfo(mallDtoList);
+                        productDto.setMinimumPrice(mallDtoList.get(0).getPrice());
 
                     } else {    // db에 저장되어있는 product인 경우,
                         Product product = productRegistered.get();
-                        Mall registeredMinimumMall = product.getMallInfo().get(0);
 
                         String[] priceText = doc.select(
                                 "div.lowest_top div.row.lowest_price span.lwst_prc a em").text()
@@ -149,8 +148,8 @@ public class ProductCrawler {
                         }
 
                         // 영속성에 의해 DB 최저가 자동 update
-                        if (registeredMinimumMall.getPrice() > price) {
-                            registeredMinimumMall.setPrice(price);
+                        if (product.getMinimumPrice() > price) {
+                            product.setMinimumPrice(price);
                         }
 
 //                        for (int i = 0; i<mallInfo.size(); i++) {
@@ -209,6 +208,7 @@ public class ProductCrawler {
 
                         productDto.setTitle(product.getName());
                         productDto.setImage(product.getImage());
+                        productDto.setUrl(product.getUrl());
                         List<Mall> mallList = product.getMallInfo();
                         for (Mall mall : mallList) {
                             MallDto mallDto = MallDto.builder()
@@ -221,6 +221,7 @@ public class ProductCrawler {
                             mallDtoList.add(mallDto);
                         }
                         productDto.setMallDtoInfo(mallDtoList);
+                        productDto.setMinimumPrice(product.getMinimumPrice());
                     }
 
                     return response.toString();
@@ -246,6 +247,8 @@ public class ProductCrawler {
             Product product = Product.builder()
                 .name(productCrawlingDto.getTitle())
                 .image(productCrawlingDto.getImage())
+                .minimumPrice(productCrawlingDto.getMinimumPrice())
+                .url(productCrawlingDto.getUrl())
                 .status(true)
                 .build();
 
