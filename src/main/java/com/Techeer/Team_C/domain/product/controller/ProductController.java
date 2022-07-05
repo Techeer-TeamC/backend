@@ -66,13 +66,19 @@ public class ProductController {
     @GetMapping("/list")
     @ApiOperation(value = "사용자 등록 상품 목록 조회", notes = "상품 등록 API, 헤더에 토큰 정보")
     public ResponseEntity<List<ProductRegisterResponseDto>> getList() {
-        return ResponseEntity.ok(productService.registerList().stream().map(mapper::toResponseDto).collect(Collectors.toList()));
+        return ResponseEntity.ok(productService.registerList()
+                .stream()
+                .map(mapper::toResponseDto)
+                .collect(Collectors.toList()));
     }
 
-    @PostMapping("/register/{id}")
+    @PostMapping("/register")
     @ApiOperation(value = "상품 알림 등록", notes = "상품 알림 등록 API, 헤더에 토큰 정보 필요")
-    public ResponseEntity<ProductRegisterResponseDto> save(@RequestBody @Valid final ProductRegisterRequestDto productRegisterRequestDto, @PathVariable("id") Long productId) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponseDto(productService.saveRegister(productRegisterRequestDto, productId)));
+    public ResponseEntity<ProductRegisterResponseDto> save(
+            @RequestBody @Valid final ProductRegisterRequestDto productRegisterRequestDto,
+            @RequestParam(value = "product") String productName) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(mapper.toResponseDto(productService.saveRegister(productRegisterRequestDto, productName)));
     }
 
     @PatchMapping("/register/{id}")
@@ -89,7 +95,8 @@ public class ProductController {
     @DeleteMapping("/register/{id}")
     public ResponseEntity<Void> deleteResister(@PathVariable("id") Long productId) {
         productService.deleteRegister(productId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .build();
     }
 
     @ApiOperation(value = "상품의 몰 정보", notes = "crawling 시 최저가 업데이트 여부 확인을 위함")

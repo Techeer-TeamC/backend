@@ -11,4 +11,5 @@ public class ProductRegisterRequestDto {
 
     @NotNull
     private int desiredPrice;
+    private String url;
 }

@@ -235,7 +235,7 @@ public class ProductCrawler {
     }
 
     @Transactional
-    public void storeProduct(ProductCrawlingDto productCrawlingDto) {
+    public Optional<Product> storeProduct(ProductCrawlingDto productCrawlingDto) {
         List<Mall> mallList = new LinkedList<>();
         Optional<Product> registeredProduct = productMysqlRepository.findByName(
             productCrawlingDto.getTitle());
@@ -262,7 +262,7 @@ public class ProductCrawler {
             }
             product.setMallInfo(mallList);
 
-            productMysqlRepository.save(product);
+            return Optional.of(productMysqlRepository.save(product));
         }
     }
 
