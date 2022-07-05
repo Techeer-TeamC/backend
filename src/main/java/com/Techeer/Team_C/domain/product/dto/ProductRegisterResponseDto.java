@@ -17,4 +17,6 @@ public class ProductRegisterResponseDto {
     private Long productId;
 
     private int desiredPrice;
+
+    private int minimumPrice;
 }
