@@ -37,6 +37,8 @@ public class ProductRegister extends BaseTimeEntity {
 
     private int desiredPrice;
 
+    private int minimumPrice;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -50,10 +52,11 @@ public class ProductRegister extends BaseTimeEntity {
     private boolean status;
 
     @Builder
-    public ProductRegister(User user, Product product, int desiredPrice, boolean status) {
+    public ProductRegister(User user, Product product, int desiredPrice, int minimumPrice, boolean status) {
         this.user = user;
         this.product = product;
         this.desiredPrice = desiredPrice;
+        this.minimumPrice = minimumPrice;
         this.status = status;
     }
 

@@ -18,7 +18,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -26,6 +29,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class Product extends BaseTimeEntity {
 
     @Id
@@ -46,7 +52,6 @@ public class Product extends BaseTimeEntity {
     @JsonManagedReference
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true) //영속화 설정
     private List<Mall> mallInfo = new ArrayList<>(); //제품에 대한 쇼핑몰 Info , ArrayList<>초기화로 null 오류 방지
-
 
     public void addMallInfo(Mall mall) {
         this.mallInfo.add(mall);

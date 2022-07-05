@@ -14,6 +14,7 @@ public class ProductRegisterMapper {
               .userId(entity.getUser().getUserId())
               .productId(entity.getProduct().getProductId())
               .desiredPrice(entity.getDesiredPrice())
+              .minimumPrice(entity.getMinimumPrice())
               .build();
    }
 }
