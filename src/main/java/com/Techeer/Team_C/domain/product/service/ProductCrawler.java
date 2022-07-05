@@ -1,7 +1,6 @@
 package com.Techeer.Team_C.domain.product.service;
 
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.DUPLICATE_PRODUCTREGISTER;
-import static com.Techeer.Team_C.global.error.exception.ErrorCode.INTERNAL_SERVER_ERROR;
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.INVALID_INPUT_VALUE;
 
 import com.Techeer.Team_C.domain.product.dto.MallDto;
@@ -19,12 +18,10 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -61,7 +58,7 @@ public class ProductCrawler {
      */
     @Transactional
     public ProductCrawlingDto DanawaCrawling(String url) {
-        HttpClient httpClient = new DefaultHttpClient();
+        HttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet httpget = new HttpGet(url);
         ProductCrawlingDto productDto = new ProductCrawlingDto();
         List<MallDto> mallDtoList = new LinkedList<>();
@@ -69,7 +66,7 @@ public class ProductCrawler {
             httpClient.execute(httpget, new BasicResponseHandler() {
                 @Override
                 public String handleResponse(HttpResponse response)
-                    throws HttpResponseException, IOException {
+                    throws IOException {
                     // 웹페이지 한글 처리를 위한 인코딩
                     String res = new String(super.handleResponse(response).getBytes("utf-8"),
                         "utf-8");
@@ -77,7 +74,8 @@ public class ProductCrawler {
 
                     String title = doc.select("div.top_summary h3.prod_tit").text();
                     Optional<Product> productRegistered = productMysqlRepository.findByName(title);
-                    Elements mallInfo = doc.select("table.lwst_tbl tbody.high_list tr.add_delivery");
+                    Elements mallInfo = doc.select(
+                        "table.lwst_tbl tbody.high_list tr.add_delivery");
 
                     if (productRegistered.isEmpty()) { // DB에 저장되어있는 product가 아닐 때
                         Elements image = doc.select("div.photo_w a img"); // product thumb
@@ -88,10 +86,9 @@ public class ProductCrawler {
                             Element mallNameElement = row.select("td.mall div a").first();
                             String mallName = "";
                             // mall title 정보가 다른 tag에 저장되어있는 case를 위함
-                            if (mallNameElement.children().isEmpty()){
+                            if (mallNameElement.children().isEmpty()) {
                                 mallName = mallNameElement.attr("title");
-                            }
-                            else{
+                            } else {
                                 mallName = mallNameElement.child(0).attr("alt");
                             }
 
@@ -139,8 +136,9 @@ public class ProductCrawler {
                         Product product = productRegistered.get();
                         Mall registeredMinimumMall = product.getMallInfo().get(0);
 
-                        String [] priceText = doc.select(
-                            "div.lowest_top div.row.lowest_price span.lwst_prc a em").text().split(",");
+                        String[] priceText = doc.select(
+                                "div.lowest_top div.row.lowest_price span.lwst_prc a em").text()
+                            .split(",");
                         String priceStr = "";
                         int price = 0;
                         for (String piece : priceText) {
@@ -151,8 +149,9 @@ public class ProductCrawler {
                         }
 
                         // 영속성에 의해 DB 최저가 자동 update
-                        if (registeredMinimumMall.getPrice() > price)
+                        if (registeredMinimumMall.getPrice() > price) {
                             registeredMinimumMall.setPrice(price);
+                        }
 
 //                        for (int i = 0; i<mallInfo.size(); i++) {
 //                            Element row = mallInfo.get(i);
@@ -228,10 +227,10 @@ public class ProductCrawler {
                 }
             });
             return productDto;
-        } catch (ClientProtocolException e) {
-            throw new BusinessException(e.getMessage(), INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
             throw new BusinessException(e.getMessage(), INVALID_INPUT_VALUE);
+        } finally {
+            httpClient.getConnectionManager().shutdown();
         }
     }
 
@@ -268,54 +267,69 @@ public class ProductCrawler {
     }
 
     public ProductListResponseDto productList(String searchWord) {
+        HttpClient httpClient = HttpClientBuilder.create().build();
         String url =
             "http://search.danawa.com/dsearch.php?k1=" + searchWord + "&module=goods&act=dispMain";
+        final int[] totalNumber = new int[1];
+        HttpGet httpget = new HttpGet(url);
         List<ProductListDto> productListDtoList = new LinkedList<>();
         try {
-            Document doc = Jsoup.connect(url).get();
-            Elements elements = doc.select(
-                "div.main_prodlist.main_prodlist_list ul li[id][class=prod_item]");
-            int totalNubmer = 0;
-            for (Element product : elements) {
-                String productUrl = product.select("div div.prod_info p a").attr("href");
-                String title = product.select("div div.prod_info p a").text();
+            httpClient.execute(httpget, new BasicResponseHandler() {
+                @Override
+                public String handleResponse(HttpResponse response)
+                    throws IOException {
+                    String res = new String(super.handleResponse(response).getBytes("utf-8"),
+                        "utf-8");
+                    Document doc = Jsoup.parse(res);
 
-                String thumbImageUrl = "http:";
-                Elements imageUrlElement = product.select("div div.thumb_image a img");
-                if (imageUrlElement.hasAttr("src")) {
-                    thumbImageUrl += imageUrlElement.attr("src");
-                } else {
-                    thumbImageUrl += imageUrlElement.attr("data-original");
-                }
+                    Elements elements = doc.select(
+                        "div.main_prodlist.main_prodlist_list ul li[id][class=prod_item]");
+                    totalNumber[0] = 0;
+                    for (Element product : elements) {
+                        String productUrl = product.select("div div.prod_info p a").attr("href");
+                        String title = product.select("div div.prod_info p a").text();
 
-                Element priceInfoList = product.select("div div.prod_pricelist ul li")
-                    .first();
-                int price = 0;
-                Elements minimumPriceElement = priceInfoList.select("p.price_sect a strong");
-                String minimumPrice = minimumPriceElement.text();
-                String[] priceSplit = minimumPrice.split(",");
-                String priceStr = "";
-                for (String piece : priceSplit) {
-                    priceStr += piece;
-                }
-                // 가격 비교 예정인 제품은 0원으로 표기함
-                if (!priceStr.isEmpty() && !priceStr.equals("가격비교예정")) {
-                    price = Integer.parseInt(priceStr);
-                }
-                productListDtoList.add(ProductListDto.builder()
-                    .title(title)
-                    .url(productUrl)
-                    .imageUrl(thumbImageUrl)
-                    .minimumPrice(price).build());
-                totalNubmer++;
-            }
+                        String thumbImageUrl = "http:";
+                        Elements imageUrlElement = product.select("div div.thumb_image a img");
+                        if (imageUrlElement.hasAttr("src")) {
+                            thumbImageUrl += imageUrlElement.attr("src");
+                        } else {
+                            thumbImageUrl += imageUrlElement.attr("data-original");
+                        }
 
+                        Element priceInfoList = product.select("div div.prod_pricelist ul li")
+                            .first();
+                        int price = 0;
+                        Elements minimumPriceElement = priceInfoList.select(
+                            "p.price_sect a strong");
+                        String minimumPrice = minimumPriceElement.text();
+                        String[] priceSplit = minimumPrice.split(",");
+                        String priceStr = "";
+                        for (String piece : priceSplit) {
+                            priceStr += piece;
+                        }
+                        // 가격 비교 예정인 제품은 0원으로 표기함
+                        if (!priceStr.isEmpty() && !priceStr.equals("가격비교예정")) {
+                            price = Integer.parseInt(priceStr);
+                        }
+                        productListDtoList.add(ProductListDto.builder()
+                            .title(title)
+                            .url(productUrl)
+                            .imageUrl(thumbImageUrl)
+                            .minimumPrice(price).build());
+                        totalNumber[0]++;
+                    }
+                    return response.toString();
+                }
+            });
             return ProductListResponseDto.builder()
-                .totalNumber(totalNubmer)
+                .totalNumber(totalNumber[0])
                 .productListDtoList(productListDtoList)
                 .build();
         } catch (IOException e) {
             throw new BusinessException(e.getMessage(), INVALID_INPUT_VALUE);
+        } finally {
+            httpClient.getConnectionManager().shutdown();
         }
     }
 }
