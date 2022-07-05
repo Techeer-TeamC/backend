@@ -88,7 +88,7 @@ public class ProductService {
             throw new BusinessException("존재하지 않는 사용자 입니다.", USER_NOT_FOUND);
         }
 
-        return productRegisterMysqlRepository.findAllByUser(userById.get());
+        return productRegisterMysqlRepository.findAllByUserAndStatus(userById.get(), true);
     }
 
     @Transactional
@@ -116,15 +116,20 @@ public class ProductService {
         if (productRegisterById.isPresent()) {
             ProductRegister entity = productRegisterById.get();
             if (!entity.isStatus()) {
-                entity.update(productRegisterRequestDto.getDesiredPrice(), true);
+                entity.update(productRegisterRequestDto.getDesiredPrice(),true);
                 return entity;
             } else {
                 throw new BusinessException("이미 등록한 상품입니다.", DUPLICATE_PRODUCTREGISTER);
             }
         }
 
+        int minimumPrice = productByName.get()
+                .getMallInfo()
+                .get(0)
+                .getPrice();
+
         ProductRegister productRegister = productRegisterMysqlRepository.build(userById.get(),
-                productByName.get(), productRegisterRequestDto.getDesiredPrice(), true);
+                productByName.get(), productRegisterRequestDto.getDesiredPrice(), minimumPrice, true);
         productRegisterMysqlRepository.save(productRegister);
 
         return productRegister;
@@ -198,9 +203,10 @@ public class ProductService {
         }
 
         Optional<List<Mall>> RegisteredProductMallList =
-            productMallMysqlRepository.findAllByProduct(
-                Product.builder().
-                    productId(productId).build());
+                productMallMysqlRepository.findAllByProduct(
+                        Product.builder().
+                                productId(productId)
+                                .build());
         if (!RegisteredProductMallList.isPresent()) {
             throw new BusinessException("mall 정보가 존재하지 않습니다.", Mall_NOT_FOUND);
         }
