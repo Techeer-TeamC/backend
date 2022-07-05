@@ -81,8 +81,9 @@ public class ProductCrawler {
                         for (Element row : mallInfo) {
                             String mallLink = row.select("td.mall div a").attr("href");
                             // 불필요 데이터 전처리
-                            if (mallLink.contains("info"))
+                            if (mallLink.contains("info")) {
                                 continue;
+                            }
                             Element mallNameElement = row.select("td.mall div a").first();
                             String mallName = "";
                             // mall title 정보가 다른 tag에 저장되어있는 case를 위함
