@@ -10,6 +10,8 @@ public class ProductCrawlingDto {
 
     private String title;
     private String image;
+    private Integer minimumPrice;
+    private String url;
     private List<MallDto> mallDtoInfo;
 
 }
