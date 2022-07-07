@@ -68,7 +68,6 @@ public class ProductService {
         result.setTotalCount(productMysqlRepository.countByNameContaining(keyword));
 
         return result;
-
     }
 
     public Integer searchCount(String keyword) {
