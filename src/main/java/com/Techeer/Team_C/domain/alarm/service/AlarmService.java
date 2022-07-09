@@ -1,11 +1,8 @@
 package com.Techeer.Team_C.domain.alarm.service;
 
 import com.Techeer.Team_C.domain.product.entity.Product;
-import com.Techeer.Team_C.domain.product.repository.ProductMysqlRepository;
 import com.Techeer.Team_C.domain.product.repository.ProductRegisterMysqlRepository;
 import com.Techeer.Team_C.domain.user.entity.User;
-import com.Techeer.Team_C.domain.user.repository.UserRepository;
-import java.util.Optional;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
@@ -22,22 +19,16 @@ public class AlarmService {
 
     private final TemplateEngine templateEngine;
     private final JavaMailSender javaMailSender;
-
-    private final ProductMysqlRepository productMysqlRepository;
     private final ProductRegisterMysqlRepository productRegisterMysqlRepository;
-    private final UserRepository userRepository;
 
     @Async
-    public String sendMail(Long id, User user) throws MessagingException { // id = productId
-        Optional<Product> product = productMysqlRepository.findById(id); // product data 가져오기
-        Optional<User> userData = userRepository.findById(user.getUserId()); // user data 가져오기
-
+    public String sendMail(Product product, User user) throws MessagingException { // id = productId
         Context context = new Context();
-        context.setVariable("product_name", product.get().getName());
-        context.setVariable("product_image", product.get().getImage());
-        context.setVariable("price_link", product.get().getLink());
-        context.setVariable("desire_price", productRegisterMysqlRepository.findByUser(user).getDesiredPrice());
-        context.setVariable("price", product.get().getOriginPrice());
+        context.setVariable("product_name", product.getName());
+        context.setVariable("product_image", product.getImage());
+        context.setVariable("price_link", product.getUrl());
+        context.setVariable("desire_price", productRegisterMysqlRepository.findByUserAndProduct(user, product).get().getDesiredPrice());
+        context.setVariable("price", product.getMinimumPrice());
         // thymeleaf 변수 설정
 
         String process = templateEngine.process("priceAlarm", context);
@@ -47,7 +38,7 @@ public class AlarmService {
         MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
         messageHelper.setSubject("상품 가격 하락 알림");
         messageHelper.setText(process, true);
-        messageHelper.setTo(userData.get().getEmail()); //user.get().getEmail()
+        messageHelper.setTo(user.getEmail());
         javaMailSender.send(message);
         return "Sent";
     }
