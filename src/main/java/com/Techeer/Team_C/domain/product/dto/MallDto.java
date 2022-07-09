@@ -10,9 +10,11 @@ import lombok.Setter;
 public class MallDto {
 
     private String link;
+    private String name;
     private Integer price;
     private Integer delivery;
     private String interestFree;
     private String paymentOption;
+
 
 }

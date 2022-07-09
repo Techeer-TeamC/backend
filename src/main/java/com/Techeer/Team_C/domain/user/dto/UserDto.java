@@ -32,14 +32,4 @@ public class UserDto {
     @ApiModelProperty(example = "회원의 권한 (USER / ADMIN)")
     private Role role;
 
-    public JSONObject toJson() {
-        JSONObject obj = new JSONObject();
-        obj.put("id", userId);
-        obj.put("email", email);
-        obj.put("memberName", memberName);
-        obj.put("password", password);
-        obj.put("Role", role);
-
-        return obj;
-    }
 }
