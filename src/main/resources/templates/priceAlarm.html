@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>제품 가격 하락 안내</title>
+</head>
+
+<body>
+  <div>
+    <div>
+      <h2 th:text="${product_name}"></h2>
+      <img th:src="${product_image}"></img>
+      <a th:href="@{${price_link}}">가격 보러가기</a>
+    </div>
+
+    <div>
+      <p> 희망 가격 <span th:text="${desire_price}"></span></p>
+      <p> 현재 가격 <span th:text="${price}"></span></p>
+    </div>
+  </div>
+  <footer>
+    <small>Footer</small>
+  </footer>
+</body>
+
+</html>

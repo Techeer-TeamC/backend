@@ -22,5 +22,17 @@ spring:
         format_sql: true
     hibernate:
       ddl-auto: update
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${gmail-smtp-username}
+    password: ${gmail-smtp-password}
+    properties:
+      mail:
+        debug: true
+        smtp:
+          auth: ture
+          starttls:
+            enable: true
 
 ip: db
