@@ -41,6 +41,8 @@ jobs:
           spring.datasource.username: ${{ secrets.DATASOURCE_NAME }}
           spring.datasource.password: ${{ secrets.DATASOURCE_PASSWORD }}
           spring.datasource.url: ${{ secrets.DATASOURCE_URL }}
+          spring.mail.username: ${{ secrets.GMAIL_SMTP_USERNAME }}
+          spring.mail.password: ${{ secrets.GMAIL_SMTP_PASSWORD }}
 
       - name: Set Application-oauth.yml
         uses: microsoft/variable-substitution@v1
