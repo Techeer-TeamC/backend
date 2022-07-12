@@ -1,23 +1,29 @@
 package com.Techeer.Team_C.domain.product.service;
 
+import com.Techeer.Team_C.domain.product.dto.MallDto;
+import com.Techeer.Team_C.domain.product.dto.ProductCrawlingDto;
 import com.Techeer.Team_C.domain.product.dto.ProductDto;
 import com.Techeer.Team_C.domain.product.dto.ProductPageListResponseDto;
 import com.Techeer.Team_C.domain.product.dto.ProductRegisterEditDto;
 import com.Techeer.Team_C.domain.product.dto.ProductRegisterRequestDto;
 import com.Techeer.Team_C.domain.product.entity.Mall;
 import com.Techeer.Team_C.domain.product.entity.Product;
+import com.Techeer.Team_C.domain.product.entity.ProductHistory;
 import com.Techeer.Team_C.domain.product.entity.ProductRegister;
+import com.Techeer.Team_C.domain.product.repository.ProductHistoryMysqlRepository;
 import com.Techeer.Team_C.domain.product.repository.ProductMallMysqlRepository;
 import com.Techeer.Team_C.domain.product.repository.ProductMysqlRepository;
 import com.Techeer.Team_C.domain.product.repository.ProductRegisterMysqlRepository;
 import com.Techeer.Team_C.domain.user.entity.User;
 import com.Techeer.Team_C.domain.user.repository.UserRepository;
 import com.Techeer.Team_C.global.error.exception.BusinessException;
+import java.util.ArrayList;
+import javax.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -26,6 +32,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import com.Techeer.Team_C.domain.alarm.service.AlarmService;
+
 
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.*;
 
@@ -39,6 +47,8 @@ public class ProductService {
     private final ModelMapper modelMapper;
     private final ProductMallMysqlRepository productMallMysqlRepository;
     private final UserRepository userRepository;
+    private final ProductHistoryMysqlRepository productHistoryMysqlRepository;
+    private final AlarmService alarmService;
 
     private ProductDto dtoConverter(Product product) {
         return modelMapper.map(product, ProductDto.class);
@@ -88,6 +98,41 @@ public class ProductService {
         }
 
         return productRegisterMysqlRepository.findAllByUserAndStatus(userById.get(), true);
+    }
+
+    @Scheduled(cron="0 */30 * * * *") // 30분마다 실행
+    @Transactional
+    public void autoUpdate() throws MessagingException {
+        List<Product> productList = new ArrayList<>(productMysqlRepository.findAll());
+        for (Product product : productList) {   // 저장된 상품에 대해 크롤링 재진행
+            ProductCrawlingDto productCrawlingDto = productCrawler.DanawaCrawling(
+                    product.getUrl());
+
+            List<String> mallNameList = new ArrayList<String>();
+            for (ProductHistory productHistory: productHistoryMysqlRepository.findTop3ByProduct(product)){
+                mallNameList.add(productHistory.getMallName());
+            }
+            // 크롤링한 데이터를 히스토리에 저장하기 위한 로직
+            for (MallDto mallData : productCrawlingDto.getMallDtoInfo()){
+                if (mallNameList.contains(mallData.getName())){
+                    ProductHistory newHistory = ProductHistory.builder()
+                            .product(product)
+                            .minimumPrice(mallData.getPrice())
+                            .mallName(mallData.getName())
+                            .build();
+                    productHistoryMysqlRepository.save(newHistory);
+                }
+            }
+
+            // 아래는 메일 발송을 위한 로직
+            Integer latestMinimum = productCrawlingDto.getMinimumPrice(); // 새로 크롤링된 최저값
+            for (ProductRegister productRegister :  productRegisterMysqlRepository.findByProduct(
+                    product)) { // 해당 제품을 등록한 사람을 찾고
+                if (productRegister.getDesiredPrice() >= latestMinimum) { // 그 사람 요구 가격보다 낮은지
+                    alarmService.sendMail(product, productRegister.getUser());
+                }
+            }
+        }
     }
 
     @Transactional
