@@ -2,6 +2,7 @@
 package com.Techeer.Team_C.domain.auth.jwt;
 
 import com.Techeer.Team_C.domain.auth.dto.TokenDto;
+import com.Techeer.Team_C.domain.user.entity.Role;
 import io.jsonwebtoken.*;
 import javax.servlet.ServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -61,6 +62,35 @@ public class JwtTokenProvider {
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())       // payload "sub": "name"
                 .claim(AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_USER"
+                .setExpiration(accessTokenExpiresIn)        // payload "exp": 1516239022 (예시)
+                .signWith(SignatureAlgorithm.HS256, secretKey)   // header "alg": "HS512"
+                .compact();
+
+        // Refresh Token 생성
+        String refreshToken = Jwts.builder()
+                .setExpiration(new Date(now + refreshTokenValidTime))
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
+
+        return TokenDto.builder()
+                .grantType(BEARER_TYPE)
+                .accessToken(accessToken)
+                .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+
+    public TokenDto createTokenSocialLogin(String email) {
+
+        Role authority = Role.ROLE_USER;
+        long now = (new Date()).getTime();
+
+        // Access Token 생성
+        Date accessTokenExpiresIn = new Date(now + tokenValidTime);
+        String accessToken = Jwts.builder()
+                .setSubject(email)       // payload "sub": "name"
+                .claim(AUTHORITIES_KEY, authority)        // payload "auth": "ROLE_USER"
                 .setExpiration(accessTokenExpiresIn)        // payload "exp": 1516239022 (예시)
                 .signWith(SignatureAlgorithm.HS256, secretKey)   // header "alg": "HS512"
                 .compact();
