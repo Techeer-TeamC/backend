@@ -2,6 +2,7 @@ package com.Techeer.Team_C.domain.auth.dto;
 
 import com.Techeer.Team_C.domain.user.entity.User;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
