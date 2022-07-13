@@ -21,6 +21,10 @@ public enum ErrorCode {
     NO_PERMISSION(403, "M005", "Do not have permission."),
     USER_NOT_FOUND(401,"M006","Not found this User"),
 
+    //Social Login
+    ACCESS_TOKEN_NOT_FOUND(400, "E00001", "Cannot access to SocialLogin"),
+    SOCIAL_LOGIN_USER_NOT_FOUND(401, "E00002", "Cannot find user from Social"),
+
     //jwtToken
     INVALID_JTW_TOKEN_SIGNATURE(401, "J001", "The token's signature is invalid."),
     EXPIRED_JTW_TOKEN(401, "J002", "Token data has expired"),
