@@ -3,6 +3,8 @@ package com.Techeer.Team_C.domain.product.service;
 import com.Techeer.Team_C.domain.product.dto.MallDto;
 import com.Techeer.Team_C.domain.product.dto.ProductCrawlingDto;
 import com.Techeer.Team_C.domain.product.dto.ProductDto;
+import com.Techeer.Team_C.domain.product.dto.ProductHistoryResponseDto;
+import com.Techeer.Team_C.domain.product.dto.ProductHistoryResponseDto.MallPriceHistoryInfo;
 import com.Techeer.Team_C.domain.product.dto.ProductPageListResponseDto;
 import com.Techeer.Team_C.domain.product.dto.ProductRegisterEditDto;
 import com.Techeer.Team_C.domain.product.dto.ProductRegisterRequestDto;
@@ -17,7 +19,10 @@ import com.Techeer.Team_C.domain.product.repository.ProductRegisterMysqlReposito
 import com.Techeer.Team_C.domain.user.entity.User;
 import com.Techeer.Team_C.domain.user.repository.UserRepository;
 import com.Techeer.Team_C.global.error.exception.BusinessException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Stack;
 import javax.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -49,6 +54,7 @@ public class ProductService {
     private final UserRepository userRepository;
     private final ProductHistoryMysqlRepository productHistoryMysqlRepository;
     private final AlarmService alarmService;
+    private final short priceHistoryMallNumber = 3;
 
     private ProductDto dtoConverter(Product product) {
         return modelMapper.map(product, ProductDto.class);
@@ -256,5 +262,51 @@ public class ProductService {
         }
 
         return RegisteredProductMallList.get();
+    }
+
+    public ProductHistoryResponseDto getProductHistory(Long productId) {
+        ProductHistoryResponseDto productHistoryResponseDto;
+        List<MallPriceHistoryInfo> mallHistoryInfoList = new LinkedList<>();
+
+        // method를 호출한 시점을 기준으로 product의 각 Mall의 10개 price를 가져오기
+        Stack<ProductHistory> productHistoryList =
+            productHistoryMysqlRepository.findTop30ByProductAndOrderByCreatedDateDesc(
+                productId);
+
+        LocalDateTime date = productHistoryList.get(productHistoryList.size()-1).getCreatedDate();
+        // priceHistory graph에 전달할 mall 분류
+        for (int i = 0; i< priceHistoryMallNumber && !productHistoryList.isEmpty(); i++){
+            List<Integer> priceList = new LinkedList<>();
+
+            // productHistoryList에서 product의 mall 가져오기
+            ProductHistory productHistoryTopMall = productHistoryList.get(i);
+            mallHistoryInfoList.add(MallPriceHistoryInfo.builder()
+                .mallName(productHistoryTopMall.getMallName())
+                .priceList(priceList)
+                .build());
+        }
+        // product mall의 price list 저장
+        while (!productHistoryList.isEmpty()){
+            ProductHistory productHistory = productHistoryList.pop();
+            for (int i =0; i< mallHistoryInfoList.size(); i++){
+                // 알맞은 mall을 찾기 위한 mallName 비교
+                if (mallHistoryInfoList.get(i).getMallName()
+                    .equals(productHistory.getMallName())){
+                    // 각 mall에 price 추가
+                    mallHistoryInfoList.get(i).
+                        getPriceList().add(productHistory.getMinimumPrice());
+                } else if (i == mallHistoryInfoList.size()){
+                    throw new BusinessException("priceHistory data의 mall 정보가 일치하지 않습니다.", UNEXPECTED_MALL);
+                }
+            }
+        }
+
+        // productHistoryDto에 product mall 추가
+        productHistoryResponseDto = ProductHistoryResponseDto.builder()
+            .mallHistoryInfoList(mallHistoryInfoList)
+            .date(date)
+            .build();
+
+        return productHistoryResponseDto;
     }
 }
