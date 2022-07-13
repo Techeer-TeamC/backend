@@ -9,6 +9,8 @@ import com.Techeer.Team_C.domain.product.dto.ProductListDto;
 import com.Techeer.Team_C.domain.product.dto.ProductListResponseDto;
 import com.Techeer.Team_C.domain.product.entity.Mall;
 import com.Techeer.Team_C.domain.product.entity.Product;
+import com.Techeer.Team_C.domain.product.entity.ProductHistory;
+import com.Techeer.Team_C.domain.product.repository.ProductHistoryMysqlRepository;
 import com.Techeer.Team_C.domain.product.repository.ProductMysqlRepository;
 import com.Techeer.Team_C.global.error.exception.BusinessException;
 import java.io.IOException;
@@ -33,6 +35,7 @@ import org.springframework.stereotype.Service;
 public class ProductCrawler {
 
     private final ProductMysqlRepository productMysqlRepository;
+    private final ProductHistoryMysqlRepository productHistoryMysqlRepository;
 
     public String searchProductPage(String item) throws IOException {
         String baseUrl = "http://search.danawa.com/dsearch.php?query=";
@@ -153,60 +156,6 @@ public class ProductCrawler {
                             product.setMinimumPrice(price);
                         }
 
-//                        for (int i = 0; i<mallInfo.size(); i++) {
-//                            Element row = mallInfo.get(i);
-//                            Mall mall = registeredMall.get(i);
-//                            String mallName = row.select("td.mall div a img").attr("alt");
-//                            Elements priceInfo = row.select("td.price a span");
-//                            String[] priceSplit = priceInfo.select("span.txt_prc").text()
-//                                .split("원")[0].split(",");
-//                            String priceStr = "";
-//                            int price = 0;
-//                            for (String piece : priceSplit) {
-//                                priceStr += piece;
-//                            }
-//                            if (!priceStr.isEmpty()) {
-//                                price = Integer.parseInt(priceStr);
-//                            }
-//
-//                            // 최저가 비교
-//                            if (mall.getPrice() > price){
-//                                //mall 정보 비교
-//                                if (mall.getName().equals(mallName)){
-//                                    mall.setPrice(price);
-//                                }
-//                                else{
-//                                    String mallLink = row.select("td.mall div a").attr("href");
-//                                    String paymentOption = priceInfo.select("span.txt_dsc").text();
-//                                    String deliveryInfo = row.select(
-//                                            "td.ship div span.stxt.deleveryBaseSection")
-//                                        .text();
-//                                    int delivery = 0;
-//                                    if ((deliveryInfo.compareTo("무료배송") == 1)) {
-//                                        String[] split = deliveryInfo.split("원")[0].split(",");
-//                                        String pieces = "";
-//                                        for (String piece : split) {
-//                                            pieces += piece;
-//                                        }
-//                                        if (!pieces.isEmpty()) {
-//                                            delivery = Integer.parseInt(pieces);
-//                                        }
-//                                    }
-//                                    String interestFree = row.select("td.bnfit div a").text();
-//
-//                                    mall = Mall.builder()
-//                                        .name(mallName)
-//                                        .link(mallLink)
-//                                        .price(price)
-//                                        .delivery(delivery)
-//                                        .interestFree(interestFree)
-//                                        .paymentOption(paymentOption)
-//                                        .build();
-//                                }
-//                                break;
-//                            }
-//                        }
-
                         productDto.setTitle(product.getName());
                         productDto.setImage(product.getImage());
                         productDto.setUrl(product.getUrl());
@@ -253,7 +202,8 @@ public class ProductCrawler {
                 .status(true)
                 .build();
 
-            for (MallDto mallDto : productCrawlingDto.getMallDtoInfo()) {
+            List<MallDto> mallDtoList = productCrawlingDto.getMallDtoInfo();
+            for (MallDto mallDto : mallDtoList) {
                 mallList.add(Mall.builder()
                     .name(mallDto.getName())
                     .link(mallDto.getLink())
@@ -265,6 +215,20 @@ public class ProductCrawler {
                     .build());
             }
             product.setMallInfo(mallList);
+
+            // pricehistory에 상위 3개의 mall 정보 저장
+            for (int i =0; i<mallDtoList.size(); i++){
+                if (i < 3){
+                    MallDto malldto = mallDtoList.get(i);
+                    productHistoryMysqlRepository.save(
+                        ProductHistory.builder()
+                            .product(product)
+                            .minimumPrice(malldto.getPrice())
+                            .mallName(malldto.getName())
+                            .build()
+                    );
+                }
+            }
 
             return Optional.of(productMysqlRepository.save(product));
         }
