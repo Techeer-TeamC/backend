@@ -1,5 +1,6 @@
 package com.Techeer.Team_C.domain.auth.controller;
 
+import com.Techeer.Team_C.domain.auth.entity.AuthorizationKakao;
 import com.Techeer.Team_C.domain.user.dto.LoginFormDto;
 import com.Techeer.Team_C.domain.auth.dto.TokenDto;
 import com.Techeer.Team_C.domain.auth.dto.TokenRefreshDto;
@@ -7,9 +8,9 @@ import com.Techeer.Team_C.domain.auth.service.AuthService;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,15 +56,17 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @GetMapping("/kakao")
+    @GetMapping("/token/kakao")
     @ApiOperation(value = "kakao 소셜 로그인", notes = "소셜로그인 API (kakao)")
-    public void kakaoCallback(@RequestParam String code) {
-        System.out.println(code);
+    public ResponseEntity<TokenDto> kakaoCallback(@RequestParam("code") String code) {
+
+        return ResponseEntity.ok(authService.oauth2AuthorizationKakao(code));
     }
 
-    @GetMapping("/google")
+    @GetMapping("/token/google")
     @ApiOperation(value = "google 소셜 로그인", notes = "소설로그인 API (google)")
-    public void googleCallback(@RequestParam String code) {
-        System.out.println(code);
+    public ResponseEntity<TokenDto> googleCallback(@RequestParam("code") String code) {
+
+        return ResponseEntity.ok(authService.oauth2AuthorizationGoogle(code));
     }
 }

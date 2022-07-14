@@ -1,5 +1,7 @@
 package com.Techeer.Team_C.domain.auth.service;
 
+import com.Techeer.Team_C.domain.auth.entity.AuthorizationGoogle;
+import com.Techeer.Team_C.domain.auth.entity.AuthorizationKakao;
 import com.Techeer.Team_C.domain.auth.jwt.JwtTokenProvider;
 import com.Techeer.Team_C.domain.auth.entity.RefreshToken;
 import com.Techeer.Team_C.domain.auth.repository.RefreshTokenRepository;
@@ -7,6 +9,7 @@ import com.Techeer.Team_C.domain.auth.dto.TokenRefreshDto;
 import com.Techeer.Team_C.domain.user.dto.LoginFormDto;
 import com.Techeer.Team_C.domain.auth.dto.TokenDto;
 import com.Techeer.Team_C.domain.user.dto.UserDto;
+import com.Techeer.Team_C.domain.user.entity.User;
 import com.Techeer.Team_C.domain.user.service.UserService;
 import com.Techeer.Team_C.global.error.exception.BusinessException;
 import io.jsonwebtoken.SignatureException;
@@ -28,6 +31,8 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final Oauth2Kakao oauth2Kakao;
+    private final Oauth2Google oauth2Google;
 
     /**
      * 로그인
@@ -132,5 +137,33 @@ public class AuthService {
         }
         return refreshToken;
     }
+
+    public TokenDto oauth2AuthorizationKakao(String code) {
+        AuthorizationKakao authorization = oauth2Kakao.getAccessTokenByCode(code);
+        User userInfoFromKakao = oauth2Kakao.getUserByAccessToken(authorization.getAccess_token());
+
+        // JWT 토큰 생성
+        TokenDto tokenDto = tokenProvider.createTokenSocialLogin(userInfoFromKakao.getEmail());
+
+        RefreshToken refreshToken = RefreshToken.builder().key(userInfoFromKakao.getEmail())
+                .value(tokenDto.getRefreshToken()).build();
+        refreshTokenRepository.save(refreshToken);
+
+        return tokenDto;
+    }
+
+    public TokenDto oauth2AuthorizationGoogle(String code) {
+        AuthorizationGoogle authorization = oauth2Google.getAccessTokenByCode(code);
+        User userInfoFromGoogle = oauth2Google.getUserByAccessToken(authorization.getAccess_token());
+
+        TokenDto tokenDto = tokenProvider.createTokenSocialLogin(userInfoFromGoogle.getEmail());
+
+        RefreshToken refreshToken = RefreshToken.builder().key(userInfoFromGoogle.getEmail())
+                .value(tokenDto.getRefreshToken()).build();
+        refreshTokenRepository.save(refreshToken);
+
+        return tokenDto;
+    }
+
 }
 
