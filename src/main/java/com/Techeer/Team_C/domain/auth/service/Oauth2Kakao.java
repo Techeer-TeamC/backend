@@ -72,9 +72,9 @@ public class Oauth2Kakao {
         }
     }
 
-
     /**
      * accessToken 을 이용한 유저정보 받기
+     *
      * @return
      */
     public User getUserByAccessToken(String accessToken) {
@@ -91,19 +91,23 @@ public class Oauth2Kakao {
             String userInfo = restTemplate.postForObject(url, request, String.class);
 
             JsonNode jsonNode = objectMapper.readTree(userInfo);
-            String email = String.valueOf(jsonNode.get("kakao_account")
+            String rawEmail = String.valueOf(jsonNode.get("kakao_account")
                     .get("email"));
-            String name = String.valueOf(jsonNode.get("kakao_account")
+            String rawName = String.valueOf(jsonNode.get("kakao_account")
                     .get("profile")
                     .get("nickname"));
 
+            String email = rawEmail.substring(1, rawEmail.length() - 1);
+            String name = rawName.substring(1, rawName.length() - 1);
+
             userByEmail = userRepository.findByEmail(email);
             if (!userByEmail.isPresent()) {
-                User user = new User();
-                user.setEmail(email.substring(1, email.length() - 1));
-                user.setMemberName(name.substring(1, name.length() - 1));
-                user.setRole(Role.ROLE_USER);
-                user.setActivated(true);
+                User user = User.builder()
+                        .email(email)
+                        .memberName(name)
+                        .role(Role.ROLE_USER)
+                        .activated(true)
+                        .build();
 
                 return userRepository.save(user);
             }
