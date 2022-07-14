@@ -1,8 +1,6 @@
 package com.Techeer.Team_C.domain.product.dto;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.LinkedList;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +17,8 @@ public class ProductHistoryResponseDto {
     @Builder
     @Getter
     @Setter
-    public static class MallPriceHistoryInfo{
+    public static class MallPriceHistoryInfo {
+
         private String mallName;
         private List<Integer> priceList;
     }

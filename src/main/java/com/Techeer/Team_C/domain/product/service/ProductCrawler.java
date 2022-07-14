@@ -217,8 +217,8 @@ public class ProductCrawler {
             product.setMallInfo(mallList);
 
             // pricehistory에 상위 3개의 mall 정보 저장
-            for (int i =0; i<mallDtoList.size(); i++){
-                if (i < 3){
+            for (int i = 0; i < mallDtoList.size(); i++) {
+                if (i < 3) {
                     MallDto malldto = mallDtoList.get(i);
                     productHistoryMysqlRepository.save(
                         ProductHistory.builder()

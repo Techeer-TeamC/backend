@@ -1,5 +1,14 @@
 package com.Techeer.Team_C.domain.product.service;
 
+import static com.Techeer.Team_C.global.error.exception.ErrorCode.DUPLICATE_PRODUCTREGISTER;
+import static com.Techeer.Team_C.global.error.exception.ErrorCode.EMPTY_TOKEN_DATA;
+import static com.Techeer.Team_C.global.error.exception.ErrorCode.Mall_NOT_FOUND;
+import static com.Techeer.Team_C.global.error.exception.ErrorCode.PRODUCTREGISTER_NOT_FOUND;
+import static com.Techeer.Team_C.global.error.exception.ErrorCode.PRODUCT_NOT_FOUND;
+import static com.Techeer.Team_C.global.error.exception.ErrorCode.UNEXPECTED_MALL;
+import static com.Techeer.Team_C.global.error.exception.ErrorCode.USER_NOT_FOUND;
+
+import com.Techeer.Team_C.domain.alarm.service.AlarmService;
 import com.Techeer.Team_C.domain.product.dto.MallDto;
 import com.Techeer.Team_C.domain.product.dto.ProductCrawlingDto;
 import com.Techeer.Team_C.domain.product.dto.ProductDto;
@@ -22,7 +31,10 @@ import com.Techeer.Team_C.global.error.exception.BusinessException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Stack;
+import java.util.stream.Collectors;
 import javax.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -33,14 +45,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import com.Techeer.Team_C.domain.alarm.service.AlarmService;
-
-
-import static com.Techeer.Team_C.global.error.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -68,7 +72,7 @@ public class ProductService {
         }
 
         return product.map(productEntity -> dtoConverter(productEntity))
-                .get();
+            .get();
     }
 
     public ProductPageListResponseDto pageList(String keyword, Pageable page) {
@@ -77,9 +81,9 @@ public class ProductService {
         ProductPageListResponseDto result = new ProductPageListResponseDto();
 
         result.setData(lists.getContent()
-                .stream()
-                .map(productEntity -> dtoConverter(productEntity))
-                .collect(Collectors.toList()));
+            .stream()
+            .map(productEntity -> dtoConverter(productEntity))
+            .collect(Collectors.toList()));
 
         result.setTotalCount(productMysqlRepository.countByNameContaining(keyword));
 
@@ -92,7 +96,7 @@ public class ProductService {
 
     public List<ProductRegister> registerList() {
         Authentication authentication = SecurityContextHolder.getContext()
-                .getAuthentication();
+            .getAuthentication();
         if (authentication == null || authentication.getName() == null) {
             throw new BusinessException("Security Context 에 인증 정보가 없습니다", EMPTY_TOKEN_DATA);
         }
@@ -106,34 +110,35 @@ public class ProductService {
         return productRegisterMysqlRepository.findAllByUserAndStatus(userById.get(), true);
     }
 
-    @Scheduled(cron="0 */30 * * * *") // 30분마다 실행
+    @Scheduled(cron = "0 */30 * * * *") // 30분마다 실행
     @Transactional
     public void autoUpdate() throws MessagingException {
         List<Product> productList = new ArrayList<>(productMysqlRepository.findAll());
         for (Product product : productList) {   // 저장된 상품에 대해 크롤링 재진행
             ProductCrawlingDto productCrawlingDto = productCrawler.DanawaCrawling(
-                    product.getUrl());
+                product.getUrl());
 
             List<String> mallNameList = new ArrayList<String>();
-            for (ProductHistory productHistory: productHistoryMysqlRepository.findTop3ByProduct(product)){
+            for (ProductHistory productHistory : productHistoryMysqlRepository.findTop3ByProduct(
+                product)) {
                 mallNameList.add(productHistory.getMallName());
             }
             // 크롤링한 데이터를 히스토리에 저장하기 위한 로직
-            for (MallDto mallData : productCrawlingDto.getMallDtoInfo()){
-                if (mallNameList.contains(mallData.getName())){
+            for (MallDto mallData : productCrawlingDto.getMallDtoInfo()) {
+                if (mallNameList.contains(mallData.getName())) {
                     ProductHistory newHistory = ProductHistory.builder()
-                            .product(product)
-                            .minimumPrice(mallData.getPrice())
-                            .mallName(mallData.getName())
-                            .build();
+                        .product(product)
+                        .minimumPrice(mallData.getPrice())
+                        .mallName(mallData.getName())
+                        .build();
                     productHistoryMysqlRepository.save(newHistory);
                 }
             }
 
             // 아래는 메일 발송을 위한 로직
             Integer latestMinimum = productCrawlingDto.getMinimumPrice(); // 새로 크롤링된 최저값
-            for (ProductRegister productRegister :  productRegisterMysqlRepository.findByProduct(
-                    product)) { // 해당 제품을 등록한 사람을 찾고
+            for (ProductRegister productRegister : productRegisterMysqlRepository.findByProduct(
+                product)) { // 해당 제품을 등록한 사람을 찾고
                 if (productRegister.getDesiredPrice() >= latestMinimum) { // 그 사람 요구 가격보다 낮은지
                     alarmService.sendMail(product, productRegister.getUser());
                 }
@@ -143,10 +148,10 @@ public class ProductService {
 
     @Transactional
     public ProductRegister saveRegister(ProductRegisterRequestDto productRegisterRequestDto,
-                                        String productName) {
+        String productName) {
 
         Authentication authentication = SecurityContextHolder.getContext()
-                .getAuthentication();
+            .getAuthentication();
         if (authentication == null || authentication.getName() == null) {
             throw new BusinessException("Security Context 에 인증 정보가 없습니다", EMPTY_TOKEN_DATA);
         }
@@ -159,14 +164,14 @@ public class ProductService {
         Optional<Product> productByName = productMysqlRepository.findByName(productName);
         if (!productByName.isPresent()) {
             productByName = productCrawler.storeProduct(
-                    productCrawler.DanawaCrawling(productRegisterRequestDto.getUrl()));
+                productCrawler.DanawaCrawling(productRegisterRequestDto.getUrl()));
         }
         Optional<ProductRegister> productRegisterById = productRegisterMysqlRepository.findByUserAndProduct(
-                userById.get(), productByName.get());
+            userById.get(), productByName.get());
         if (productRegisterById.isPresent()) {
             ProductRegister entity = productRegisterById.get();
             if (!entity.isStatus()) {
-                entity.update(productRegisterRequestDto.getDesiredPrice(),true);
+                entity.update(productRegisterRequestDto.getDesiredPrice(), true);
                 return entity;
             } else {
                 throw new BusinessException("이미 등록한 상품입니다.", DUPLICATE_PRODUCTREGISTER);
@@ -174,12 +179,12 @@ public class ProductService {
         }
 
         int minimumPrice = productByName.get()
-                .getMallInfo()
-                .get(0)
-                .getPrice();
+            .getMallInfo()
+            .get(0)
+            .getPrice();
 
         ProductRegister productRegister = productRegisterMysqlRepository.build(userById.get(),
-                productByName.get(), productRegisterRequestDto.getDesiredPrice(), minimumPrice, true);
+            productByName.get(), productRegisterRequestDto.getDesiredPrice(), minimumPrice, true);
         productRegisterMysqlRepository.save(productRegister);
 
         return productRegister;
@@ -187,9 +192,9 @@ public class ProductService {
 
     @Transactional
     public ProductRegister editRegister(ProductRegisterEditDto productRegisterEditDto,
-                                        Long productId) {
+        Long productId) {
         Authentication authentication = SecurityContextHolder.getContext()
-                .getAuthentication();
+            .getAuthentication();
         if (authentication == null || authentication.getName() == null) {
             throw new BusinessException("Security Context 에 인증 정보가 없습니다", EMPTY_TOKEN_DATA);
         }
@@ -200,8 +205,8 @@ public class ProductService {
             throw new BusinessException("존재하지 않는 사용자 입니다.", USER_NOT_FOUND);
         }
         Optional<ProductRegister> productRegisterById = productRegisterMysqlRepository.findByUserAndProduct(
-                userById.get(), productMysqlRepository.findById(productId)
-                        .get());
+            userById.get(), productMysqlRepository.findById(productId)
+                .get());
 
         if (!productRegisterById.isPresent()) {
             throw new BusinessException("등록하지 않은 물품 입니다.", PRODUCTREGISTER_NOT_FOUND);
@@ -217,7 +222,7 @@ public class ProductService {
     @Transactional
     public void deleteRegister(Long productId) {
         Authentication authentication = SecurityContextHolder.getContext()
-                .getAuthentication();
+            .getAuthentication();
         if (authentication == null || authentication.getName() == null) {
             throw new BusinessException("Security Context 에 인증 정보가 없습니다", EMPTY_TOKEN_DATA);
         }
@@ -235,10 +240,10 @@ public class ProductService {
         }
 
         Optional<ProductRegister> productRegisterById = productRegisterMysqlRepository.findByUserAndProduct(
-                userById.get(), productById.get());
+            userById.get(), productById.get());
         productRegisterById.ifPresentOrElse(productRegister -> {
             productRegisterById.get()
-                    .setStatus(false);
+                .setStatus(false);
             productRegisterMysqlRepository.save(productRegister);
         }, () -> {
             throw new BusinessException("등록하지 않은 물품입니다.", PRODUCTREGISTER_NOT_FOUND);
@@ -253,10 +258,10 @@ public class ProductService {
         }
 
         Optional<List<Mall>> RegisteredProductMallList =
-                productMallMysqlRepository.findAllByProduct(
-                        Product.builder().
-                                productId(productId)
-                                .build());
+            productMallMysqlRepository.findAllByProduct(
+                Product.builder().
+                    productId(productId)
+                    .build());
         if (!RegisteredProductMallList.isPresent()) {
             throw new BusinessException("mall 정보가 존재하지 않습니다.", Mall_NOT_FOUND);
         }
@@ -268,14 +273,16 @@ public class ProductService {
         ProductHistoryResponseDto productHistoryResponseDto;
         List<MallPriceHistoryInfo> mallHistoryInfoList = new LinkedList<>();
 
-        // method를 호출한 시점을 기준으로 product의 각 Mall의 10개 price를 가져오기
+        // product의 priceHistory 에서 최근 Mall data 가져오기
         Stack<ProductHistory> productHistoryList =
             productHistoryMysqlRepository.findTop30ByProductAndOrderByCreatedDateDesc(
                 productId);
 
-        LocalDateTime date = productHistoryList.get(productHistoryList.size()-1).getCreatedDate();
+        // 최근 10개를 기준으로 가장 이전에 만들어진 created_at 시간 가져오기
+        LocalDateTime date = productHistoryList.get(productHistoryList.size() - 1).getCreatedDate();
+
         // priceHistory graph에 전달할 mall 분류
-        for (int i = 0; i< priceHistoryMallNumber && !productHistoryList.isEmpty(); i++){
+        for (int i = 0; i < priceHistoryMallNumber && !productHistoryList.isEmpty(); i++) {
             List<Integer> priceList = new LinkedList<>();
 
             // productHistoryList에서 product의 mall 가져오기
@@ -286,22 +293,24 @@ public class ProductService {
                 .build());
         }
         // product mall의 price list 저장
-        while (!productHistoryList.isEmpty()){
+        while (!productHistoryList.isEmpty()) {
+            // 오래된 data 순으로 가져오기 (stack 이용)
             ProductHistory productHistory = productHistoryList.pop();
-            for (int i =0; i< mallHistoryInfoList.size(); i++){
+            for (int i = 0; i < mallHistoryInfoList.size(); i++) {
                 // 알맞은 mall을 찾기 위한 mallName 비교
                 if (mallHistoryInfoList.get(i).getMallName()
-                    .equals(productHistory.getMallName())){
-                    // 각 mall에 price 추가
+                    .equals(productHistory.getMallName())) {
+                    // 해당하는 mall의 pricelist에 price 추가
                     mallHistoryInfoList.get(i).
                         getPriceList().add(productHistory.getMinimumPrice());
-                } else if (i == mallHistoryInfoList.size()){
-                    throw new BusinessException("priceHistory data의 mall 정보가 일치하지 않습니다.", UNEXPECTED_MALL);
+                    // product의 저장 시점의 mall이 아닌 다른 mall 정보가 priceHistory에 존재할 때
+                } else if (i == mallHistoryInfoList.size()) {
+                    throw new BusinessException("priceHistory data의 mall 정보가 일치하지 않습니다.",
+                        UNEXPECTED_MALL);
                 }
             }
         }
 
-        // productHistoryDto에 product mall 추가
         productHistoryResponseDto = ProductHistoryResponseDto.builder()
             .mallHistoryInfoList(mallHistoryInfoList)
             .date(date)
