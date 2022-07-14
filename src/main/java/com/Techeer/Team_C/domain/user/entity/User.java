@@ -1,7 +1,6 @@
 package com.Techeer.Team_C.domain.user.entity;
 
 import com.Techeer.Team_C.domain.product.entity.ProductRegister;
-//import com.Techeer.Team_C.domain.product.entity.ProductRegisterId;
 import com.Techeer.Team_C.global.utils.dto.BaseTimeEntity;
 import com.Techeer.Team_C.global.utils.dto.BooleanToYNConverter;
 import java.util.List;
@@ -27,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import lombok.Setter;
-
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.lang.Nullable;
