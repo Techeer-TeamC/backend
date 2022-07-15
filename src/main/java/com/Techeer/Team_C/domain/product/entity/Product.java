@@ -3,13 +3,10 @@ package com.Techeer.Team_C.domain.product.entity;
 
 import com.Techeer.Team_C.global.utils.dto.BaseTimeEntity;
 import com.Techeer.Team_C.global.utils.dto.BooleanToYNConverter;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators.IntSequenceGenerator;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -42,12 +39,19 @@ public class Product extends BaseTimeEntity {
 
     private String name;
 
+    private String url;
+
+    private Integer minimumPrice;
+
     @NotNull
     @Convert(converter = BooleanToYNConverter.class)
     private boolean status;
 
     @OneToMany(mappedBy = "product")
     private List<ProductRegister> productRegister;
+
+    @OneToMany(mappedBy = "product")
+    private List<ProductHistory> productHistory;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true) //영속화 설정
