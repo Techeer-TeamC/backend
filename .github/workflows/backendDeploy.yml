@@ -50,8 +50,9 @@ jobs:
           files: ./src/main/resources/application-oauth.yml
         env:
           spring.security.oauth2.client.registration.google.client-id: ${{ secrets.GOOGLE_CLIENT_ID }}
-          spring.security.oauth2.client.registration.google.client-secret : ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          spring.security.oauth2.client.registration.google.client-secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           spring.security.oauth2.client.registration.google.scope: ${{ secrets.GOOGLE_SCOPE }}
+          spring.security.oauth2.client.registration.google.redirect-uri: ${{ secrets.GOOGLE_REDIRECT_URI }}
           spring.security.oauth2.client.registration.kakao.client-id: ${{ secrets.KAKAO_CLIENT_ID }}
           spring.security.oauth2.client.registration.kakao.redirect-uri: ${{ secrets.KAKAO_REDIRECT_ID }}
           spring.security.oauth2.client.registration.kakao.client-authentication-method: ${{ secrets.KAKAO_CLIENT_METHOD }}
