@@ -6,6 +6,7 @@ spring:
           google:
             client-id: ${google-client-id}
             client-secret: ${google-client-secret}
+            redirect-uri: ${google-redirect-uri}
             scope: ${google-scope}
           kakao:
             client-id: ${kakao-client-id}
