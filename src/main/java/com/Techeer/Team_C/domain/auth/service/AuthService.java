@@ -61,8 +61,10 @@ public class AuthService {
         TokenDto tokenDto = tokenProvider.createToken(authentication);
 
         // 4. RefreshToken 저장
-        RefreshToken refreshToken = RefreshToken.builder().key(authentication.getName())
-                .value(tokenDto.getRefreshToken()).build();
+        RefreshToken refreshToken = RefreshToken.builder()
+                .key(authentication.getName())
+                .value(tokenDto.getRefreshToken())
+                .build();
 
         refreshTokenRepository.save(refreshToken);
 
@@ -124,7 +126,7 @@ public class AuthService {
     }
 
     public RefreshToken refreshTokenValidCheck(Authentication authentication,
-            TokenRefreshDto tokenRefreshDto) {
+                                               TokenRefreshDto tokenRefreshDto) {
         //  저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
                 .orElseThrow(
@@ -132,7 +134,8 @@ public class AuthService {
 
         // Refresh Token 일치하는지 검사
 
-        if (!refreshToken.getValue().equals(tokenRefreshDto.getRefreshToken())) {
+        if (!refreshToken.getValue()
+                .equals(tokenRefreshDto.getRefreshToken())) {
             throw new BusinessException("토큰과 유저정보가 서로 일치하지 않습니다.", MISMATCHED_USER_INFORMATION);
         }
         return refreshToken;
@@ -143,10 +146,12 @@ public class AuthService {
         User userInfoFromKakao = oauth2Kakao.getUserByAccessToken(authorization.getAccess_token());
 
         // JWT 토큰 생성
-        TokenDto tokenDto = tokenProvider.createTokenSocialLogin(userInfoFromKakao.getEmail());
+        TokenDto tokenDto = tokenProvider.createTokenSocialLogin(userInfoFromKakao.getUserId());
 
-        RefreshToken refreshToken = RefreshToken.builder().key(userInfoFromKakao.getEmail())
-                .value(tokenDto.getRefreshToken()).build();
+        RefreshToken refreshToken = RefreshToken.builder()
+                .key(String.valueOf(userInfoFromKakao.getUserId()))
+                .value(tokenDto.getRefreshToken())
+                .build();
         refreshTokenRepository.save(refreshToken);
 
         return tokenDto;
@@ -156,10 +161,12 @@ public class AuthService {
         AuthorizationGoogle authorization = oauth2Google.getAccessTokenByCode(code);
         User userInfoFromGoogle = oauth2Google.getUserByAccessToken(authorization.getAccess_token());
 
-        TokenDto tokenDto = tokenProvider.createTokenSocialLogin(userInfoFromGoogle.getEmail());
+        TokenDto tokenDto = tokenProvider.createTokenSocialLogin(userInfoFromGoogle.getUserId());
 
-        RefreshToken refreshToken = RefreshToken.builder().key(userInfoFromGoogle.getEmail())
-                .value(tokenDto.getRefreshToken()).build();
+        RefreshToken refreshToken = RefreshToken.builder()
+                .key(String.valueOf(userInfoFromGoogle.getUserId()))
+                .value(tokenDto.getRefreshToken())
+                .build();
         refreshTokenRepository.save(refreshToken);
 
         return tokenDto;

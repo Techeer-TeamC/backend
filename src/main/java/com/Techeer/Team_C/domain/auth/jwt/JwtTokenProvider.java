@@ -1,10 +1,11 @@
-
 package com.Techeer.Team_C.domain.auth.jwt;
 
 import com.Techeer.Team_C.domain.auth.dto.TokenDto;
 import com.Techeer.Team_C.domain.user.entity.Role;
 import io.jsonwebtoken.*;
+
 import javax.servlet.ServletRequest;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,14 +32,14 @@ public class JwtTokenProvider {
     @Value("${jwt.secret}")   //.yml파일을 통해 secret키 관리
     private String secretKey;
 
-
     private long tokenValidTime = 30 * 60 * 1000L; //토큰 유효시간 30분
     private long refreshTokenValidTime = 7 * 24 * 60 * 60 * 1000L; // refresh 유효시간 : 7일
 
     // 객체 초기화, secretKey를 Base64로 인코딩한다.
     @PostConstruct
     protected void init() {
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        secretKey = Base64.getEncoder()
+                .encodeToString(secretKey.getBytes());
     }
 
     // JWT 토큰 생성
@@ -51,7 +52,8 @@ public class JwtTokenProvider {
      */
     public TokenDto createToken(Authentication authentication) {
         // 권한들 가져오기
-        String authorities = authentication.getAuthorities().stream()
+        String authorities = authentication.getAuthorities()
+                .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
@@ -80,8 +82,7 @@ public class JwtTokenProvider {
                 .build();
     }
 
-
-    public TokenDto createTokenSocialLogin(String email) {
+    public TokenDto createTokenSocialLogin(Long userId) {
 
         Role authority = Role.ROLE_USER;
         long now = (new Date()).getTime();
@@ -89,7 +90,7 @@ public class JwtTokenProvider {
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + tokenValidTime);
         String accessToken = Jwts.builder()
-                .setSubject(email)       // payload "sub": "name"
+                .setSubject(String.valueOf(userId))       // payload "sub": "name"
                 .claim(AUTHORITIES_KEY, authority)        // payload "auth": "ROLE_USER"
                 .setExpiration(accessTokenExpiresIn)        // payload "exp": 1516239022 (예시)
                 .signWith(SignatureAlgorithm.HS256, secretKey)   // header "alg": "HS512"
@@ -109,7 +110,6 @@ public class JwtTokenProvider {
                 .build();
     }
 
-
     public Authentication getAuthentication(String accessToken) {
         // 토큰 복호화
         Claims claims = parseClaims(accessToken);
@@ -119,10 +119,11 @@ public class JwtTokenProvider {
         }
 
         // 클레임에서 권한 정보 가져오기
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
+        Collection<? extends GrantedAuthority> authorities = Arrays.stream(claims.get(AUTHORITIES_KEY)
+                        .toString()
+                        .split(","))
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
 
         // UserDetails 객체를 만들어서 Authentication 리턴
         UserDetails principal = new User(claims.getSubject(), "", authorities);
@@ -133,18 +134,24 @@ public class JwtTokenProvider {
     //토큰 복호화 함수
     private Claims parseClaims(String accessToken) {
         try {
-            return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(accessToken).getBody();
+            return Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(accessToken)
+                    .getBody();
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
     }
 
-
     // 토큰의 유효성 + 만료일자 확인
     public boolean validateToken(ServletRequest request, String jwtToken) {
         try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
-            return !claims.getBody().getExpiration().before(new Date());
+            Jws<Claims> claims = Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(jwtToken);
+            return !claims.getBody()
+                    .getExpiration()
+                    .before(new Date());
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("잘못된 JWT 서명입니다.");
             request.setAttribute("exception", INVALID_JTW_TOKEN_SIGNATURE);
@@ -170,8 +177,12 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String jwtToken) {
         try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
-            return !claims.getBody().getExpiration().before(new Date());
+            Jws<Claims> claims = Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(jwtToken);
+            return !claims.getBody()
+                    .getExpiration()
+                    .before(new Date());
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {
