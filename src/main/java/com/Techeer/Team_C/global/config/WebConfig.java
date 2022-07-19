@@ -10,7 +10,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000", "http://3.39.75.19:3000")
+                .allowedOrigins("http://localhost:3000", "https://fish-it-c.herokuapp.com/")
                 .allowedMethods("*"); //get,post,patch 등 모든 허용할 HTTP method정의
     }
 }
