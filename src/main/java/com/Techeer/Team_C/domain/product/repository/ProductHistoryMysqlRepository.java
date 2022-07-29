@@ -12,7 +12,7 @@ public interface ProductHistoryMysqlRepository extends JpaRepository<ProductHist
 
     List<ProductHistory> findTop3ByProduct(Product product);
 
-    @Query(value = "SELECT * FROM product_history where product_id = :id order by created_date desc LIMIT 30"
+    @Query(value = "SELECT * FROM product_history where product_id = :id order by created_date desc LIMIT :number"
         , nativeQuery = true)
-    Stack<ProductHistory> findTop30ByProductAndOrderByCreatedDateDesc(Long id);
+    Stack<ProductHistory> findByProductAndOrderByCreatedDateDesc(Long id, int number);
 }
