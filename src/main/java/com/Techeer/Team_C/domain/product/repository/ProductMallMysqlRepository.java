@@ -12,6 +12,6 @@ public interface ProductMallMysqlRepository extends JpaRepository<Mall, Long> {
     Optional<List<Mall>> findAllByProduct(Product product);
 
     @Query(value = "SELECT * from mall where product_id = :productId LiMIT 3", nativeQuery = true)
-    Optional<List<Mall>> findMallByProduct(Long productId);
+    Optional<List<Mall>> findTop3MallByProduct(Long productId);
 
 }
