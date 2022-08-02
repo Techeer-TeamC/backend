@@ -111,4 +111,11 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductHistory(productId));
     }
 
+    @ApiOperation(value = "월별에 따른 상품의 가격 추이 그래프")
+    @GetMapping("/price-history/{productId}/month-time")
+    public ResponseEntity<ProductHistoryResponseDto> getProductHistoryByTime(
+        @PathVariable("productId") Long productId, @RequestParam int month, @RequestParam int day) {
+        return ResponseEntity.ok(productService.getProductHistoryForSpecificTime(productId, month, day));
+    }
+
 }

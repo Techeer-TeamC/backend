@@ -2,7 +2,8 @@ package com.Techeer.Team_C.domain.product.service;
 
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.DUPLICATE_PRODUCTREGISTER;
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.EMPTY_TOKEN_DATA;
-import static com.Techeer.Team_C.global.error.exception.ErrorCode.Mall_NOT_FOUND;
+import static com.Techeer.Team_C.global.error.exception.ErrorCode.MALL_NOT_FOUND;
+import static com.Techeer.Team_C.global.error.exception.ErrorCode.PRICE_NOT_FOUND;
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.PRODUCTREGISTER_NOT_FOUND;
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.PRODUCT_NOT_FOUND;
 import static com.Techeer.Team_C.global.error.exception.ErrorCode.UNEXPECTED_MALL;
@@ -58,7 +59,6 @@ public class ProductService {
     private final UserRepository userRepository;
     private final ProductHistoryMysqlRepository productHistoryMysqlRepository;
     private final AlarmService alarmService;
-    private final short priceHistoryMallNumber = 3;
 
     private ProductDto dtoConverter(Product product) {
         return modelMapper.map(product, ProductDto.class);
@@ -263,7 +263,7 @@ public class ProductService {
                     productId(productId)
                     .build());
         if (!RegisteredProductMallList.isPresent()) {
-            throw new BusinessException("mall 정보가 존재하지 않습니다.", Mall_NOT_FOUND);
+            throw new BusinessException("mall 정보가 존재하지 않습니다.", MALL_NOT_FOUND);
         }
 
         return RegisteredProductMallList.get();
@@ -273,16 +273,86 @@ public class ProductService {
         ProductHistoryResponseDto productHistoryResponseDto;
         List<MallPriceHistoryInfo> mallHistoryInfoList = new LinkedList<>();
 
-        // product의 priceHistory 에서 최근 Mall data 가져오기
-        Stack<ProductHistory> productHistoryList =
-            productHistoryMysqlRepository.findTop30ByProductAndOrderByCreatedDateDesc(
-                productId);
+        // product에 저장된 mall 정보 가져오기 (상위 3개)
+        Optional<List<Mall>> productMallList = productMallMysqlRepository.findTop3MallByProduct(
+            productId);
 
-        // 최근 10개를 기준으로 가장 이전에 만들어진 created_at 시간 가져오기
+        // product에 저장된 mall 정보가 없는 경우
+        if (productMallList.isEmpty()) {
+            throw new BusinessException("mall 정보가 존재하지 않습니다.", MALL_NOT_FOUND);
+        }
+
+        // product 에 대한 가격 추이 그래프 가져오기
+        Stack<ProductHistory> productHistoryList =
+            productHistoryMysqlRepository.findByProductAndOrderByCreatedDateDesc(
+                productId, productMallList.get().size() * 10);
+
+        // product 에 대한 최근 가격 정보가 존재하지 않는 경우
+        if (productHistoryList.isEmpty()) {
+            throw new BusinessException("product에 대한 최근 가격 데이터가 존재하지 않습니다.", PRICE_NOT_FOUND);
+        }
+
+        // 최근 data 기준으로 가장 오래된 created_at 시간 가져오기
         LocalDateTime date = productHistoryList.get(productHistoryList.size() - 1).getCreatedDate();
 
-        // priceHistory graph에 전달할 mall 분류
-        for (int i = 0; i < priceHistoryMallNumber && !productHistoryList.isEmpty(); i++) {
+        // 가격 추이 그래프 데이터 가공
+        createPriceHistoryData(productHistoryList, productMallList.get().size(),
+            mallHistoryInfoList);
+
+        productHistoryResponseDto = ProductHistoryResponseDto.builder()
+            .mallHistoryInfoList(mallHistoryInfoList)
+            .date(date)
+            .build();
+
+        return productHistoryResponseDto;
+    }
+
+    public ProductHistoryResponseDto getProductHistoryForSpecificTime(Long productId,
+        int month, int day) {
+        ProductHistoryResponseDto productHistoryResponseDto;
+        List<MallPriceHistoryInfo> mallHistoryInfoList = new LinkedList<>();
+
+        // product에 저장된 mall 정보 가져오기 (상위 3개)
+        Optional<List<Mall>> productMallList = productMallMysqlRepository.findTop3MallByProduct(
+            productId);
+
+        // product에 저장된 mall 정보가 없는 경우
+        if (productMallList.isEmpty()) {
+            throw new BusinessException("mall 정보가 존재하지 않습니다.", MALL_NOT_FOUND);
+        }
+
+        // 특정 시간 대한 가격 추이 그래프 data 가져오기
+        Stack<ProductHistory> productHistoryList = productHistoryMysqlRepository.findPriceHistoryForSpecificTime
+            (productId, productMallList.get().size(),
+                month * 30 * 24 * 6 + day * 24 * 6,
+                productMallList.get().size() * 10);
+
+        // product 에 대한 최근 가격 정보가 존재하지 않는 경우
+        if (productHistoryList.isEmpty()) {
+            throw new BusinessException("product에 대한 최근 가격 데이터가 존재하지 않습니다.", PRICE_NOT_FOUND);
+        }
+
+        // 최근 data 기준으로 가장 오래된 created_at 시간 가져오기
+        LocalDateTime currentDate = productHistoryList.get(productHistoryList.size() - 1)
+            .getCreatedDate();
+
+        // 가격 추이 그래프 데이터 가공
+        createPriceHistoryData(productHistoryList, productMallList.get().size(),
+            mallHistoryInfoList);
+
+        productHistoryResponseDto = ProductHistoryResponseDto.builder()
+            .mallHistoryInfoList(mallHistoryInfoList)
+            .date(currentDate)
+            .build();
+
+        return productHistoryResponseDto;
+    }
+
+    public void createPriceHistoryData(Stack<ProductHistory> productHistoryList, int mallSize,
+        List<MallPriceHistoryInfo> mallHistoryInfoList) {
+
+        // priceHistory graph에 전달할 mall을 개별로 분류
+        for (int i = 0; i < mallSize && !productHistoryList.isEmpty(); i++) {
             List<Integer> priceList = new LinkedList<>();
 
             // productHistoryList에서 product의 mall 가져오기
@@ -292,12 +362,13 @@ public class ProductService {
                 .priceList(priceList)
                 .build());
         }
+
         // product mall의 price list 저장
         while (!productHistoryList.isEmpty()) {
             // 오래된 data 순으로 가져오기 (stack 이용)
             ProductHistory productHistory = productHistoryList.pop();
+            // 알맞은 mall을 찾기 위한 mallName 비교
             for (int i = 0; i < mallHistoryInfoList.size(); i++) {
-                // 알맞은 mall을 찾기 위한 mallName 비교
                 if (mallHistoryInfoList.get(i).getMallName()
                     .equals(productHistory.getMallName())) {
                     // 해당하는 mall의 pricelist에 price 추가
@@ -305,17 +376,12 @@ public class ProductService {
                         getPriceList().add(productHistory.getMinimumPrice());
                     // product의 저장 시점의 mall이 아닌 다른 mall 정보가 priceHistory에 존재할 때
                 } else if (i == mallHistoryInfoList.size()) {
-                    throw new BusinessException("priceHistory data의 mall 정보가 일치하지 않습니다.",
+                    throw new BusinessException(
+                        "priceHistory data의 mall 정보가 mall list의 정보와 일치하지 않습니다.",
                         UNEXPECTED_MALL);
                 }
             }
         }
 
-        productHistoryResponseDto = ProductHistoryResponseDto.builder()
-            .mallHistoryInfoList(mallHistoryInfoList)
-            .date(date)
-            .build();
-
-        return productHistoryResponseDto;
     }
 }

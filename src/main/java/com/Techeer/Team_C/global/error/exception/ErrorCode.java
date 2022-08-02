@@ -44,10 +44,11 @@ public enum ErrorCode {
 
     //Product
     PRODUCT_NOT_FOUND(400,"I001","Not found product"),
-    Mall_NOT_FOUND(400,"I002", "Not found Mall"),
+    MALL_NOT_FOUND(400,"I002", "Not found Mall"),
 
     //Price history
     UNEXPECTED_MALL(400, "H001", "Unexpected mall information in price history table"),
+    PRICE_NOT_FOUND(400,"H001", "Not found price-history of product"),
 
     //ProductResister
     PRODUCTREGISTER_NOT_FOUND(400, "I003", "Product not registered"),
