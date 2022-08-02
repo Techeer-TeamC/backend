@@ -307,8 +307,8 @@ public class ProductService {
         return productHistoryResponseDto;
     }
 
-    public ProductHistoryResponseDto getProductHistoryForSpecificTime(Long productId, int year,
-        int month) {
+    public ProductHistoryResponseDto getProductHistoryForSpecificTime(Long productId,
+        int month, int day) {
         ProductHistoryResponseDto productHistoryResponseDto;
         List<MallPriceHistoryInfo> mallHistoryInfoList = new LinkedList<>();
 
@@ -321,9 +321,10 @@ public class ProductService {
             throw new BusinessException("mall 정보가 존재하지 않습니다.", MALL_NOT_FOUND);
         }
 
-        // 특정 시간에 대한 가격 추이 그래프 data 가져오기
+        // 특정 시간 대한 가격 추이 그래프 data 가져오기
         Stack<ProductHistory> productHistoryList = productHistoryMysqlRepository.findPriceHistoryForSpecificTime
-            (productId, productMallList.get().size(), year * 24 + month * 3 + 3,
+            (productId, productMallList.get().size(),
+                month * 30 * 24 * 6 + day * 24 * 6,
                 productMallList.get().size() * 10);
 
         // product 에 대한 최근 가격 정보가 존재하지 않는 경우
