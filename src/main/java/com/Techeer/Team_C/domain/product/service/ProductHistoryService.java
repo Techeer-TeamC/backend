@@ -50,9 +50,9 @@ public class ProductHistoryService {
                 product.getUrl());
 
             List<String> mallNameList = new ArrayList<String>();
-            for (ProductHistory productHistory : productHistoryMysqlRepository.findTop3ByProduct(
-                product)) {
-                mallNameList.add(productHistory.getMallName());
+            // 상품의 상위 3개 mall 가져오기 (상위 3개)
+            for (Mall mall : productMallMysqlRepository.findTop3ByProduct(product).get()) {
+                mallNameList.add(mall.getName());
             }
             // 크롤링한 데이터를 히스토리에 저장하기 위한 로직
             for (MallDto mallData : productCrawlingDto.getMallDtoInfo()) {
@@ -83,8 +83,8 @@ public class ProductHistoryService {
         List<MallPriceHistoryInfo> mallHistoryInfoList = new LinkedList<>();
 
         // product에 저장된 mall 정보 가져오기 (상위 3개)
-        Optional<List<Mall>> productMallList = productMallMysqlRepository.findTop3MallByProduct(
-            productId);
+        Optional<List<Mall>> productMallList = productMallMysqlRepository.findTop3ByProduct(
+            Product.builder().productId(productId).build());
 
         // product에 저장된 mall 정보가 없는 경우
         if (productMallList.isEmpty()) {
@@ -122,8 +122,8 @@ public class ProductHistoryService {
         List<MallPriceHistoryInfo> mallHistoryInfoList = new LinkedList<>();
 
         // product에 저장된 mall 정보 가져오기 (상위 3개)
-        Optional<List<Mall>> productMallList = productMallMysqlRepository.findTop3MallByProduct(
-            productId);
+        Optional<List<Mall>> productMallList = productMallMysqlRepository.findTop3ByProduct(
+            Product.builder().productId(productId).build());
 
         // product에 저장된 mall 정보가 없는 경우
         if (productMallList.isEmpty()) {

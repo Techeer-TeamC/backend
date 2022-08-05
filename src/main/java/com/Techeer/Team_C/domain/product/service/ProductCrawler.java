@@ -240,7 +240,8 @@ public class ProductCrawler {
         String encodedSearchWord = URLEncoder.encode(searchWord, StandardCharsets.UTF_8);
         HttpClient httpClient = HttpClientBuilder.create().build();
         String url =
-            "http://search.danawa.com/dsearch.php?k1=" + encodedSearchWord+ "&module=goods&act=dispMain";
+            "http://search.danawa.com/dsearch.php?k1=" + encodedSearchWord
+                + "&module=goods&act=dispMain";
         final int[] totalNumber = new int[1];
         HttpGet httpget = new HttpGet(url);
         List<ProductListDto> productListDtoList = new LinkedList<>();

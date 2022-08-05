@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(API_PREFIX +"/product-history")
+@RequestMapping(API_PREFIX + "/product-history")
 public class ProductHistoryController {
 
     private final ProductHistoryService productHistoryService;
@@ -31,7 +31,8 @@ public class ProductHistoryController {
     @GetMapping("/price-history/{productId}/month-time")
     public ResponseEntity<ProductHistoryResponseDto> getProductHistoryByTime(
         @PathVariable("productId") Long productId, @RequestParam int month, @RequestParam int day) {
-        return ResponseEntity.ok(productHistoryService.getProductHistoryForSpecificTime(productId, month, day));
+        return ResponseEntity.ok(
+            productHistoryService.getProductHistoryForSpecificTime(productId, month, day));
     }
 
 }

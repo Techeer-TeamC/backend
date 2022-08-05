@@ -3,7 +3,6 @@ package com.Techeer.Team_C.domain.product.controller;
 import static com.Techeer.Team_C.global.utils.Constants.API_PREFIX;
 
 import com.Techeer.Team_C.domain.product.dto.ProductDto;
-import com.Techeer.Team_C.domain.product.dto.ProductHistoryResponseDto;
 import com.Techeer.Team_C.domain.product.dto.ProductPageListResponseDto;
 import com.Techeer.Team_C.domain.product.dto.ProductRegisterEditDto;
 import com.Techeer.Team_C.domain.product.dto.ProductRegisterMapper;
