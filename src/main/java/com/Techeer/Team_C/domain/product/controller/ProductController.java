@@ -104,18 +104,4 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductMallList(productId));
     }
 
-    @ApiOperation(value = "상품의 가격 추이 그래프")
-    @GetMapping("/price-history/{id}")
-    public ResponseEntity<ProductHistoryResponseDto> getProductHistory(
-        @PathVariable("id") Long productId) {
-        return ResponseEntity.ok(productService.getProductHistory(productId));
-    }
-
-    @ApiOperation(value = "월별에 따른 상품의 가격 추이 그래프")
-    @GetMapping("/price-history/{productId}/month-time")
-    public ResponseEntity<ProductHistoryResponseDto> getProductHistoryByTime(
-        @PathVariable("productId") Long productId, @RequestParam int month, @RequestParam int day) {
-        return ResponseEntity.ok(productService.getProductHistoryForSpecificTime(productId, month, day));
-    }
-
 }
