@@ -14,6 +14,8 @@ import com.Techeer.Team_C.domain.product.repository.ProductHistoryMysqlRepositor
 import com.Techeer.Team_C.domain.product.repository.ProductMysqlRepository;
 import com.Techeer.Team_C.global.error.exception.BusinessException;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -235,9 +237,11 @@ public class ProductCrawler {
     }
 
     public ProductListResponseDto productList(String searchWord) {
+        String encodedSearchWord = URLEncoder.encode(searchWord, StandardCharsets.UTF_8);
         HttpClient httpClient = HttpClientBuilder.create().build();
         String url =
-            "http://search.danawa.com/dsearch.php?k1=" + searchWord + "&module=goods&act=dispMain";
+            "http://search.danawa.com/dsearch.php?k1=" + encodedSearchWord
+                + "&module=goods&act=dispMain";
         final int[] totalNumber = new int[1];
         HttpGet httpget = new HttpGet(url);
         List<ProductListDto> productListDtoList = new LinkedList<>();
@@ -276,8 +280,9 @@ public class ProductCrawler {
                         for (String piece : priceSplit) {
                             priceStr += piece;
                         }
-                        // 가격 비교 예정인 제품은 0원으로 표기함
-                        if (!priceStr.isEmpty() && !priceStr.equals("가격비교예정")) {
+
+                        // 가격이 미정 or 품절인 제품은 0원으로 표기함
+                        if (!minimumPrice.contains("품절") && !minimumPrice.contains("예정")) {
                             price = Integer.parseInt(priceStr);
                         }
                         productListDtoList.add(ProductListDto.builder()
