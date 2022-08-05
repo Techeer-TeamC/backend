@@ -4,6 +4,7 @@ import com.Techeer.Team_C.domain.user.dto.PasswordChangeRequestDto;
 import com.Techeer.Team_C.domain.user.dto.SignupFormDto;
 import com.Techeer.Team_C.domain.user.dto.UserDto;
 import com.Techeer.Team_C.domain.auth.jwt.JwtTokenProvider;
+import com.Techeer.Team_C.domain.user.dto.UserResponeDto;
 import com.Techeer.Team_C.domain.user.entity.Role;
 import com.Techeer.Team_C.domain.user.repository.UserRepository;
 import com.Techeer.Team_C.domain.auth.service.AuthService;
@@ -60,10 +61,9 @@ public class UserController {
 
     @GetMapping("/")
     @ApiOperation(value = "User 정보 조회", notes = "정보조회 API , 헤더에 토큰 정보 필요")
-    public ResponseEntity<UserDto> getMyMemberInfo() {
+    public ResponseEntity<UserResponeDto> getMyMemberInfo() {
 
         return ResponseEntity.ok(userService.getMyinfo().get());
-
 
     }
 

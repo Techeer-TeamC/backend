@@ -10,4 +10,6 @@ public interface ProductMallMysqlRepository extends JpaRepository<Mall, Long> {
 
     Optional<List<Mall>> findAllByProduct(Product product);
 
+    Optional<List<Mall>> findTop3ByProduct(Product product);
+
 }

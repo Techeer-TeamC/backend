@@ -2,6 +2,7 @@ package com.Techeer.Team_C.domain.user.service;
 
 import com.Techeer.Team_C.domain.user.dto.PasswordChangeRequestDto;
 import com.Techeer.Team_C.domain.user.dto.UserDto;
+import com.Techeer.Team_C.domain.user.dto.UserResponeDto;
 import com.Techeer.Team_C.domain.user.entity.User;
 import com.Techeer.Team_C.domain.user.repository.UserRepository;
 
@@ -33,6 +34,11 @@ public class UserService {
 
     private UserDto dtoConverter(User user) {
         return modelMapper.map(user, UserDto.class);
+        // Serice에서는 user entitiy에 바로 접근하지 않고, User entitiy를 user Dto로 변경하여 dto에 접근
+    }
+
+    private UserResponeDto ResponeDtoConverter(User user) {
+        return modelMapper.map(user, UserResponeDto.class);
         // Serice에서는 user entitiy에 바로 접근하지 않고, User entitiy를 user Dto로 변경하여 dto에 접근
     }
 
@@ -82,7 +88,7 @@ public class UserService {
      * @return 해당 user객체의 데이터
      */
     @Transactional
-    public Optional<UserDto> getMyinfo() {
+    public Optional<UserResponeDto> getMyinfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getName() == null) {
             throw new BusinessException("Security Context 에 인증 정보가 없습니다", EMPTY_TOKEN_DATA);
@@ -90,7 +96,7 @@ public class UserService {
 
         Long id = Long.parseLong(authentication.getName());
         Optional<User> userById = userRepository.findById(id);
-        return userById.map(userEntity -> dtoConverter(userEntity));
+        return userById.map(userEntity -> ResponeDtoConverter(userEntity));
 
     }
 

@@ -3,7 +3,6 @@ package com.Techeer.Team_C.domain.product.controller;
 import static com.Techeer.Team_C.global.utils.Constants.API_PREFIX;
 
 import com.Techeer.Team_C.domain.product.dto.ProductDto;
-import com.Techeer.Team_C.domain.product.dto.ProductHistoryResponseDto;
 import com.Techeer.Team_C.domain.product.dto.ProductPageListResponseDto;
 import com.Techeer.Team_C.domain.product.dto.ProductRegisterEditDto;
 import com.Techeer.Team_C.domain.product.dto.ProductRegisterMapper;
@@ -102,13 +101,6 @@ public class ProductController {
     @GetMapping("/product/mallList/{id}")
     public ResponseEntity<List<Mall>> getMallList(@PathVariable("id") Long productId) {
         return ResponseEntity.ok(productService.getProductMallList(productId));
-    }
-
-    @ApiOperation(value = "상품의 가격 추이 그래프")
-    @GetMapping("/price-history/{id}")
-    public ResponseEntity<ProductHistoryResponseDto> getProductHistory(
-        @PathVariable("id") Long productId) {
-        return ResponseEntity.ok(productService.getProductHistory(productId));
     }
 
 }
