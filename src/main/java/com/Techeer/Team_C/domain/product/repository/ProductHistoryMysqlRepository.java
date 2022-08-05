@@ -12,15 +12,17 @@ public interface ProductHistoryMysqlRepository extends JpaRepository<ProductHist
 
     List<ProductHistory> findTop3ByProduct(Product product);
 
-    @Query(value = "SELECT * FROM product_history where product_id = :id order by created_date desc LIMIT :limitDataNum"
+    @Query(value = "SELECT * FROM product_history WHERE product_id = :id ORDER BY created_date DESC LIMIT :limitDataNum"
         , nativeQuery = true)
     Stack<ProductHistory> findByProductAndOrderByCreatedDateDesc(Long id, int limitDataNum);
 
     @Query(value =
-        "select p.* from (select *, (@step \\:= @step+1) as step from product_history as ph,"
-            + "(select @step\\:= 0) as s where ph.product_id= :id order by ph.created_date desc) as p "
-            + "where p.step % :timeStandard <= :mallNum "
-            + "and p.step % :timeStandard != 0 "
+        "SELECT p.* FROM (SELECT *, (@step \\:= @step+1) AS step "
+            + "FROM product_history AS ph, (SELECT @step\\:= 0) AS s "
+            + "WHERE ph.product_id= :id "
+            + "ORDER BY ph.created_date DESC) AS p "
+            + "WHERE p.step % :timeStandard <= :mallNum "
+            + "AND p.step % :timeStandard != 0 "
             + "LIMIT :limitDataNum"
         , nativeQuery = true)
     Stack<ProductHistory> findPriceHistoryForSpecificTime(Long id,
