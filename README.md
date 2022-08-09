@@ -28,10 +28,12 @@
 
 <table>
   <tr>
-    <td><img width="600" src="https://user-images.githubusercontent.com/57824857/182031046-d509eb8f-e508-4ce6-afb5-11c31dab0ba5.png"></td>
-    <td><img width="600" src="https://user-images.githubusercontent.com/57824857/182031080-83571823-b44f-48e9-9130-312356914ea5.png"></td>
+    <td><img width="600" src="https://user-images.githubusercontent.com/94429560/183659009-a0938dcf-a5aa-40af-9e65-59f6a8be8aa3.png"></td>
+    <td><img width="600" src="https://user-images.githubusercontent.com/94429560/183658385-1e38457d-a2f2-4d9a-a18a-4fbe84ebba11.png"></td>
+    <td><img width="600" src="https://user-images.githubusercontent.com/94429560/183659288-c8eeb39d-8c42-4d80-9c80-93e9a9e034de.png"></td>
   </tr>
   <tr>
+    <td align="center"><b>메인페이지</b></td>
     <td align="center"><b>로그인 및 회원가입</b></td>
     <td align="center"><b>제품 검색 페이지</b></td>
   </tr>
@@ -39,7 +41,7 @@
 <table>
   <tr>
     <td><img width="600" src="https://user-images.githubusercontent.com/57824857/182031108-9d37ec57-0a4e-47c5-a5ca-3ceef33684a0.png"></td>
-    <td><img width="600" src="https://user-images.githubusercontent.com/57824857/182031117-53e67dc4-fbba-4c9d-9ab1-45390e6728a4.png"></td>
+    <td><img width="600" src="https://user-images.githubusercontent.com/57824857/182031117-53e67dc4-fbba-4c9d-9ab1-45390e6728a4.png"><img width="600" src=""> </td>
   </tr>
   <tr>
     <td align="center"><b>제품 상세 페이지</b></td>
@@ -49,7 +51,7 @@
 
 <table>
   <tr>
-    <td><img width="600" src="https://user-images.githubusercontent.com/57824857/182031166-b801490e-54e0-47c9-983f-3b52701c5b66.png"></td>
+    <td><img width="600" src="https://user-images.githubusercontent.com/94429560/183660765-694b988e-5025-4552-ad29-df8d268ac763.png"></td>
     <td><img width="600" src="https://user-images.githubusercontent.com/57824857/182030983-494b7b0e-cc05-40f9-a4e1-32aa4c4a5091.png"></td>
   </tr>
   <tr>
@@ -61,13 +63,6 @@
 
 
   
-  
-
-## Package
-
-```bash
-추가해야합니다.
-```
 
 
 
@@ -155,6 +150,8 @@ $ docker-compose up --build
 ![image](https://user-images.githubusercontent.com/57824857/182031224-e58a7c3b-3388-47b4-9eb9-bc1d7296af03.png)
 
 
+### Medium.com Docs
+👉 https://medium.com/@techeerteamc/fish-it-get-notification-when-the-product-reaches-the-price-you-want-17b9239282b7
 
 
 
