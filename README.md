@@ -79,26 +79,6 @@
 
 <br>
 
-## 배포 서버
-http://fish-it-c.herokuapp.com
-
-테스트용 계정
-- email: test@test.com
-- password : test
-  
-
-## Dev Server
-
-http://3.39.75.19:8080/api/v1
-
-
-
-## API Documentation
-
-http://3.39.75.19:8080/swagger-ui.html
-
-
-
 ## Getting Started
 
 `spring: 2.6.6`  
